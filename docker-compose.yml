@@ -1,0 +1,39 @@
+services:
+  db:
+    image: postgis/postgis:16-3.4
+    container_name: nlams_postgis_db
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-nlams_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-nlams_pass}
+      POSTGRES_DB: ${POSTGRES_DB:-nlams_dev}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-nlams_user} -d ${POSTGRES_DB:-nlams_dev}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: nlams_fastapi_api
+    restart: always
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    env_file:
+      - ./backend/.env
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-nlams_user}:${POSTGRES_PASSWORD:-nlams_pass}@db:5432/${POSTGRES_DB:-nlams_dev}
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
