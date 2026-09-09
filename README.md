@@ -128,10 +128,10 @@ Each role gets the same **shell component** (top bar + role-driven side menu + w
 
 | Feature | Citizen | Surveyor | Talathi | Tehsildar | LAO | Collector | PIA | State Admin | Central Admin |
 |---|---|---|---|---|---|---|---|---|---|
-| **Location Intelligence** (trigger/create) | – | – | – | – | ✅ | – | ✅ | – | – |
-| **Location Intelligence** (view report) | – | ✅ (own task) | – | ✅ (taluka) | ✅ (own) | ✅ (district, aggregated) | ✅ (own) | ✅ (state, aggregated) | ✅ (national, aggregated) |
-| **Project-Status RAG** (Copilot) | – | – | – | ✅ (taluka) | ✅ (own cases) | ✅ (district) | ✅ (own project) | ✅ (state) | ✅ (national) |
-| **Regulatory/Procedural RAG** (Copilot) | ✅ (public subset only) | ✅ (task-scoped) | ✅ (mutation-scoped) | ✅ | ✅ | ✅ | ✅ (project-relevant) | ✅ + manage KB (state docs) | ✅ + manage KB (national docs) |
+| *Location Intelligence* (trigger/create) | – | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| *Location Intelligence* (view report) | – | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| *Project-Status RAG* (Copilot) | – | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| *Regulatory/Procedural RAG* (Copilot) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 
 > ⚠️ **Citizen Copilot must be a separate, restricted instance** from the official Copilot — never the same session/service, to prevent cross-case data leakage.
 
