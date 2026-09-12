@@ -52,3 +52,5 @@ htmlcov/
 
 # Docker
 .docker/
+
+nlams.db

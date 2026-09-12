@@ -6,12 +6,25 @@ from app.core.config import settings
 from app.db.session import get_db
 from app.api.auth import router as auth_router
 from app.api.test_rbac import router as test_rbac_router
+from app.api.citizen_dashboard import router as citizen_dashboard_router
+
+from app.db.base import Base
+from app.db.session import engine
+from app.db.seed import seed_database
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
     description="NLAMS - National Land Acquisition & Management System Backend API",
     version="0.1.0",
 )
+
+@app.on_event("startup")
+def on_startup():
+    try:
+        Base.metadata.create_all(bind=engine)
+        seed_database()
+    except Exception as e:
+        print(f"Startup DB init notice: {e}")
 
 # CORS middleware configuration
 app.add_middleware(
@@ -25,6 +38,7 @@ app.add_middleware(
 # Include Routers
 app.include_router(auth_router)
 app.include_router(test_rbac_router)
+app.include_router(citizen_dashboard_router)
 
 
 @app.get("/health", tags=["Health"])
