@@ -3,15 +3,7 @@ import {
   Bell,
   User,
   LogOut,
-  Search,
-  FileText,
   ChevronDown,
-  Home,
-  Layers,
-  Activity,
-  AlertCircle,
-  CreditCard,
-  UserCheck,
   ShieldCheck,
 } from 'lucide-react'
 import EmblemIndia from '../landing/EmblemIndia'

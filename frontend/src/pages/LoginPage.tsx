@@ -97,10 +97,12 @@ export default function LoginPage() {
       setIsLoading(false)
       setSuccessMessage(`Successfully authenticated as ${username}!`)
 
-      // Redirect to citizen or department dashboard
+      // Redirect to citizen, PIA agency, or central department dashboard
       setTimeout(() => {
         if (activeType === 'citizen') {
           navigate('/dashboard/citizen')
+        } else if (username === 'nhai_agency' || MOCK_ACCOUNTS[username]?.role === 'agency') {
+          navigate('/dashboard/pia')
         } else {
           navigate('/dashboard/central')
         }
@@ -276,6 +278,15 @@ export default function LoginPage() {
                     className="inline-flex items-center gap-1.5 rounded-lg bg-white px-3 py-1.5 text-xs font-bold text-indigo-900 border border-indigo-300 shadow-xs hover:bg-indigo-50 transition-colors"
                   >
                     Collector
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleQuickFill('nhai_agency')}
+                    className="inline-flex items-center gap-1.5 rounded-lg bg-red-50 px-3 py-1.5 text-xs font-bold text-[#991B1B] border border-red-300 shadow-xs hover:bg-red-100 transition-colors"
+                  >
+                    <Building2 className="h-3.5 w-3.5 text-[#991B1B]" />
+                    PIA Agency (NHAI)
                   </button>
                 </div>
               </div>

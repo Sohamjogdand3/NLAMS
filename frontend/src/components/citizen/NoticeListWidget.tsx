@@ -5,11 +5,8 @@ import {
   Eye,
   Calendar,
   Building,
-  Filter,
   Search,
-  CheckCircle2,
   AlertCircle,
-  FileCheck2,
   Sparkles,
 } from 'lucide-react'
 import type { NoticeItem } from '../../types/citizen'
