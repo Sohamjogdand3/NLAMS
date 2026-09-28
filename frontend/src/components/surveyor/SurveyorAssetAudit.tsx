@@ -18,12 +18,12 @@ export default function SurveyorAssetAudit({
   parcel,
   onSaveAssets,
 }: SurveyorAssetAuditProps) {
-  const [timberTrees, setTimberTrees] = useState(parcel.treesSurveyed.timberTrees || 0)
-  const [fruitTrees, setFruitTrees] = useState(parcel.treesSurveyed.fruitBearingTrees || 0)
-  const [borewells, setBorewells] = useState(parcel.structuresCount.borewells || 0)
-  const [puccaHouses, setPuccaHouses] = useState(parcel.structuresCount.puccaStructures || 0)
-  const [farmPonds, setFarmPonds] = useState(parcel.structuresCount.farmPonds || 0)
-  const [fencingMeters, setFencingMeters] = useState(parcel.structuresCount.fencingMeters || 0)
+  const [timberTrees, setTimberTrees] = useState(parcel.treesSurveyed?.timberTrees || 0)
+  const [fruitTrees, setFruitTrees] = useState(parcel.treesSurveyed?.fruitBearingTrees || 0)
+  const [borewells, setBorewells] = useState(parcel.structuresCount?.borewells || 0)
+  const [puccaHouses, setPuccaHouses] = useState(parcel.structuresCount?.puccaStructures || 0)
+  const [farmPonds, setFarmPonds] = useState(parcel.structuresCount?.farmPonds || 0)
+  const [fencingMeters, setFencingMeters] = useState(parcel.structuresCount?.fencingMeters || 0)
 
   const [photos, setPhotos] = useState<GeotaggedPhoto[]>(MOCK_GEOTAGGED_PHOTOS)
   const [showSavedMsg, setShowSavedMsg] = useState(false)
