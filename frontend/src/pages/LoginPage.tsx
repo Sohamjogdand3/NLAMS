@@ -250,7 +250,7 @@ export default function LoginPage() {
                 Official Single Sign-On Portal (Maharashtra &amp; Central Hierarchy)
               </h2>
               <p className="mt-1 text-sm text-white/85 max-w-2xl">
-                Multi-factor Email OTP verification for 36 District Collectors, 36 LAOs, 358 Tehsildars, 358 Talathis, State Admin, and National Infrastructure Agencies.
+                Multi-factor Email OTP verification for 36 District Collectors, 36 LAOs, R&amp;R Administrators, 358 Tehsildars, Talathis, Field Surveyors, State Admin, and National Infrastructure Agencies.
               </p>
             </div>
           </div>
@@ -325,7 +325,7 @@ export default function LoginPage() {
               </div>
 
               {/* Maharashtra Hierarchy Quick Demo Account Selector */}
-              <div className="mt-6 rounded-xl bg-gradient-to-r from-slate-50 via-white to-amber-50/40 border border-slate-200/80 p-4 shadow-xs">
+              <div className="mt-6 rounded-xl bg-gradient-to-r from-slate-50 via-white to-purple-50/40 border border-slate-200/80 p-4 shadow-xs">
                 <div className="flex items-center justify-between mb-2.5">
                   <div className="flex items-center gap-2 text-xs font-bold text-slate-900 uppercase tracking-wider">
                     <KeyRound className="h-4 w-4 text-[#991B1B]" />
@@ -337,7 +337,7 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={() => handleQuickFill('collector_district')}
-                    className="inline-flex items-center gap-1.5 rounded-lg bg-indigo-50 px-2.5 py-1.5 text-xs font-bold text-indigo-900 border border-indigo-200 hover:bg-indigo-100 transition-colors"
+                    className="inline-flex items-center gap-1.5 rounded-lg bg-indigo-50 px-2.5 py-1.5 text-xs font-bold text-indigo-900 border border-indigo-200 hover:bg-indigo-100 transition-colors cursor-pointer"
                   >
                     Collector (Pune)
                   </button>
@@ -345,15 +345,23 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={() => handleQuickFill('lao_officer')}
-                    className="inline-flex items-center gap-1.5 rounded-lg bg-blue-50 px-2.5 py-1.5 text-xs font-bold text-blue-900 border border-blue-200 hover:bg-blue-100 transition-colors"
+                    className="inline-flex items-center gap-1.5 rounded-lg bg-blue-50 px-2.5 py-1.5 text-xs font-bold text-blue-900 border border-blue-200 hover:bg-blue-100 transition-colors cursor-pointer"
                   >
                     LAO (Pune)
                   </button>
 
                   <button
                     type="button"
+                    onClick={() => handleQuickFill('rnr_officer')}
+                    className="inline-flex items-center gap-1.5 rounded-lg bg-purple-50 px-2.5 py-1.5 text-xs font-bold text-purple-900 border border-purple-200 hover:bg-purple-100 transition-colors cursor-pointer"
+                  >
+                    R&amp;R Admin (Pune)
+                  </button>
+
+                  <button
+                    type="button"
                     onClick={() => handleQuickFill('tehsildar_haveli')}
-                    className="inline-flex items-center gap-1.5 rounded-lg bg-slate-50 px-2.5 py-1.5 text-xs font-bold text-slate-800 border border-slate-300 hover:bg-slate-100 transition-colors"
+                    className="inline-flex items-center gap-1.5 rounded-lg bg-slate-50 px-2.5 py-1.5 text-xs font-bold text-slate-800 border border-slate-300 hover:bg-slate-100 transition-colors cursor-pointer"
                   >
                     Tehsildar (Haveli)
                   </button>
@@ -361,15 +369,23 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={() => handleQuickFill('talathi_haveli')}
-                    className="inline-flex items-center gap-1.5 rounded-lg bg-amber-50 px-2.5 py-1.5 text-xs font-bold text-amber-900 border border-amber-200 hover:bg-amber-100 transition-colors"
+                    className="inline-flex items-center gap-1.5 rounded-lg bg-amber-50 px-2.5 py-1.5 text-xs font-bold text-amber-900 border border-amber-200 hover:bg-amber-100 transition-colors cursor-pointer"
                   >
                     Talathi (Haveli)
                   </button>
 
                   <button
                     type="button"
+                    onClick={() => handleQuickFill('surveyor_pune')}
+                    className="inline-flex items-center gap-1.5 rounded-lg bg-cyan-50 px-2.5 py-1.5 text-xs font-bold text-cyan-900 border border-cyan-200 hover:bg-cyan-100 transition-colors cursor-pointer"
+                  >
+                    Surveyor / GIS
+                  </button>
+
+                  <button
+                    type="button"
                     onClick={() => handleQuickFill('nhai_agency')}
-                    className="inline-flex items-center gap-1.5 rounded-lg bg-red-50 px-2.5 py-1.5 text-xs font-bold text-[#991B1B] border border-red-200 hover:bg-red-100 transition-colors"
+                    className="inline-flex items-center gap-1.5 rounded-lg bg-red-50 px-2.5 py-1.5 text-xs font-bold text-[#991B1B] border border-red-200 hover:bg-red-100 transition-colors cursor-pointer"
                   >
                     <Building2 className="h-3.5 w-3.5 text-[#991B1B]" />
                     PIA (NHAI)
@@ -378,7 +394,7 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={() => handleQuickFill('state_admin')}
-                    className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-50 px-2.5 py-1.5 text-xs font-bold text-emerald-900 border border-emerald-200 hover:bg-emerald-100 transition-colors"
+                    className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-50 px-2.5 py-1.5 text-xs font-bold text-emerald-900 border border-emerald-200 hover:bg-emerald-100 transition-colors cursor-pointer"
                   >
                     State Admin (MH)
                   </button>
@@ -386,7 +402,7 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={() => handleQuickFill('central_admin')}
-                    className="inline-flex items-center gap-1.5 rounded-lg bg-teal-50 px-2.5 py-1.5 text-xs font-bold text-teal-900 border border-teal-200 hover:bg-teal-100 transition-colors"
+                    className="inline-flex items-center gap-1.5 rounded-lg bg-teal-50 px-2.5 py-1.5 text-xs font-bold text-teal-900 border border-teal-200 hover:bg-teal-100 transition-colors cursor-pointer"
                   >
                     Central Admin
                   </button>
@@ -447,7 +463,7 @@ export default function LoginPage() {
                     <p className="text-xs font-medium text-slate-500 mt-1 max-w-xs">
                       {activeType === 'pia'
                         ? 'For NHAI, MMRDA, CIDCO & Maharashtra PWD project authorities'
-                        : 'For Collectors, LAOs, Tehsildars, Talathis & Revenue Administrators'}
+                        : 'For Collectors, LAOs, R&R Administrators, Tehsildars, Talathis & Field Surveyors'}
                     </p>
                   </div>
 
