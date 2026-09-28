@@ -17,9 +17,6 @@ import {
   MOCK_OBJECTIONS,
   MOCK_COMPENSATION,
 } from '../data/mockCitizenData'
-import { citizenApi } from '../services/api'
-import type { Project } from '../services/api'
-import ProjectTable from '../components/dashboard/ProjectTable'
 
 import {
   PlusCircle,
@@ -37,25 +34,12 @@ export default function CitizenDashboard() {
   const [activeToken, setActiveToken] = useState<string>(tokenFromUrl)
 
   const [activeTab, setActiveTab] = useState<string>('home')
-  const [projects, setProjects] = useState<Project[]>([])
 
   useEffect(() => {
     if (tokenFromUrl) {
       setActiveToken(tokenFromUrl)
     }
   }, [tokenFromUrl])
-
-  useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const data = await citizenApi.fetchCitizenProjects()
-        setProjects(data.items)
-      } catch (error) {
-        console.warn('Failed to fetch citizen projects from API, using client mock data:', error)
-      }
-    }
-    fetchProjects()
-  }, [])
 
   return (
     <div className="min-h-screen bg-slate-100/70 text-slate-800 font-sans flex flex-col">
@@ -114,9 +98,9 @@ export default function CitizenDashboard() {
           </div>
         </div>
 
-        {/* TAB 1: HOME (Dashboard Overview Grid) */}
+        {/* TAB 1: HOME (Compact, Calm Overview) */}
         {activeTab === 'home' && (
-          <div className="space-y-6">
+          <div className="space-y-6 animate-in fade-in duration-150">
             {/* Case Stepper Widget */}
             <CaseStepperWidget
               steps={MOCK_STEPPER_STEPS}
@@ -124,24 +108,80 @@ export default function CitizenDashboard() {
               projectName={MOCK_ACQUISITION_CASE.projectName}
             />
 
-            {/* DBT Payment Status Card */}
-            <div>
-              <PaymentStatusCard compensation={MOCK_COMPENSATION} />
-            </div>
-
-            {/* Document Upload Status + Notices Preview */}
+            {/* Two-Column Clean Snapshot */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <DocumentUploadWidget documents={MOCK_DOCUMENTS} />
-              <NoticeListWidget notices={MOCK_NOTICES} />
-            </div>
+              {/* Compensation Quick Status Card */}
+              <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-xs flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                      Compensation Entitlement
+                    </span>
+                    <span className="rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2.5 py-0.5">
+                      PFMS Approved
+                    </span>
+                  </div>
+                  <div className="mt-3">
+                    <span className="text-2xl sm:text-3xl font-black text-slate-900">
+                      ₹{((MOCK_COMPENSATION.totalAwardAmount || 9330250) / 100000).toFixed(2)} Lakh
+                    </span>
+                    <p className="text-xs text-slate-500 mt-1">
+                      Direct Benefit Transfer scheduled to Bank Account: <strong>XXXX-XXXX-4821</strong>
+                    </p>
+                  </div>
+                </div>
 
-            {/* Projects list if loaded */}
-            {projects.length > 0 && (
-              <div className="rounded-2xl bg-white p-6 shadow-sm border border-slate-200">
-                <h3 className="text-sm font-bold text-slate-900 mb-3">Associated Infrastructure Projects</h3>
-                <ProjectTable projects={projects} />
+                <div className="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between">
+                  <span className="text-xs font-semibold text-slate-600">Disbursal Stage: <strong>Stage 3/4</strong></span>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('compensation')}
+                    className="text-xs font-bold text-[#042A5E] hover:underline cursor-pointer"
+                  >
+                    View Breakdown &rarr;
+                  </button>
+                </div>
               </div>
-            )}
+
+              {/* Statutory Notices Quick Card */}
+              <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-xs flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                      Active Notices &amp; Objections
+                    </span>
+                    <span className="rounded-full bg-red-100 text-red-800 text-[10px] font-bold px-2.5 py-0.5">
+                      60d Window Active
+                    </span>
+                  </div>
+                  <div className="mt-3">
+                    <span className="text-base font-bold text-slate-900 block">
+                      Section 11(1) Preliminary Gazette Notification
+                    </span>
+                    <p className="text-xs text-slate-500 mt-1">
+                      Published on 12 Sep 2026 • 48 days remaining to submit objections under Sec 15.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between">
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('notices')}
+                    className="text-xs font-bold text-[#042A5E] hover:underline cursor-pointer"
+                  >
+                    Read Gazette Notice &rarr;
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('objections')}
+                    className="rounded-lg bg-[#FF6B00] hover:bg-[#E05E00] text-white px-3 py-1.5 text-xs font-bold transition-colors cursor-pointer"
+                  >
+                    File Objection
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 

@@ -57,8 +57,9 @@ export default function CentralDashboard() {
         {/* Content Body */}
         <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6">
           {/* TAB 1: MAIN DASHBOARD OVERVIEW */}
+          {/* TAB 1: EXECUTIVE DASHBOARD OVERVIEW */}
           {activeTab === 'dashboard' && (
-            <div className="space-y-6">
+            <div className="space-y-6 animate-in fade-in duration-150">
               {/* National KPI Cards Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {MOCK_CENTRAL_KPIS.map((kpi) => (
@@ -84,33 +85,7 @@ export default function CentralDashboard() {
                 ))}
               </div>
 
-              {/* State Leaderboard Row */}
-              <div>
-                <StatePerformancePanel
-                  statesData={MOCK_STATE_PROGRESS}
-                  selectedState={selectedState}
-                  onSelectState={setSelectedState}
-                />
-              </div>
-
-              {/* Critical Projects Execution Table */}
-              <div>
-                <CriticalProjectsTable
-                  projects={MOCK_CRITICAL_PROJECTS}
-                  selectedStateFilter={selectedState ? selectedState.stateName : null}
-                />
-              </div>
-
-              {/* SLA Alerts Stream + AI Risk Insights Grid */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <SlaAlertsWidget
-                  alerts={slaAlerts}
-                  onAcknowledge={handleAcknowledgeAlert}
-                />
-                <AiRiskWidget insights={MOCK_AI_RISK_INSIGHTS} />
-              </div>
-
-              {/* Infrastructure Sector Breakdown */}
+              {/* Infrastructure Sector Allocation (Clean & Compact) */}
               <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs">
                 <div className="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
                   <div className="flex items-center gap-2">
@@ -123,21 +98,34 @@ export default function CentralDashboard() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
                   {MOCK_SECTOR_BREAKDOWN.map((sec) => (
-                    <div key={sec.sector} className="rounded-xl bg-slate-50 p-4 border border-slate-200/80">
+                    <div key={sec.sector} className="rounded-xl bg-slate-50 p-3.5 border border-slate-200/80">
                       <span className="block text-xs font-bold text-slate-800 line-clamp-1" title={sec.sector}>
                         {sec.sector}
                       </span>
-                      <span className="block text-xl font-extrabold text-navy mt-2">
+                      <span className="block text-lg font-black text-navy mt-1">
                         {sec.acquiredPercentage}% <span className="text-xs font-normal text-slate-500">Acquired</span>
                       </span>
-                      <div className="mt-2 text-[11px] text-slate-500 font-medium flex justify-between">
+                      <div className="mt-1 text-[11px] text-slate-500 font-medium flex justify-between">
                         <span>{sec.projectCount} Projects</span>
                         <span>₹{(sec.allocatedBudgetCr / 1000).toFixed(0)}k Cr</span>
                       </div>
                     </div>
                   ))}
+                </div>
+              </div>
+
+              {/* Quick Action Queue: PMO Blockers & Top Alerts Summary */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div className="lg:col-span-7">
+                  <SlaAlertsWidget
+                    alerts={slaAlerts.slice(0, 3)}
+                    onAcknowledge={handleAcknowledgeAlert}
+                  />
+                </div>
+                <div className="lg:col-span-5">
+                  <AiRiskWidget insights={MOCK_AI_RISK_INSIGHTS.slice(0, 2)} />
                 </div>
               </div>
             </div>
