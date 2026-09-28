@@ -3,44 +3,25 @@ import {
   Bell,
   User,
   LogOut,
-  Search,
-  FileText,
   ChevronDown,
-  Home,
-  Layers,
-  Activity,
-  AlertCircle,
-  CreditCard,
-  UserCheck,
   ShieldCheck,
 } from 'lucide-react'
 import EmblemIndia from '../landing/EmblemIndia'
 import { useAuth } from '../../auth/AuthContext'
 
 interface CitizenHeaderProps {
-  activeTab: string
-  setActiveTab: (tab: string) => void
+  activeTab?: string
+  setActiveTab?: (tab: string) => void
   unreadNotificationsCount?: number
 }
 
 export default function CitizenHeader({
-  activeTab,
   setActiveTab,
   unreadNotificationsCount = 2,
 }: CitizenHeaderProps) {
   const { user, logout } = useAuth()
   const [profileDropdown, setProfileDropdown] = useState(false)
   const [notifDropdown, setNotifDropdown] = useState(false)
-
-  const menuItems = [
-    { id: 'home', label: 'Dashboard' },
-    { id: 'land', label: 'My Land' },
-    { id: 'case', label: 'Case Status Timeline' },
-    { id: 'notices', label: 'Notices & Alerts', badge: '2' },
-    { id: 'compensation', label: 'Compensation Status' },
-    { id: 'objections', label: 'Objections & Grievances', badge: '1' },
-    { id: 'profile', label: 'Profile' },
-  ]
 
   return (
     <header className="w-full bg-[#042A5E] text-white shadow-md sticky top-0 z-40">
@@ -92,7 +73,7 @@ export default function CitizenHeader({
                     <button
                       type="button"
                       onClick={() => {
-                        setActiveTab('notices')
+                        setActiveTab?.('notices')
                         setNotifDropdown(false)
                       }}
                       className="text-[11px] text-[#042A5E] hover:underline"
@@ -103,7 +84,7 @@ export default function CitizenHeader({
                   <div className="space-y-2">
                     <div
                       onClick={() => {
-                        setActiveTab('notices')
+                        setActiveTab?.('notices')
                         setNotifDropdown(false)
                       }}
                       className="p-2.5 rounded-lg bg-amber-50/70 border-l-3 border-amber-600 cursor-pointer hover:bg-amber-50"
@@ -116,7 +97,7 @@ export default function CitizenHeader({
                     </div>
                     <div
                       onClick={() => {
-                        setActiveTab('compensation')
+                        setActiveTab?.('compensation')
                         setNotifDropdown(false)
                       }}
                       className="p-2.5 rounded-lg bg-emerald-50/70 border-l-3 border-emerald-600 cursor-pointer hover:bg-emerald-50"
@@ -168,7 +149,7 @@ export default function CitizenHeader({
                   <button
                     type="button"
                     onClick={() => {
-                      setActiveTab('profile')
+                      setActiveTab?.('profile')
                       setProfileDropdown(false)
                     }}
                     className="flex w-full items-center gap-2 px-4 py-2 text-slate-700 hover:bg-slate-50 font-medium"
@@ -187,40 +168,6 @@ export default function CitizenHeader({
               )}
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Navigation Tab Bar */}
-      <div className="bg-[#031B3D] border-b border-blue-950 px-4 sm:px-8">
-        <div className="mx-auto flex max-w-7xl items-center overflow-x-auto no-scrollbar">
-          {menuItems.map((item) => {
-            const isActive = activeTab === item.id
-            return (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() => setActiveTab(item.id)}
-                className={`py-3 px-4 font-semibold text-xs sm:text-sm whitespace-nowrap transition-all border-b-2 cursor-pointer ${
-                  isActive
-                    ? 'border-amber-400 text-amber-300 font-bold bg-white/5'
-                    : 'border-transparent text-slate-300 hover:text-white hover:bg-white/5'
-                }`}
-              >
-                <span>{item.label}</span>
-                {item.badge && (
-                  <span
-                    className={`ml-1.5 rounded-full px-1.5 py-0.2 text-[10px] font-extrabold ${
-                      isActive
-                        ? 'bg-amber-400 text-[#042A5E]'
-                        : 'bg-[#991B1B] text-white'
-                    }`}
-                  >
-                    {item.badge}
-                  </span>
-                )}
-              </button>
-            )
-          })}
         </div>
       </div>
     </header>

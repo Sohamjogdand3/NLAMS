@@ -118,7 +118,6 @@ export default function DocumentUploadWidget({
         {docList.map((doc) => {
           const isVerified = doc.status === 'Verified'
           const isReview = doc.status === 'Under Review'
-          const isRequired = doc.status === 'Required'
 
           return (
             <div

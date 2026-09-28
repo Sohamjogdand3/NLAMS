@@ -77,6 +77,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             token: `mock_jwt_token_${Date.now()}`,
           }
         }
+      } else if (userType === 'pia') {
+        // PIA Agency Login
+        const mock = MOCK_ACCOUNTS[username] || MOCK_ACCOUNTS['nhai_agency']
+        session = {
+          id: `usr_pia_${Date.now()}`,
+          name: mock.name,
+          email: `${username}@nhai.gov.in`,
+          userType: 'pia',
+          role: 'agency',
+          departmentName: mock.departmentName || 'National Highways Authority of India (NHAI)',
+          token: `mock_jwt_token_pia_${Date.now()}`,
+        }
       } else {
         // Official / Department Login
         try {

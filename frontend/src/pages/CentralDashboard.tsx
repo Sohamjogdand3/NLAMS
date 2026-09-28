@@ -19,7 +19,6 @@ import AiRiskWidget from '../components/central/AiRiskWidget'
 
 import {
   PieChart,
-  ShieldCheck,
 } from 'lucide-react'
 
 export default function CentralDashboard() {
@@ -56,44 +55,6 @@ export default function CentralDashboard() {
 
         {/* Content Body */}
         <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6">
-          {/* Top National Context Banner */}
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="inline-flex items-center gap-1 rounded-md bg-navy px-2.5 py-0.5 text-xs font-bold text-white shadow-2xs">
-                  <ShieldCheck className="h-3.5 w-3.5" /> Tier 5: Central / National Level Command
-                </span>
-                <span className="text-xs font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
-                  DoLR &amp; NITI Aayog Portal
-                </span>
-              </div>
-              <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 mt-2">
-                National Land Acquisition &amp; Monitoring Command System
-              </h1>
-              <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-3xl">
-                Nationwide strategic monitoring, inter-state progress tracking, statutory SLA bottleneck resolution, and AI delay prediction.
-              </p>
-            </div>
-
-            {/* Hierarchy Badge Indicator */}
-            <div className="shrink-0 rounded-xl bg-slate-50 p-3 border border-slate-200 text-xs">
-              <span className="block text-[10px] font-extrabold uppercase text-slate-400 tracking-wider">
-                System Hierarchy Pipeline
-              </span>
-              <div className="mt-1 font-extrabold text-navy text-xs flex items-center gap-1">
-                <span>Citizen</span>
-                <span>→</span>
-                <span>PIA</span>
-                <span>→</span>
-                <span>District</span>
-                <span>→</span>
-                <span>State</span>
-                <span>→</span>
-                <span className="text-red-700 underline">Central</span>
-              </div>
-            </div>
-          </div>
-
           {/* TAB 1: MAIN DASHBOARD OVERVIEW */}
           {activeTab === 'dashboard' && (
             <div className="space-y-6">
@@ -122,22 +83,13 @@ export default function CentralDashboard() {
                 ))}
               </div>
 
-              {/* GIS India Map + State Leaderboard Row */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <div className="lg:col-span-7">
-                  <InteractiveIndiaMap
-                    statesData={MOCK_STATE_PROGRESS}
-                    selectedState={selectedState}
-                    onSelectState={setSelectedState}
-                  />
-                </div>
-                <div className="lg:col-span-5">
-                  <StatePerformancePanel
-                    statesData={MOCK_STATE_PROGRESS}
-                    selectedState={selectedState}
-                    onSelectState={setSelectedState}
-                  />
-                </div>
+              {/* State Leaderboard Row */}
+              <div>
+                <StatePerformancePanel
+                  statesData={MOCK_STATE_PROGRESS}
+                  selectedState={selectedState}
+                  onSelectState={setSelectedState}
+                />
               </div>
 
               {/* Critical Projects Execution Table */}
@@ -265,44 +217,52 @@ export default function CentralDashboard() {
             </div>
           )}
 
-          {/* TAB 7: ANALYTICS */}
+          {/* TAB 7: ANALYTICS & REPORTS */}
           {activeTab === 'analytics' && (
-            <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-xs space-y-4">
-              <h2 className="text-base font-bold text-slate-900">National Macro-Level Acquisition Analytics</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="rounded-xl bg-slate-50 p-4 border border-slate-200">
-                  <span className="text-xs font-semibold text-slate-500">Total Award Budget</span>
-                  <span className="block text-xl font-black text-slate-900 mt-1">₹1,84,200 Cr</span>
-                </div>
-                <div className="rounded-xl bg-emerald-50 p-4 border border-emerald-200">
-                  <span className="text-xs font-semibold text-emerald-700">Disbursed Compensation</span>
-                  <span className="block text-xl font-black text-emerald-900 mt-1">₹1,42,800 Cr</span>
-                </div>
-                <div className="rounded-xl bg-indigo-50 p-4 border border-indigo-200">
-                  <span className="text-xs font-semibold text-indigo-700">Average Disbursal Speed</span>
-                  <span className="block text-xl font-black text-indigo-900 mt-1">14.2 Days</span>
-                </div>
-                <div className="rounded-xl bg-amber-50 p-4 border border-amber-200">
-                  <span className="text-xs font-semibold text-amber-800">Pending Escrows</span>
-                  <span className="block text-xl font-black text-amber-950 mt-1">₹41,400 Cr</span>
+            <div className="space-y-6">
+              {/* Macro Analytics */}
+              <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-xs space-y-4">
+                <h2 className="text-base font-bold text-slate-900">National Macro-Level Acquisition Analytics</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div className="rounded-xl bg-slate-50 p-4 border border-slate-200">
+                    <span className="text-xs font-semibold text-slate-500">Total Award Budget</span>
+                    <span className="block text-xl font-black text-slate-900 mt-1">₹1,84,200 Cr</span>
+                  </div>
+                  <div className="rounded-xl bg-emerald-50 p-4 border border-emerald-200">
+                    <span className="text-xs font-semibold text-emerald-700">Disbursed Compensation</span>
+                    <span className="block text-xl font-black text-emerald-900 mt-1">₹1,42,800 Cr</span>
+                  </div>
+                  <div className="rounded-xl bg-indigo-50 p-4 border border-indigo-200">
+                    <span className="text-xs font-semibold text-indigo-700">Average Disbursal Speed</span>
+                    <span className="block text-xl font-black text-indigo-900 mt-1">14.2 Days</span>
+                  </div>
+                  <div className="rounded-xl bg-amber-50 p-4 border border-amber-200">
+                    <span className="text-xs font-semibold text-amber-800">Pending Escrows</span>
+                    <span className="block text-xl font-black text-amber-950 mt-1">₹41,400 Cr</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
 
-          {/* TAB 8: REPORTS */}
-          {activeTab === 'reports' && (
-            <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-xs space-y-4">
-              <h2 className="text-base font-bold text-slate-900">National MIS Reports Generator</h2>
-              <p className="text-xs text-slate-500">Generate and export automated compliance &amp; acquisition reports for Cabinet Secretariat.</p>
-              <div className="flex gap-3">
-                <button
-                  type="button"
-                  onClick={() => alert('Generating National Monthly Acquisition Summary PDF...')}
-                  className="rounded-xl bg-navy px-4 py-2 text-xs font-bold text-white hover:bg-slate-800 cursor-pointer"
-                >
-                  Download Cabinet Report (PDF)
-                </button>
+              {/* Integrated National Reports Generator */}
+              <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-xs space-y-4">
+                <h2 className="text-base font-bold text-slate-900">National MIS Reports Generator</h2>
+                <p className="text-xs text-slate-500">Generate and export automated compliance &amp; acquisition reports for Cabinet Secretariat.</p>
+                <div className="flex flex-wrap gap-3">
+                  <button
+                    type="button"
+                    onClick={() => alert('Generating National Monthly Acquisition Summary PDF...')}
+                    className="rounded-xl bg-navy px-4 py-2 text-xs font-bold text-white hover:bg-slate-800 transition-colors cursor-pointer"
+                  >
+                    Download Cabinet Report (PDF)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => alert('Exporting Inter-State Land Acquisition Analytics (Excel)...')}
+                    className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-xs font-bold text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+                  >
+                    Export Analytics Data (Excel)
+                  </button>
+                </div>
               </div>
             </div>
           )}

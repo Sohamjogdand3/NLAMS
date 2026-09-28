@@ -1,5 +1,3 @@
-import { Link } from 'react-router-dom';
-
 export default function UtilityBar() {
   return (
     <div className="bg-navy-dark text-white/80 text-xs border-b border-navy/40">
