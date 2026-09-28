@@ -66,6 +66,21 @@ FIXED_ROLES = [
         "code": "CENTRAL_ADMIN",
         "description": "National System Administrator overseeing global security and audit logs",
     },
+    {
+        "name": "SIA Agency",
+        "code": "SIA_AGENCY",
+        "description": "Independent Social Impact Assessment Agency conducting socio-economic field census",
+    },
+    {
+        "name": "Expert Committee",
+        "code": "EXPERT_COMMITTEE",
+        "description": "Multi-disciplinary Expert Committee appraising SIA reports under Section 7 RFCTLARR",
+    },
+    {
+        "name": "R&R Administrator",
+        "code": "RNR_ADMIN",
+        "description": "Resettlement and Rehabilitation Administrator managing social welfare packages and non-owner census",
+    },
 ]
 
 
@@ -300,8 +315,78 @@ def seed_database():
             db.flush()
             db.add(UserRoleJurisdiction(user_id=citizen_user.id, role_id=role_map["CITIZEN"].id, jurisdiction_id=None, is_active=True))
 
-        # 8. Seed sample Land Records & Acquisition cases if not present
         pune_jur = db.query(Jurisdiction).filter(Jurisdiction.name == "Pune", Jurisdiction.type == JurisdictionType.DISTRICT).first()
+        pune_jur_id = pune_jur.id if pune_jur else None
+
+        # 7.1 Seed SIA Agency Officer
+        sia_email = "sia.agency@nlams.gov.demo"
+        sia_user = db.query(User).filter(User.email == sia_email).first()
+        if not sia_user:
+            sia_user = User(
+                full_name="Independent SIA Agency Lead",
+                emp_id="SIA-PUN-001",
+                email=sia_email,
+                designation="Director (Socio-Economic Impact Assessments)",
+                department_name="Accredited State SIA Agency",
+                hashed_password=default_pwd_hash,
+                is_active=True,
+            )
+            db.add(sia_user)
+            db.flush()
+            db.add(UserRoleJurisdiction(user_id=sia_user.id, role_id=role_map["SIA_AGENCY"].id, jurisdiction_id=pune_jur_id, is_active=True))
+
+        # 7.2 Seed Expert Committee Chairperson
+        expert_email = "expert.committee@nlams.gov.demo"
+        expert_user = db.query(User).filter(User.email == expert_email).first()
+        if not expert_user:
+            expert_user = User(
+                full_name="Dr. V. M. Gadgil (Expert Panel Chair)",
+                emp_id="EXP-PUN-001",
+                email=expert_email,
+                designation="Chairman (Multi-Disciplinary Expert Committee)",
+                department_name="Section 7 RFCTLARR Expert Panel",
+                hashed_password=default_pwd_hash,
+                is_active=True,
+            )
+            db.add(expert_user)
+            db.flush()
+            db.add(UserRoleJurisdiction(user_id=expert_user.id, role_id=role_map["EXPERT_COMMITTEE"].id, jurisdiction_id=pune_jur_id, is_active=True))
+
+        # 7.3 Seed R&R Administrator
+        rnr_email = "rnr.officer.pune@nlams.gov.demo"
+        rnr_user = db.query(User).filter(User.email == rnr_email).first()
+        if not rnr_user:
+            rnr_user = User(
+                full_name="R&R Administrator (Pune)",
+                emp_id="RNR-PUN-001",
+                email=rnr_email,
+                designation="Resettlement & Rehabilitation Administrator",
+                department_name="District Social Welfare & R&R Office, Pune",
+                hashed_password=default_pwd_hash,
+                is_active=True,
+            )
+            db.add(rnr_user)
+            db.flush()
+            db.add(UserRoleJurisdiction(user_id=rnr_user.id, role_id=role_map["RNR_ADMIN"].id, jurisdiction_id=pune_jur_id, is_active=True))
+
+        # 7.4 Seed Field Cadastral Surveyor
+        surveyor_email = "surveyor.pune@nlams.gov.demo"
+        surveyor_user = db.query(User).filter(User.email == surveyor_email).first()
+        if not surveyor_user:
+            surveyor_user = User(
+                full_name="Field Surveyor (Pune Haveli)",
+                emp_id="SURV-PUN-001",
+                email=surveyor_email,
+                designation="Cadastral Field Surveyor",
+                department_name="District Land Records & Cadastral Survey Office",
+                hashed_password=default_pwd_hash,
+                is_active=True,
+            )
+            db.add(surveyor_user)
+            db.flush()
+            db.add(UserRoleJurisdiction(user_id=surveyor_user.id, role_id=role_map["SURVEYOR"].id, jurisdiction_id=pune_jur_id, is_active=True))
+
+        # 8. Seed sample Land Records & Acquisition cases if not present
         if pune_jur:
             sample_rec = db.query(LandRecord).filter(LandRecord.survey_number == "101/1", LandRecord.jurisdiction_id == pune_jur.id).first()
             if not sample_rec:
@@ -323,8 +408,12 @@ def seed_database():
                 )
                 db.add(sample_case)
 
+        # 9. Seed National Simulation Spatial Dataset Hierarchy (India -> States -> Districts -> Talukas -> Villages)
+        from app.services.national_simulation_service import NationalSimulationService
+        NationalSimulationService.seed_national_hierarchy(db)
+
         db.commit()
-        logger.info("NLAMS Database Seeding completed successfully with full Maharashtra Hierarchy!")
+        logger.info("NLAMS Database Seeding completed successfully with full Maharashtra & National Simulation Hierarchy!")
     except Exception as e:
         db.rollback()
         logger.error(f"Seeding failed: {str(e)}")
