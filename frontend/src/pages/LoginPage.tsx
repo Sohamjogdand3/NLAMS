@@ -9,7 +9,6 @@ import {
   BookOpen,
   KeyRound,
   Building2,
-  UserCheck,
   CheckCircle2,
   AlertCircle,
   ShieldCheck,
@@ -17,6 +16,7 @@ import {
   MapPin,
   ArrowRight,
   HelpCircle,
+  Building,
 } from 'lucide-react'
 import UtilityBar from '../components/landing/UtilityBar'
 import Header from '../components/landing/Header'
@@ -29,8 +29,8 @@ export default function LoginPage() {
   const navigate = useNavigate()
   const { login, user } = useAuth()
 
-  // Get active login type from URL search param
-  const initialType: UserType = searchParams.get('type') === 'department' ? 'department' : 'citizen'
+  // Get active login type from URL search param: 'pia' or 'department'
+  const initialType: UserType = searchParams.get('type') === 'pia' ? 'pia' : 'department'
   const [activeType, setActiveType] = useState<UserType>(initialType)
 
   // Form states
@@ -62,8 +62,8 @@ export default function LoginPage() {
   // Sync state if URL query param changes
   useEffect(() => {
     const typeFromUrl = searchParams.get('type')
-    if (typeFromUrl === 'department' || typeFromUrl === 'citizen') {
-      setActiveType(typeFromUrl)
+    if (typeFromUrl === 'pia' || typeFromUrl === 'department') {
+      setActiveType(typeFromUrl as UserType)
     }
   }, [searchParams])
 
@@ -91,22 +91,28 @@ export default function LoginPage() {
 
     setIsLoading(true)
 
-    // Perform mock login
     setTimeout(() => {
       login(username.trim(), activeType)
       setIsLoading(false)
       setSuccessMessage(`Successfully authenticated as ${username}!`)
 
-      // Redirect to citizen, PIA agency, or central department dashboard
+      // Redirect to PIA agency dashboard, District Collectorate dashboard, or Central department dashboard
       setTimeout(() => {
-        if (activeType === 'citizen') {
-          navigate('/dashboard/citizen')
-        } else if (username === 'nhai_agency' || MOCK_ACCOUNTS[username]?.role === 'agency') {
+        if (activeType === 'pia' || username === 'nhai_agency' || MOCK_ACCOUNTS[username]?.role === 'agency') {
           navigate('/dashboard/pia')
+        } else if (
+          username === 'lao_officer' ||
+          username === 'collector_district' ||
+          username === 'surveyor_01' ||
+          MOCK_ACCOUNTS[username]?.role === 'lao' ||
+          MOCK_ACCOUNTS[username]?.role === 'collector' ||
+          MOCK_ACCOUNTS[username]?.role === 'surveyor'
+        ) {
+          navigate('/dashboard/district')
         } else {
           navigate('/dashboard/central')
         }
-      }, 800)
+      }, 700)
     }, 600)
   }
 
@@ -116,7 +122,7 @@ export default function LoginPage() {
     if (acc) {
       setUsername(acc.username)
       setPassword('password123')
-      setActiveType(acc.role === 'citizen' ? 'citizen' : 'department')
+      setActiveType(acc.role === 'agency' ? 'pia' : 'department')
       setCaptchaInput(captchaText)
       setErrorMessage(null)
     }
@@ -135,7 +141,7 @@ export default function LoginPage() {
               <a href="/" className="hover:text-navy transition-colors">Home</a>
               <span>/</span>
               <span className="text-navy font-bold">
-                {activeType === 'citizen' ? 'Citizen Single Sign-On Portal' : 'Departmental Official Portal'}
+                {activeType === 'pia' ? 'PIA Agency Single Sign-On' : 'Department Official Portal'}
               </span>
             </div>
 
@@ -157,29 +163,29 @@ export default function LoginPage() {
             <div className="absolute inset-0 bg-gradient-to-t from-[#042A5E]/80 via-[#042A5E]/30 to-transparent" />
             <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-6 lg:p-8">
               <h2 className="text-xl sm:text-2xl font-bold text-white drop-shadow-lg">
-                Land Acquisition Information &amp; Citizen Services
+                Official Single Sign-On Portal (PIA &amp; Department Authorities)
               </h2>
               <p className="mt-1.5 text-sm text-white/80 max-w-xl">
-                Access information, procedures, notices, rights and services related to land acquisition.
+                Access Project Implementing Agency (PIA) corridor tools, LAO decision workflows, GIS boundary surveys, and statutory gazette publishing.
               </p>
             </div>
           </div>
 
-          {/* 2-Column Responsive Layout (Full Screen Span) */}
+          {/* 2-Column Responsive Layout */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch">
-            {/* Left Column: Modern Security & Access Features Card */}
+            {/* Left Column: Security & Guidelines */}
             <div className="lg:col-span-6 flex flex-col justify-between rounded-2xl bg-white/80 backdrop-blur border border-slate-200/80 p-6 sm:p-10 shadow-sm">
               <div>
                 <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-navy border border-blue-100 mb-4">
                   <ShieldCheck className="h-3.5 w-3.5 text-blue-600" />
-                  <span>Secure Government Single Sign-On (SSO)</span>
+                  <span>Secure Government SSO (DoLR &amp; MoRTH)</span>
                 </div>
 
                 <h2 className="text-2xl sm:text-3xl font-extrabold text-[#042A5E] tracking-tight font-sans">
-                  Instructions &amp; Access Guidelines
+                  Official Authentication Instructions
                 </h2>
                 <p className="mt-2 text-sm text-slate-600 leading-relaxed">
-                  Welcome to the National Land Acquisition &amp; Management System (NLAMS). Please review the instructions below before logging in.
+                  Welcome to the National Land Acquisition &amp; Management System (NLAMS). Citizens can track land records directly on the landing page without logging in. Official login below is restricted to authorized personnel.
                 </p>
 
                 {/* Instruction Cards */}
@@ -189,11 +195,9 @@ export default function LoginPage() {
                       1
                     </div>
                     <div>
-                      <h4 className="text-sm font-bold text-slate-900">Enter Registered Credentials</h4>
+                      <h4 className="text-sm font-bold text-slate-900">Select Authorization Desk</h4>
                       <p className="mt-0.5 text-xs text-slate-600">
-                        {activeType === 'citizen'
-                          ? 'Provide your registered Citizen User ID, Aadhaar-linked Mobile No, or Email ID.'
-                          : 'Use your Official Government Department User ID or Employee Code.'}
+                        Choose <strong>PIA Agency Login</strong> (NHAI, DFCCIL, MoRTH, NTPC) or <strong>Department Official Login</strong> (LAO, Collector, Surveyor, DoLR).
                       </p>
                     </div>
                   </div>
@@ -203,9 +207,9 @@ export default function LoginPage() {
                       2
                     </div>
                     <div>
-                      <h4 className="text-sm font-bold text-slate-900">Verify Password</h4>
+                      <h4 className="text-sm font-bold text-slate-900">Provide Government Credentials</h4>
                       <p className="mt-0.5 text-xs text-slate-600">
-                        Enter your confidential portal password. Click the eye icon to verify spelling.
+                        Enter your official User ID / Employee Code and verified password.
                       </p>
                     </div>
                   </div>
@@ -217,7 +221,7 @@ export default function LoginPage() {
                     <div>
                       <h4 className="text-sm font-bold text-slate-900">Security Captcha Check</h4>
                       <p className="mt-0.5 text-xs text-slate-600">
-                        Type the exact security captcha code shown in the image box to complete authentication.
+                        Input the security captcha string to initiate your encrypted session.
                       </p>
                     </div>
                   </div>
@@ -227,32 +231,32 @@ export default function LoginPage() {
                 <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-3 pt-6 border-t border-slate-200">
                   <div className="flex items-center gap-2.5 text-xs font-semibold text-slate-700">
                     <FileCheck2 className="h-4 w-4 text-emerald-600 shrink-0" />
-                    <span>Digitally Signed Land Records</span>
+                    <span>Digitally Signed Gazette Orders</span>
                   </div>
                   <div className="flex items-center gap-2.5 text-xs font-semibold text-slate-700">
                     <MapPin className="h-4 w-4 text-amber-600 shrink-0" />
-                    <span>GIS Geo-Referenced Cadastral Parcels</span>
+                    <span>GIS Geo-Referenced Corridor Alignments</span>
                   </div>
                 </div>
               </div>
 
-              {/* Quick Demo Credentials Panel for testing convenience */}
-              <div className="mt-8 rounded-xl bg-gradient-to-r from-amber-50/80 via-white to-amber-50/40 border border-amber-200/70 p-5 shadow-xs">
+              {/* Quick Demo Credentials Panel */}
+              <div className="mt-8 rounded-xl bg-gradient-to-r from-slate-50 via-white to-amber-50/40 border border-slate-200/80 p-5 shadow-xs">
                 <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-2 text-xs font-bold text-amber-900 uppercase tracking-wider">
-                    <KeyRound className="h-4 w-4 text-amber-600" />
+                  <div className="flex items-center gap-2 text-xs font-bold text-slate-900 uppercase tracking-wider">
+                    <KeyRound className="h-4 w-4 text-[#991B1B]" />
                     <span>Quick Demo Account Selector</span>
                   </div>
-                  <span className="text-[11px] font-medium text-amber-700">One-click auto fill</span>
+                  <span className="text-[11px] font-medium text-slate-500">One-click auto fill</span>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   <button
                     type="button"
-                    onClick={() => handleQuickFill('citizen123')}
-                    className="inline-flex items-center gap-1.5 rounded-lg bg-white px-3 py-1.5 text-xs font-bold text-amber-900 border border-amber-300 shadow-xs hover:bg-amber-100 transition-colors"
+                    onClick={() => handleQuickFill('nhai_agency')}
+                    className="inline-flex items-center gap-1.5 rounded-lg bg-red-50 px-3 py-1.5 text-xs font-bold text-[#991B1B] border border-red-300 shadow-xs hover:bg-red-100 transition-colors"
                   >
-                    <UserCheck className="h-3.5 w-3.5 text-amber-700" />
-                    Citizen (Landowner)
+                    <Building2 className="h-3.5 w-3.5 text-[#991B1B]" />
+                    PIA Agency (NHAI)
                   </button>
 
                   <button
@@ -260,8 +264,16 @@ export default function LoginPage() {
                     onClick={() => handleQuickFill('lao_officer')}
                     className="inline-flex items-center gap-1.5 rounded-lg bg-white px-3 py-1.5 text-xs font-bold text-blue-900 border border-blue-300 shadow-xs hover:bg-blue-50 transition-colors"
                   >
-                    <Building2 className="h-3.5 w-3.5 text-blue-700" />
+                    <Building className="h-3.5 w-3.5 text-blue-700" />
                     LAO Officer
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleQuickFill('collector_district')}
+                    className="inline-flex items-center gap-1.5 rounded-lg bg-white px-3 py-1.5 text-xs font-bold text-indigo-900 border border-indigo-300 shadow-xs hover:bg-indigo-50 transition-colors"
+                  >
+                    District Collector
                   </button>
 
                   <button
@@ -274,43 +286,34 @@ export default function LoginPage() {
 
                   <button
                     type="button"
-                    onClick={() => handleQuickFill('collector_district')}
-                    className="inline-flex items-center gap-1.5 rounded-lg bg-white px-3 py-1.5 text-xs font-bold text-indigo-900 border border-indigo-300 shadow-xs hover:bg-indigo-50 transition-colors"
+                    onClick={() => handleQuickFill('central_admin')}
+                    className="inline-flex items-center gap-1.5 rounded-lg bg-white px-3 py-1.5 text-xs font-bold text-emerald-900 border border-emerald-300 shadow-xs hover:bg-emerald-50 transition-colors"
                   >
-                    Collector
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => handleQuickFill('nhai_agency')}
-                    className="inline-flex items-center gap-1.5 rounded-lg bg-red-50 px-3 py-1.5 text-xs font-bold text-[#991B1B] border border-red-300 shadow-xs hover:bg-red-100 transition-colors"
-                  >
-                    <Building2 className="h-3.5 w-3.5 text-[#991B1B]" />
-                    PIA Agency (NHAI)
+                    Central Admin
                   </button>
                 </div>
               </div>
             </div>
 
-            {/* Right Column: Modern Floating Auth Form Card */}
+            {/* Right Column: Auth Form Card with TWO Logins */}
             <div className="lg:col-span-6 flex justify-center">
               <div className="w-full max-w-lg bg-white rounded-2xl border border-slate-200/90 shadow-xl p-6 sm:p-10 flex flex-col justify-between">
                 <div>
-                  {/* Styled Segmented Tab Switcher */}
+                  {/* TWO-LOGIN Segmented Tab Switcher */}
                   <div className="mb-6 grid grid-cols-2 rounded-xl bg-slate-100 p-1.5 border border-slate-200">
                     <button
                       type="button"
                       onClick={() => {
-                        setActiveType('citizen')
+                        setActiveType('pia')
                         setErrorMessage(null)
                       }}
                       className={`py-2.5 px-3 text-xs sm:text-sm font-bold rounded-lg transition-all ${
-                        activeType === 'citizen'
-                          ? 'bg-[#FF6B00] text-white shadow-md'
+                        activeType === 'pia'
+                          ? 'bg-[#991B1B] text-white shadow-md'
                           : 'text-slate-600 hover:text-slate-900'
                       }`}
                     >
-                      Citizen Login
+                      PIA Agency Login
                     </button>
                     <button
                       type="button"
@@ -324,28 +327,28 @@ export default function LoginPage() {
                           : 'text-slate-600 hover:text-slate-900'
                       }`}
                     >
-                      Department / Institute Login
+                      Department Official Login
                     </button>
                   </div>
 
-                  {/* Top Circular Icon & Badge */}
+                  {/* Header Badge & Title */}
                   <div className="flex flex-col items-center mb-6 text-center">
                     <div className={`h-16 w-16 rounded-full flex items-center justify-center shadow-md text-white mb-3 transition-colors ${
-                      activeType === 'citizen' ? 'bg-[#FF6B00]' : 'bg-[#042A5E]'
+                      activeType === 'pia' ? 'bg-[#991B1B]' : 'bg-[#042A5E]'
                     }`}>
-                      <User className="h-8 w-8" />
+                      {activeType === 'pia' ? <Building2 className="h-8 w-8" /> : <User className="h-8 w-8" />}
                     </div>
                     <h3 className="text-2xl font-bold text-slate-900 font-sans">
-                      {activeType === 'citizen' ? 'Citizen Portal Sign In' : 'Department Official Log In'}
+                      {activeType === 'pia' ? 'PIA Agency Portal Sign In' : 'Department Official Log In'}
                     </h3>
                     <p className="text-xs font-semibold text-slate-500 mt-1 max-w-xs">
-                      {activeType === 'citizen'
-                        ? 'Track compensation claims, view notices, and submit objections'
-                        : 'Access official GIS survey tools, LAO decision workflows, & approval desks'}
+                      {activeType === 'pia'
+                        ? 'For NHAI, DFCCIL, MoRTH, NTPC project implementing agencies'
+                        : 'For LAO Officers, District Collectors, Field Surveyors & DoLR Administrators'}
                     </p>
                   </div>
 
-                  {/* Error & Success Feedback Alerts */}
+                  {/* Feedback Alerts */}
                   {errorMessage && (
                     <div className="mb-5 flex items-center gap-2.5 rounded-xl bg-red-50 p-3.5 text-xs font-semibold text-red-800 border border-red-200 shadow-xs">
                       <AlertCircle className="h-4 w-4 text-red-600 shrink-0" />
@@ -362,10 +365,10 @@ export default function LoginPage() {
 
                   {/* Login Form */}
                   <form onSubmit={handleSubmit} className="space-y-4">
-                    {/* User Name / Employee ID */}
+                    {/* Username */}
                     <div>
                       <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                        {activeType === 'citizen' ? 'User Name / Mobile No' : 'User Name / Employee ID'}
+                        {activeType === 'pia' ? 'PIA Agency User ID / Unit Code' : 'Official User ID / Employee Code'}
                       </label>
                       <div className="relative rounded-lg shadow-xs">
                         <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
@@ -375,7 +378,7 @@ export default function LoginPage() {
                           type="text"
                           value={username}
                           onChange={(e) => setUsername(e.target.value)}
-                          placeholder={activeType === 'citizen' ? 'Enter registered username or mobile' : 'Enter official user ID or employee ID'}
+                          placeholder={activeType === 'pia' ? 'Enter agency user ID (e.g. nhai_agency)' : 'Enter official user ID or employee ID'}
                           className="block w-full rounded-lg border border-slate-300 bg-slate-50/60 py-3 pl-10 pr-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-navy focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-navy/20"
                           required
                         />
@@ -410,7 +413,7 @@ export default function LoginPage() {
                       </div>
                     </div>
 
-                    {/* Remember Me Checkbox */}
+                    {/* Remember Me */}
                     <div className="flex items-center justify-between pt-1">
                       <div className="flex items-center">
                         <input
@@ -430,15 +433,13 @@ export default function LoginPage() {
                       </a>
                     </div>
 
-                    {/* Security Captcha Section */}
+                    {/* Captcha Section */}
                     <div className="pt-2">
                       <label className="block text-xs font-bold text-slate-700 mb-1.5">
                         Security Text (Captcha)
                       </label>
                       <div className="flex items-center gap-2">
-                        {/* Stylized Captcha Canvas Box */}
                         <div className="relative select-none rounded-lg border border-slate-300 bg-slate-100 px-4 py-2 text-center text-xl font-extrabold tracking-widest text-slate-900 shadow-inner font-mono overflow-hidden flex items-center justify-center min-w-[130px] h-[44px]">
-                          {/* Noise pattern SVG overlay */}
                           <div className="absolute inset-0 opacity-20 pointer-events-none">
                             <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
                               <line x1="0" y1="5" x2="130" y2="40" stroke="#000" strokeWidth="2" />
@@ -451,7 +452,6 @@ export default function LoginPage() {
                           </span>
                         </div>
 
-                        {/* Refresh Captcha Button */}
                         <button
                           type="button"
                           onClick={generateCaptcha}
@@ -461,7 +461,6 @@ export default function LoginPage() {
                           <RotateCw className="h-4 w-4" />
                         </button>
 
-                        {/* Captcha Input */}
                         <input
                           type="text"
                           value={captchaInput}
@@ -478,12 +477,12 @@ export default function LoginPage() {
                       type="submit"
                       disabled={isLoading}
                       className={`w-full rounded-lg py-3.5 text-sm font-bold text-white shadow-md transition-all focus:outline-hidden disabled:opacity-50 cursor-pointer mt-3 flex items-center justify-center gap-2 ${
-                        activeType === 'citizen'
-                          ? 'bg-[#FF6B00] hover:bg-[#E05E00]'
+                        activeType === 'pia'
+                          ? 'bg-[#991B1B] hover:bg-[#7F1D1D]'
                           : 'bg-[#042A5E] hover:bg-[#021838]'
                       }`}
                     >
-                      <span>{isLoading ? 'Authenticating Credentials...' : 'Sign In to Account'}</span>
+                      <span>{isLoading ? 'Authenticating Credentials...' : activeType === 'pia' ? 'Sign In as PIA Agency' : 'Sign In as Department Official'}</span>
                       <ArrowRight className="h-4 w-4" />
                     </button>
                   </form>

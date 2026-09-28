@@ -1,4 +1,4 @@
-export type UserType = 'citizen' | 'department'
+export type UserType = 'citizen' | 'department' | 'pia'
 
 export type DepartmentRole =
   | 'lao' // Land Acquisition Officer

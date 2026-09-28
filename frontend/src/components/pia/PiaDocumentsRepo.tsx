@@ -107,15 +107,6 @@ export default function PiaDocumentsRepo({
             Official repository of gazette publications, revenue survey maps, sanctions & compensation valuations
           </p>
         </div>
-
-        <button
-          type="button"
-          onClick={() => setIsUploadModalOpen(true)}
-          className="flex items-center gap-1.5 rounded-xl bg-[#991B1B] hover:bg-[#7F1D1D] px-4 py-2 text-xs font-semibold text-white shadow-xs transition-colors self-start sm:self-auto"
-        >
-          <UploadCloud className="h-4 w-4" />
-          <span>Upload Document</span>
-        </button>
       </div>
 
       {/* Filters and Search Bar */}

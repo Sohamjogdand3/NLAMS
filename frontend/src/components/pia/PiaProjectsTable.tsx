@@ -13,7 +13,7 @@ import type { PiaProject } from '../../types/pia'
 interface PiaProjectsTableProps {
   projects: PiaProject[]
   onSelectProject: (project: PiaProject) => void
-  onOpenCreateModal: () => void
+  onOpenCreateModal?: () => void
   statusFilter: string
   setStatusFilter: (status: string) => void
 }
@@ -21,7 +21,6 @@ interface PiaProjectsTableProps {
 export default function PiaProjectsTable({
   projects,
   onSelectProject,
-  onOpenCreateModal,
   statusFilter,
   setStatusFilter,
 }: PiaProjectsTableProps) {
@@ -109,14 +108,6 @@ export default function PiaProjectsTable({
               <span>Cards</span>
             </button>
           </div>
-
-          <button
-            type="button"
-            onClick={onOpenCreateModal}
-            className="flex items-center gap-1.5 rounded-xl bg-[#991B1B] hover:bg-[#7F1D1D] px-3.5 py-1.5 text-xs font-semibold text-white shadow-xs transition-colors"
-          >
-            <span>+ New Proposal</span>
-          </button>
         </div>
       </div>
 

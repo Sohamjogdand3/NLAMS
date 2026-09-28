@@ -100,31 +100,40 @@ export default function Header() {
                     onMouseLeave={() => setLoginDropdownOpen(false)}
                   >
                     <a
-                      href="/login?type=citizen"
+                      href="/login?type=pia"
                       onClick={() => setLoginDropdownOpen(false)}
                       className="flex items-center gap-3 px-4 py-2.5 text-sm font-semibold text-slate-800 hover:bg-slate-50 hover:text-navy transition-colors"
                     >
-                      <span className="h-2 w-2 rounded-full bg-saffron" />
-                      Citizen Login
+                      <span className="h-2 w-2 rounded-full bg-[#991B1B]" />
+                      PIA Agency Login (NHAI)
                     </a>
                     <a
                       href="/login?type=department"
                       onClick={() => setLoginDropdownOpen(false)}
                       className="flex items-center gap-3 px-4 py-2.5 text-sm font-semibold text-slate-800 hover:bg-slate-50 hover:text-navy transition-colors"
                     >
-                      <span className="h-2 w-2 rounded-full bg-navy" />
-                      Department / Institute Login
+                      <span className="h-2 w-2 rounded-full bg-[#042A5E]" />
+                      Department / Official Login
+                    </a>
+                    <div className="border-t border-slate-100 my-1" />
+                    <a
+                      href="#citizen-token-tracker"
+                      onClick={() => setLoginDropdownOpen(false)}
+                      className="flex items-center gap-3 px-4 py-2.5 text-sm font-semibold text-amber-900 bg-amber-50/60 hover:bg-amber-100 transition-colors"
+                    >
+                      <span className="h-2 w-2 rounded-full bg-[#FF6B00]" />
+                      Citizen Token Desk (No Login)
                     </a>
                   </div>
                 )}
               </div>
 
-              {/* Blue Register Button */}
+              {/* Citizen Token Quick Action Button */}
               <a
-                href="/login?type=citizen&mode=register"
+                href="#citizen-token-tracker"
                 className="inline-flex items-center gap-2 rounded-md bg-[#042A5E] px-4 py-2 text-sm font-bold text-white shadow-xs transition-all hover:bg-[#021838] focus:outline-hidden"
               >
-                <span>Register</span>
+                <span>Citizen Token Desk</span>
               </a>
           </div>
 

@@ -1,6 +1,7 @@
 import UtilityBar from '../components/landing/UtilityBar'
 import Header from '../components/landing/Header'
 import Hero from '../components/landing/Hero'
+import CitizenTokenTracker from '../components/landing/CitizenTokenTracker'
 import StatsStrip from '../components/landing/StatsStrip'
 import InfoSection from '../components/landing/InfoSection'
 import WorkflowSection from '../components/landing/WorkflowSection'
@@ -16,6 +17,7 @@ export default function LandingPage() {
       <Header />
       <main>
         <Hero />
+        <CitizenTokenTracker />
         <StatsStrip />
         <InfoSection />
         <WorkflowSection />

@@ -7,9 +7,7 @@ import {
   LogOut,
   ChevronDown,
   PlusCircle,
-  ExternalLink,
   Phone,
-  RefreshCw,
 } from 'lucide-react'
 import { useAuth } from '../../auth/AuthContext'
 import { useNavigate } from 'react-router-dom'
@@ -19,7 +17,7 @@ interface PiaHeaderProps {
   setSearchTerm: (term: string) => void
   openClarificationCount: number
   onNotificationClick: () => void
-  onOpenCreateModal: () => void
+  onOpenCreateModal?: () => void
 }
 
 export default function PiaHeader({
@@ -32,14 +30,6 @@ export default function PiaHeader({
   const { user, logout } = useAuth()
   const navigate = useNavigate()
   const [showProfileMenu, setShowProfileMenu] = useState(false)
-  const [isSyncing, setIsSyncing] = useState(false)
-
-  const handleSync = () => {
-    setIsSyncing(true)
-    setTimeout(() => {
-      setIsSyncing(false)
-    }, 800)
-  }
 
   const handleLogout = () => {
     logout()
@@ -65,13 +55,6 @@ export default function PiaHeader({
             <Phone className="h-3 w-3 text-red-400" />
             <span>PIA Helpline: 1800-11-2026</span>
           </div>
-          <button
-            type="button"
-            onClick={() => navigate('/dashboard/central')}
-            className="text-xs text-amber-400 hover:text-amber-300 font-semibold flex items-center gap-1 transition-colors"
-          >
-            Switch to Central Dashboard <ExternalLink className="h-3 w-3" />
-          </button>
         </div>
       </div>
 
@@ -93,29 +76,17 @@ export default function PiaHeader({
 
         {/* Action Buttons & User Profile */}
         <div className="flex items-center gap-2 sm:gap-3">
-          {/* Quick Refresh sync button */}
-          <button
-            type="button"
-            onClick={handleSync}
-            className={`hidden sm:flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors ${
-              isSyncing ? 'opacity-70' : ''
-            }`}
-            title="Sync latest gazette and revenue updates"
-          >
-            <RefreshCw className={`h-3.5 w-3.5 text-slate-500 ${isSyncing ? 'animate-spin text-[#991B1B]' : ''}`} />
-            <span>{isSyncing ? 'Syncing...' : 'Sync Bhulekh'}</span>
-          </button>
-
-          {/* Prominent Create Proposal CTA Button */}
-          <button
-            type="button"
-            onClick={onOpenCreateModal}
-            className="flex items-center gap-2 rounded-xl bg-[#991B1B] hover:bg-[#7F1D1D] text-white px-3.5 py-2 text-xs sm:text-sm font-semibold shadow-xs hover:shadow transition-all"
-          >
-            <PlusCircle className="h-4 w-4" />
-            <span className="hidden sm:inline">New Acquisition Proposal</span>
-            <span className="sm:hidden">Proposal</span>
-          </button>
+          {/* Single Primary Action: New Proposal */}
+          {onOpenCreateModal && (
+            <button
+              type="button"
+              onClick={onOpenCreateModal}
+              className="flex items-center gap-2 rounded-xl bg-[#991B1B] hover:bg-[#7F1D1D] text-white px-3.5 py-2 text-xs sm:text-sm font-semibold shadow-xs hover:shadow transition-all"
+            >
+              <PlusCircle className="h-4 w-4 shrink-0" />
+              <span>+ New Proposal</span>
+            </button>
+          )}
 
           {/* Notifications / Clarifications Bell */}
           <button

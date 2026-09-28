@@ -22,7 +22,6 @@ import PiaCreateProposalModal from '../components/pia/PiaCreateProposalModal'
 import PiaAcquisitionProgress from '../components/pia/PiaAcquisitionProgress'
 import PiaDocumentsRepo from '../components/pia/PiaDocumentsRepo'
 import PiaAlertsTasks from '../components/pia/PiaAlertsTasks'
-import PiaReportsAnalytics from '../components/pia/PiaReportsAnalytics'
 import PiaGisMap from '../components/pia/PiaGisMap'
 
 import { CheckCircle2, X } from 'lucide-react'
@@ -180,10 +179,6 @@ export default function PiaDashboard() {
                 activeAlertToOpen={activeAlertToRespond}
                 onClearActiveAlert={() => setActiveAlertToRespond(null)}
               />
-            )}
-
-            {activeTab === 'reports' && (
-              <PiaReportsAnalytics projects={projects} />
             )}
 
             {activeTab === 'gis' && (

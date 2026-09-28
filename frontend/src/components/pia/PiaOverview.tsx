@@ -6,12 +6,8 @@ import {
   AlertCircle,
   Clock,
   ArrowUpRight,
-  TrendingUp,
   MapPin,
-  Building2,
-  PlusCircle,
   ShieldAlert,
-  Compass,
 } from 'lucide-react'
 import type { PiaProject, PiaClarificationAlert, PiaKpiMetrics } from '../../types/pia'
 
@@ -30,7 +26,6 @@ export default function PiaOverview({
   projects,
   alerts,
   onSelectProject,
-  onOpenCreateModal,
   onNavigateTab,
   onFilterStatus,
 }: PiaOverviewProps) {
@@ -112,84 +107,9 @@ export default function PiaOverview({
     },
   ]
 
-  // Statutory pipeline stages
-  const timelineStages = [
-    { stage: 'Proposal', desc: 'Requisition & PFR', count: 4, status: 'completed' },
-    { stage: 'Scrutiny', desc: 'CALA Verification', count: 6, status: 'completed' },
-    { stage: 'Notification', desc: 'Sec 3A / 3D Gazette', count: 5, status: 'current' },
-    { stage: 'Award', desc: 'Sec 3G Determination', count: 4, status: 'pending' },
-    { stage: 'Compensation', desc: 'Sec 3H Escrow Disbursal', count: 3, status: 'pending' },
-    { stage: 'Possession', desc: 'Sec 3E Site Handover', count: 6, status: 'pending' },
-  ]
-
   return (
     <div className="space-y-6">
-      {/* 1. National PIA Executive Context & Quick Action Banner */}
-      <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 p-6 text-white shadow-sm">
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-2 max-w-3xl">
-            <div className="inline-flex items-center gap-2 rounded-md bg-red-800/80 px-2.5 py-1 text-xs font-semibold text-red-100 ring-1 ring-red-700">
-              <Building2 className="h-3.5 w-3.5" />
-              <span>National Highways Authority of India (NHAI) · PIU Management</span>
-            </div>
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight">
-              Land Acquisition & Corridor Right-of-Way Portal
-            </h1>
-            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-              Manage pre-statutory proposals, field measurement records, CALA revenue scrutinies, gazette notifications, and compensation disbursements under the RFCTLARR & NH Acts.
-            </p>
-          </div>
-
-          <div className="flex flex-wrap sm:flex-nowrap items-center gap-3">
-            <button
-              type="button"
-              onClick={onOpenCreateModal}
-              className="flex items-center gap-2 rounded-xl bg-[#991B1B] hover:bg-[#7F1D1D] px-4 py-3 text-sm font-semibold text-white shadow-md transition-all hover:shadow-lg"
-            >
-              <PlusCircle className="h-4 w-4" />
-              <span>Start 2-Step Proposal</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => onNavigateTab('gis')}
-              className="flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-800/80 hover:bg-slate-700/80 px-4 py-3 text-sm font-semibold text-slate-200 transition-colors"
-            >
-              <Compass className="h-4 w-4 text-red-400" />
-              <span>Corridor GIS Map</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Aggregate Land & Financials Micro-strip */}
-        <div className="mt-6 pt-5 border-t border-slate-800/80 grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <div>
-            <span className="text-[11px] text-slate-400 font-medium">Total Land Required</span>
-            <p className="text-lg sm:text-xl font-bold text-white mt-0.5">
-              {kpis.totalLandRequiredHa.toLocaleString('en-IN')} <span className="text-xs font-normal text-slate-400">Ha</span>
-            </p>
-          </div>
-          <div>
-            <span className="text-[11px] text-slate-400 font-medium">Possession Acquired</span>
-            <p className="text-lg sm:text-xl font-bold text-emerald-400 mt-0.5">
-              {kpis.totalLandAcquiredHa.toLocaleString('en-IN')} <span className="text-xs font-normal text-slate-400">Ha ({((kpis.totalLandAcquiredHa / kpis.totalLandRequiredHa) * 100).toFixed(1)}%)</span>
-            </p>
-          </div>
-          <div>
-            <span className="text-[11px] text-slate-400 font-medium">Sanctioned Budget</span>
-            <p className="text-lg sm:text-xl font-bold text-white mt-0.5">
-              ₹{kpis.totalBudgetCr.toLocaleString('en-IN')} <span className="text-xs font-normal text-slate-400">Cr</span>
-            </p>
-          </div>
-          <div>
-            <span className="text-[11px] text-slate-400 font-medium">Direct Disbursed (PFMS)</span>
-            <p className="text-lg sm:text-xl font-bold text-amber-300 mt-0.5">
-              ₹{kpis.totalDisbursedCr.toLocaleString('en-IN')} <span className="text-xs font-normal text-slate-400">Cr</span>
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* 2. Urgent Clarification Required Alert Banner */}
+      {/* 1. Urgent Clarification Required Alert Banner */}
       {openAlerts.length > 0 && (
         <div className="rounded-xl border border-red-200 bg-red-50/90 p-4 shadow-2xs">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -265,53 +185,7 @@ export default function PiaOverview({
         })}
       </div>
 
-      {/* 4. Statutory Acquisition Progress Pipeline */}
-      <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-2xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-slate-100">
-          <div>
-            <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-              <TrendingUp className="h-4 w-4 text-[#991B1B]" />
-              Statutory Land Acquisition Pipeline
-            </h3>
-            <p className="text-xs text-slate-500">
-              National standard timeline: Requisition → Revenue Scrutiny → Notification (3A/3D) → Award (3G) → Compensation (3H) → Possession (3E)
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={() => onNavigateTab('progress')}
-            className="text-xs font-bold text-[#991B1B] hover:text-[#7F1D1D] flex items-center gap-1 self-start sm:self-auto"
-          >
-            <span>Detailed Stage Tracker</span>
-            <ArrowUpRight className="h-3.5 w-3.5" />
-          </button>
-        </div>
-
-        {/* 6 Stage Milestone Horizontal Cards */}
-        <div className="mt-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-          {timelineStages.map((st, idx) => (
-            <div
-              key={st.stage}
-              className="relative flex flex-col justify-between rounded-xl border border-slate-200 bg-slate-50/60 p-3 hover:border-red-300 transition-colors"
-            >
-              <div className="flex items-center justify-between text-[10px] font-bold text-slate-400">
-                <span>STAGE 0{idx + 1}</span>
-                <span className="text-[#991B1B]">{st.count} Projects</span>
-              </div>
-              <div className="my-2">
-                <span className="text-xs font-bold text-slate-900 block">{st.stage}</span>
-                <span className="text-[10px] text-slate-500 block leading-tight">{st.desc}</span>
-              </div>
-              <div className="h-1.5 w-full bg-slate-200 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-[#991B1B]"
-                  style={{ width: `${Math.min(100, (st.count / 8) * 100)}%` }}
-                />
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+      {/* 2. Priority Projects Overview Table */}
 
       {/* 5. Recent Active Projects Snapshot Table */}
       <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-2xs">

@@ -1,12 +1,9 @@
 import {
   LayoutDashboard,
   FolderGit2,
-  FilePlus2,
   GitFork,
   FileText,
   AlertTriangle,
-  BarChart3,
-  MapPin,
   ChevronLeft,
   ChevronRight,
   Shield,
@@ -21,7 +18,7 @@ interface PiaSidebarProps {
   isCollapsed: boolean
   setIsCollapsed: (collapsed: boolean) => void
   openClarificationCount: number
-  onOpenCreateModal: () => void
+  onOpenCreateModal?: () => void
 }
 
 export default function PiaSidebar({
@@ -30,7 +27,6 @@ export default function PiaSidebar({
   isCollapsed,
   setIsCollapsed,
   openClarificationCount,
-  onOpenCreateModal,
 }: PiaSidebarProps) {
   const menuItems = [
     {
@@ -63,18 +59,6 @@ export default function PiaSidebar({
       icon: AlertTriangle,
       badge: openClarificationCount > 0 ? `${openClarificationCount} Action` : null,
       badgeColor: 'bg-red-700 text-white animate-pulse',
-    },
-    {
-      id: 'reports' as PiaNavigationTab,
-      label: 'Reports & Analytics',
-      icon: BarChart3,
-      badge: null,
-    },
-    {
-      id: 'gis' as PiaNavigationTab,
-      label: 'GIS Corridors Map',
-      icon: MapPin,
-      badge: 'Live',
     },
   ]
 
@@ -114,25 +98,6 @@ export default function PiaSidebar({
             </div>
           )}
         </div>
-      </div>
-
-      {/* Prominent Quick Action: Create Land Acquisition Proposal */}
-      <div className="p-3 border-b border-slate-100">
-        <button
-          type="button"
-          onClick={onOpenCreateModal}
-          className={`w-full flex items-center justify-center gap-2.5 rounded-xl bg-gradient-to-r from-[#991B1B] to-[#B91C1C] hover:from-[#7F1D1D] hover:to-[#991B1B] text-white font-semibold py-3 px-3 shadow-sm hover:shadow transition-all group ${
-            isCollapsed ? 'px-2' : ''
-          }`}
-          title="Create Land Acquisition Proposal (2-Step Process)"
-        >
-          <FilePlus2 className="h-5 w-5 shrink-0 group-hover:scale-110 transition-transform" />
-          {!isCollapsed && (
-            <span className="text-sm tracking-wide">
-              Create Proposal
-            </span>
-          )}
-        </button>
       </div>
 
       {/* Navigation List */}

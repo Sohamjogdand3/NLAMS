@@ -6,8 +6,6 @@ import {
   GitMerge,
   AlertTriangle,
   BarChart3,
-  FileText,
-  Bell,
   ChevronLeft,
   ChevronRight,
   ShieldCheck,
@@ -19,7 +17,7 @@ interface CentralSidebarProps {
   setActiveTab: (tab: NavigationTab) => void
   isCollapsed: boolean
   setIsCollapsed: (collapsed: boolean) => void
-  slaAlertCount: number
+  slaAlertCount?: number
 }
 
 export default function CentralSidebar({
@@ -27,7 +25,6 @@ export default function CentralSidebar({
   setActiveTab,
   isCollapsed,
   setIsCollapsed,
-  slaAlertCount,
 }: CentralSidebarProps) {
   const menuItems: { id: NavigationTab; label: string; icon: any; badge?: number }[] = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -37,8 +34,6 @@ export default function CentralSidebar({
     { id: 'workflow', label: 'Workflow', icon: GitMerge },
     { id: 'risk', label: 'Risk & AI', icon: AlertTriangle, badge: 3 },
     { id: 'analytics', label: 'Analytics', icon: BarChart3 },
-    { id: 'reports', label: 'Reports', icon: FileText },
-    { id: 'notifications', label: 'Notifications', icon: Bell, badge: slaAlertCount },
   ]
 
   return (

@@ -5,7 +5,6 @@ import {
   CheckCircle2,
   FileQuestion,
   Calendar,
-  Send,
   UploadCloud,
   X,
 } from 'lucide-react'
@@ -241,10 +240,10 @@ export default function PiaAlertsTasks({
                     <button
                       type="button"
                       onClick={() => handleOpenResponseModal(alert)}
-                      className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#991B1B] hover:bg-[#7F1D1D] px-4 py-2 text-xs font-bold text-white shadow-xs transition-colors shrink-0 self-start"
+                      className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#991B1B] hover:bg-[#7F1D1D] px-3.5 py-2 text-xs font-bold text-white shadow-xs transition-colors shrink-0 self-start"
                     >
-                      <Send className="h-3.5 w-3.5" />
-                      <span>Submit Response</span>
+                      <UploadCloud className="h-4 w-4" />
+                      <span>Upload Requested Document</span>
                     </button>
                   )}
                 </div>
@@ -297,7 +296,7 @@ export default function PiaAlertsTasks({
         </div>
       </div>
 
-      {/* Response Modal */}
+      {/* Response & Document Upload Modal */}
       {selectedAlert && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-xs animate-in fade-in-50">
           <div className="relative w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl space-y-4">
@@ -307,7 +306,7 @@ export default function PiaAlertsTasks({
                   {selectedAlert.projectCode}
                 </span>
                 <h3 className="text-sm font-bold text-slate-900">
-                  Submit Clarification Response to CALA
+                  Upload Requested Document &amp; Respond to CALA
                 </h3>
               </div>
               <button
@@ -319,44 +318,48 @@ export default function PiaAlertsTasks({
               </button>
             </div>
 
-            <div className="rounded-lg bg-slate-50 p-3 border border-slate-200 text-xs">
-              <p className="font-bold text-slate-900">{selectedAlert.title}</p>
-              <p className="text-slate-600 mt-1 leading-relaxed text-[11px]">{selectedAlert.description}</p>
-              <p className="text-slate-400 text-[10px] mt-1.5">Authority: {selectedAlert.raisedBy}</p>
+            <div className="rounded-lg bg-red-50/60 p-3 border border-red-200 text-xs">
+              <p className="font-bold text-[#991B1B]">{selectedAlert.title}</p>
+              <p className="text-slate-700 mt-1 leading-relaxed text-[11px]">{selectedAlert.description}</p>
+              <p className="text-slate-500 text-[10px] mt-1.5 font-semibold">Requested By Authority: {selectedAlert.raisedBy}</p>
             </div>
 
-            <form onSubmit={handleSubmitResponse} className="space-y-3 text-xs">
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">
-                  Official Explanation & Technical Remarks *
-                </label>
-                <textarea
-                  required
-                  rows={4}
-                  placeholder="Enter detailed clarification, boundary survey reconciliation, or revised DPR justification..."
-                  value={responseRemark}
-                  onChange={(e) => setResponseRemark(e.target.value)}
-                  className="w-full rounded-lg border border-slate-300 p-2.5 text-xs focus:border-[#991B1B] focus:outline-none"
-                />
+            <form onSubmit={handleSubmitResponse} className="space-y-4 text-xs">
+              {/* Document Attachment Upload Section */}
+              <div className="rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 p-4 text-center space-y-2">
+                <UploadCloud className="h-6 w-6 text-[#991B1B] mx-auto" />
+                <p className="font-bold text-slate-900">Upload Requested Document File *</p>
+                <p className="text-[10px] text-slate-500">Supports PDF, CAD/DWG, or Spreadsheet (.xlsx)</p>
+                
+                <div className="pt-1 flex flex-col items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setAttachedFileName(`${selectedAlert.queryType.replace(/\s+/g, '_')}_Certified.pdf`)}
+                    className="rounded-lg bg-white border border-slate-300 hover:bg-slate-100 px-3.5 py-1.5 text-xs font-bold text-[#991B1B] shadow-2xs transition-colors flex items-center gap-1.5"
+                  >
+                    <UploadCloud className="h-3.5 w-3.5 text-[#991B1B]" />
+                    <span>{attachedFileName ? `Selected: ${attachedFileName}` : 'Choose File to Upload'}</span>
+                  </button>
+                  {attachedFileName && (
+                    <span className="text-emerald-700 text-[11px] font-bold">
+                      ✓ Document file ready for submission
+                    </span>
+                  )}
+                </div>
               </div>
 
               <div>
                 <label className="block font-bold text-slate-700 mb-1">
-                  Attach Certified Cadastral Map / Revised Gata Schedule
+                  Explanatory Remarks / Cover Note *
                 </label>
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setAttachedFileName('Reconciled_Cadastral_Overlay_Certified.pdf')}
-                    className="rounded bg-slate-100 hover:bg-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 flex items-center gap-1"
-                  >
-                    <UploadCloud className="h-3.5 w-3.5 text-[#991B1B]" />
-                    <span>{attachedFileName || 'Attach PDF Document'}</span>
-                  </button>
-                  {attachedFileName && (
-                    <span className="text-emerald-700 text-[11px] font-semibold">Attached</span>
-                  )}
-                </div>
+                <textarea
+                  required
+                  rows={3}
+                  placeholder="Enter clarification summary, survey reconciliation remarks, or DPR reference details..."
+                  value={responseRemark}
+                  onChange={(e) => setResponseRemark(e.target.value)}
+                  className="w-full rounded-lg border border-slate-300 p-2.5 text-xs focus:border-[#991B1B] focus:outline-none"
+                />
               </div>
 
               <div className="pt-2 flex justify-end gap-2 border-t border-slate-100">
@@ -371,7 +374,7 @@ export default function PiaAlertsTasks({
                   type="submit"
                   className="rounded-lg bg-[#991B1B] hover:bg-[#7F1D1D] px-5 py-2 text-xs font-bold text-white shadow-xs"
                 >
-                  Send Response to CALA
+                  Upload &amp; Submit Response
                 </button>
               </div>
             </form>
