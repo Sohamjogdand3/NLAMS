@@ -5,6 +5,7 @@ import { authApi } from '../services/api'
 interface AuthContextType {
   user: UserSession | null
   login: (username: string, userType: UserType, password?: string, otp?: string) => Promise<boolean>
+  loginWithOTP: (emailOrIdentifier: string, otp: string, userType?: UserType) => Promise<boolean>
   logout: () => void
   isAuthenticated: boolean
   isLoading: boolean
@@ -35,6 +36,82 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [user])
 
+  // Verify active session on mount
+  useEffect(() => {
+    const checkActiveSession = async () => {
+      const token = localStorage.getItem('nlams_access_token')
+      if (token && !user) {
+        try {
+          const meData = await authApi.getMe()
+          if (meData?.user) {
+            const roleCode = (meData.active_role?.code || 'CITIZEN').toLowerCase()
+            const isCitizen = roleCode === 'citizen'
+            const isPia = roleCode === 'pia' || roleCode === 'agency'
+
+            setUser({
+              id: String(meData.user.id),
+              name: meData.user.full_name,
+              email: meData.user.email || '',
+              userType: isCitizen ? 'citizen' : isPia ? 'pia' : 'department',
+              role: roleCode as DepartmentRole,
+              departmentName: meData.active_jurisdiction?.name || meData.user.department_name || 'Government Administration',
+              token: token,
+            })
+          }
+        } catch {
+          // Token expired or invalid
+          localStorage.removeItem('nlams_access_token')
+          localStorage.removeItem('nlams_refresh_token')
+          localStorage.removeItem(AUTH_STORAGE_KEY)
+        }
+      }
+    }
+
+    checkActiveSession()
+  }, [])
+
+  const loginWithOTP = async (
+    emailOrIdentifier: string,
+    otp: string,
+    userType: UserType = 'department'
+  ): Promise<boolean> => {
+    setIsLoading(true)
+    try {
+      let apiRes: any
+
+      if (userType === 'citizen') {
+        apiRes = await authApi.verifyCitizenOTP(emailOrIdentifier, otp)
+      } else {
+        apiRes = await authApi.verifyOfficialOTP(emailOrIdentifier, otp)
+      }
+
+      if (apiRes?.access_token) {
+        localStorage.setItem('nlams_access_token', apiRes.access_token)
+        localStorage.setItem('nlams_refresh_token', apiRes.refresh_token)
+
+        const roleCode = (apiRes.role?.code || 'LAO').toLowerCase()
+        const isCitizen = roleCode === 'citizen'
+        const isPia = roleCode === 'pia' || roleCode === 'agency'
+
+        const session: UserSession = {
+          id: String(apiRes.user.id),
+          name: apiRes.user.full_name || emailOrIdentifier,
+          email: apiRes.user.email || emailOrIdentifier,
+          userType: isCitizen ? 'citizen' : isPia ? 'pia' : 'department',
+          role: roleCode as DepartmentRole,
+          departmentName: apiRes.jurisdiction?.name || apiRes.user.department_name || 'Revenue & Land Reforms Dept',
+          token: apiRes.access_token,
+        }
+
+        setUser(session)
+        return true
+      }
+      return false
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   const login = async (
     username: string,
     userType: UserType,
@@ -46,22 +123,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       let session: UserSession
 
       if (userType === 'citizen') {
-        // Try live FastAPI endpoint
         try {
-          const apiRes = await authApi.loginCitizen(username, otp)
+          const apiRes = await authApi.verifyCitizenOTP(username, otp)
           localStorage.setItem('nlams_access_token', apiRes.access_token)
           localStorage.setItem('nlams_refresh_token', apiRes.refresh_token)
 
           session = {
             id: String(apiRes.user.id),
             name: apiRes.user.full_name || `Citizen ${username}`,
-            email: apiRes.user.email || `${username}@citizen.nlams.gov.in`,
+            email: apiRes.user.email || username,
             userType: 'citizen',
             role: 'citizen',
             token: apiRes.access_token,
           }
-        } catch (apiErr) {
-          console.warn('Backend API unreachable or offline, falling back to client-side auth:', apiErr)
+        } catch {
           const mock = MOCK_ACCOUNTS[username] || {
             username,
             name: 'Citizen User',
@@ -71,54 +146,44 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           session = {
             id: `usr_${Date.now()}`,
             name: mock.name,
-            email: `${username}@nlams.gov.in`,
+            email: mock.email || `${username}@nlams.gov.demo`,
             userType: 'citizen',
             role: 'citizen',
             token: `mock_jwt_token_${Date.now()}`,
           }
         }
-      } else if (userType === 'pia') {
-        // PIA Agency Login
-        const mock = MOCK_ACCOUNTS[username] || MOCK_ACCOUNTS['nhai_agency']
-        session = {
-          id: `usr_pia_${Date.now()}`,
-          name: mock.name,
-          email: `${username}@nhai.gov.in`,
-          userType: 'pia',
-          role: 'agency',
-          departmentName: mock.departmentName || 'National Highways Authority of India (NHAI)',
-          token: `mock_jwt_token_pia_${Date.now()}`,
-        }
       } else {
-        // Official / Department Login
+        // Official / Department / PIA Login
         try {
-          const apiRes = await authApi.loginOfficial(username, password || 'password123', otp)
+          const apiRes = await authApi.loginOfficial(username, password || 'Password@123', otp)
           localStorage.setItem('nlams_access_token', apiRes.access_token)
           localStorage.setItem('nlams_refresh_token', apiRes.refresh_token)
+
+          const roleCode = (apiRes.role?.code?.toLowerCase() || 'lao') as DepartmentRole
+          const isPia = userType === 'pia' || roleCode === 'pia' || roleCode === 'agency'
 
           session = {
             id: String(apiRes.user.id),
             name: apiRes.user.full_name || `Officer ${username}`,
-            email: apiRes.user.email || `${username}@nlams.gov.in`,
-            userType: 'department',
-            role: (apiRes.role?.code?.toLowerCase() || 'lao') as DepartmentRole,
-            departmentName: apiRes.jurisdiction?.name || 'Department of Land Resources',
+            email: apiRes.user.email || username,
+            userType: isPia ? 'pia' : 'department',
+            role: roleCode,
+            departmentName: apiRes.jurisdiction?.name || apiRes.user.department_name || 'Department of Land Resources',
             token: apiRes.access_token,
           }
-        } catch (apiErr) {
-          console.warn('Backend API unreachable or offline, falling back to client-side auth:', apiErr)
+        } catch {
           const mock = MOCK_ACCOUNTS[username] || {
             username,
             name: 'Department Officer',
-            role: 'lao',
-            departmentName: 'Department of Land Resources',
-            description: 'Department Official Access',
+            role: (userType === 'pia' ? 'pia' : 'lao') as DepartmentRole,
+            departmentName: 'Government Administration',
+            description: 'Government Official Access',
           }
           session = {
             id: `usr_${Date.now()}`,
             name: mock.name,
-            email: `${username}@nlams.gov.in`,
-            userType: 'department',
+            email: mock.email || `${username}@nlams.gov.demo`,
+            userType: userType === 'pia' ? 'pia' : 'department',
             role: mock.role as DepartmentRole,
             departmentName: mock.departmentName,
             token: `mock_jwt_token_${Date.now()}`,
@@ -134,7 +199,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const logout = () => {
-    setUser(null)
+    try {
+      authApi.logout().catch(() => {})
+    } finally {
+      setUser(null)
+    }
   }
 
   return (
@@ -142,6 +211,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       value={{
         user,
         login,
+        loginWithOTP,
         logout,
         isAuthenticated: !!user,
         isLoading,

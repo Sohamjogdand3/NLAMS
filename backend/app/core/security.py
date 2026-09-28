@@ -76,3 +76,22 @@ def decode_token(token: str) -> Dict[str, Any]:
         return payload
     except JWTError as e:
         raise ValueError(f"Invalid or expired token: {str(e)}")
+
+
+def hash_token(token: str) -> str:
+    """Generate SHA-256 hash of a token for secure database storage."""
+    import hashlib
+    return hashlib.sha256(token.encode("utf-8")).hexdigest()
+
+
+def hash_otp(otp: str, salt: str = "") -> str:
+    """Generate a cryptographic SHA-256 hash of an OTP code."""
+    import hashlib
+    combined = f"{otp}:{salt}:{settings.SECRET_KEY}"
+    return hashlib.sha256(combined.encode("utf-8")).hexdigest()
+
+
+def generate_secure_otp(length: int = 6) -> str:
+    """Generate a cryptographically secure numeric OTP."""
+    import secrets
+    return "".join([str(secrets.randbelow(10)) for _ in range(length)])

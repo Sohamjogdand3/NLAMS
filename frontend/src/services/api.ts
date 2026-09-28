@@ -46,6 +46,57 @@ export async function apiRequest<T>(
 
 // API Endpoints Mapping
 export const authApi = {
+  // Official Government Identity Flow (OTP)
+  requestOfficialOTP: (email: string, deviceId?: string) =>
+    apiRequest<{ message: string; identifier_masked: string; expires_in_seconds: number; cooldown_seconds: number; provider: string }>(
+      '/auth/official/request-otp',
+      {
+        method: 'POST',
+        body: JSON.stringify({ email, device_id: deviceId }),
+      }
+    ),
+
+  verifyOfficialOTP: (email: string, otp: string, deviceId?: string) =>
+    apiRequest<any>('/auth/official/verify-otp', {
+      method: 'POST',
+      body: JSON.stringify({ email, otp, device_id: deviceId }),
+    }),
+
+  // Citizen Identity Flow (OTP)
+  requestCitizenOTP: (identifier: string, provider: string = 'email_otp') =>
+    apiRequest<{ message: string; identifier_masked: string; expires_in_seconds: number; cooldown_seconds: number; provider: string }>(
+      '/auth/citizen/request-otp',
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          ...(identifier.includes('@') ? { email: identifier } : { mobile_number: identifier }),
+          provider,
+        }),
+      }
+    ),
+
+  verifyCitizenOTP: (identifier: string, otp: string, provider: string = 'email_otp', deviceId?: string) =>
+    apiRequest<any>('/auth/citizen/verify-otp', {
+      method: 'POST',
+      body: JSON.stringify({ identifier, otp, provider, device_id: deviceId }),
+    }),
+
+  // Shared Session Security
+  getMe: () => apiRequest<any>('/auth/me'),
+
+  refreshToken: (refreshToken: string) =>
+    apiRequest<any>('/auth/refresh', {
+      method: 'POST',
+      body: JSON.stringify({ refresh_token: refreshToken }),
+    }),
+
+  logout: (refreshToken?: string) =>
+    apiRequest<{ message: string; success: boolean }>('/auth/logout', {
+      method: 'POST',
+      body: JSON.stringify({ refresh_token: refreshToken || localStorage.getItem('nlams_refresh_token') }),
+    }),
+
+  // Legacy compatibility helpers
   loginCitizen: (mobileNumber: string, otp: string = '123456') =>
     apiRequest<any>('/auth/login/citizen', {
       method: 'POST',
@@ -55,22 +106,14 @@ export const authApi = {
       }),
     }),
 
-  loginOfficial: (empId: string, password: string, otp?: string) =>
+  loginOfficial: (empIdOrEmail: string, password?: string, otp?: string) =>
     apiRequest<any>('/auth/login/official', {
       method: 'POST',
       body: JSON.stringify({
-        emp_id: empId,
-        password: password,
+        ...(empIdOrEmail.includes('@') ? { email: empIdOrEmail } : { emp_id: empIdOrEmail }),
+        password: password || 'Password@123',
         otp: otp || '123456',
       }),
-    }),
-
-  getMe: () => apiRequest<any>('/auth/me'),
-
-  refreshToken: (refreshToken: string) =>
-    apiRequest<any>('/auth/refresh', {
-      method: 'POST',
-      body: JSON.stringify({ refresh_token: refreshToken }),
     }),
 };
 

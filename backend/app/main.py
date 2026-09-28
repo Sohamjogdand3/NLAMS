@@ -35,7 +35,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include Routers
+# Include Routers under /api/v1 as required
+app.include_router(auth_router, prefix=settings.API_V1_STR)
+app.include_router(test_rbac_router, prefix=settings.API_V1_STR)
+app.include_router(citizen_dashboard_router, prefix=settings.API_V1_STR)
+
+# Direct fallback mounts for legacy compatibility
 app.include_router(auth_router)
 app.include_router(test_rbac_router)
 app.include_router(citizen_dashboard_router)

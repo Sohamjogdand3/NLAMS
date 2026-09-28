@@ -7,11 +7,30 @@ class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
     ENVIRONMENT: str = "development"
 
-    # JWT & Security Configuration
+    # JWT & Session Security Configuration
     SECRET_KEY: str = "nlams-dev-secret-key-super-secure-at-least-32-characters-long"
     ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24  # 24 hours
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 15  # 15 minutes as per government-grade standard
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7  # 7 days
+
+    # OTP Security Configuration
+    OTP_TTL_SECONDS: int = 180  # 3 minutes TTL
+    OTP_MAX_ATTEMPTS: int = 3
+    OTP_COOLDOWN_SECONDS: int = 60
+    OTP_LENGTH: int = 6
+
+    # Redis Configuration
+    REDIS_URL: str = "redis://localhost:6379/0"
+
+    # Email Service Configuration
+    EMAIL_PROVIDER: str = "ethereal"  # ethereal, mailtrap, smtp, console
+    SMTP_HOST: str = "sandbox.smtp.mailtrap.io"
+    SMTP_PORT: int = 2525
+    SMTP_USER: str = ""
+    SMTP_PASSWORD: str = ""
+    SMTP_FROM_EMAIL: str = "no-reply@nlams.gov.demo"
+    SMTP_FROM_NAME: str = "NLAMS National Identity System"
+    SMTP_TLS: bool = True
 
     # PostgreSQL / PostGIS connection
     POSTGRES_USER: str = "nlams_user"
@@ -32,7 +51,7 @@ class Settings(BaseSettings):
         )
 
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=(".env", "backend/.env", "../backend/.env"),
         env_file_encoding="utf-8",
         extra="ignore",
         case_sensitive=True,

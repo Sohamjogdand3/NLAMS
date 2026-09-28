@@ -6,6 +6,11 @@ from app.models.user import User
 from app.models.user_role_jurisdiction import UserRoleJurisdiction
 from app.models.land_record import LandRecord
 from app.models.acquisition_case import AcquisitionCase
+from app.models.official_email_domain import OfficialEmailDomain
+from app.models.otp_session import OTPSession
+from app.models.user_session import UserSession
+from app.models.login_attempt import LoginAttempt
+from app.models.audit_log import AuditLog
 
 __all__ = [
     "Base",
@@ -16,4 +21,9 @@ __all__ = [
     "UserRoleJurisdiction",
     "LandRecord",
     "AcquisitionCase",
+    "OfficialEmailDomain",
+    "OTPSession",
+    "UserSession",
+    "LoginAttempt",
+    "AuditLog",
 ]
