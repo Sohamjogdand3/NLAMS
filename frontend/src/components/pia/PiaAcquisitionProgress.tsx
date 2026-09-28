@@ -83,31 +83,33 @@ export default function PiaAcquisitionProgress({
   ]
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Header */}
-      <div>
-        <h2 className="text-lg sm:text-xl font-bold text-slate-900">
-          Statutory Land Acquisition Lifecycle
-        </h2>
-        <p className="text-xs sm:text-sm text-slate-500">
-          Standardized 6-stage milestone tracker under RFCTLARR Act 2013 & National Highways Act 1956
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <div>
+          <h2 className="text-base sm:text-lg font-bold text-slate-900">
+            Statutory Land Acquisition Lifecycle
+          </h2>
+          <p className="text-xs text-slate-500">
+            Standardized 6-stage milestone tracker under RFCTLARR Act 2013 &amp; NH Act 1956
+          </p>
+        </div>
       </div>
 
-      {/* Interactive Project Selector Banner */}
-      <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-red-50 text-[#991B1B]">
-            <GitFork className="h-5 w-5" />
+      {/* Interactive Project Selector Banner (Compact) */}
+      <div className="rounded-xl border border-slate-200/90 bg-white p-3 sm:p-3.5 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-3">
+        <div className="flex items-center gap-2.5">
+          <div className="p-2 rounded-lg bg-red-50 text-[#991B1B]">
+            <GitFork className="h-4 w-4" />
           </div>
           <div>
-            <label className="text-xs font-bold text-slate-500 block uppercase tracking-wider">
-              Track Acquisition Progress for Project:
+            <label className="text-[10px] font-bold text-slate-400 block uppercase tracking-wider">
+              Track Progress for Project:
             </label>
             <select
               value={selectedProjectId}
               onChange={(e) => setSelectedProjectId(e.target.value)}
-              className="mt-0.5 rounded-lg border border-slate-300 bg-slate-50 px-3 py-1.5 text-xs font-bold text-slate-900 focus:border-[#991B1B] focus:outline-none"
+              className="mt-0.5 rounded-lg border border-slate-300 bg-slate-50 px-2.5 py-1 text-xs font-bold text-slate-900 focus:border-[#991B1B] focus:outline-none cursor-pointer"
             >
               {projects.map((p) => (
                 <option key={p.id} value={p.id}>
@@ -119,23 +121,23 @@ export default function PiaAcquisitionProgress({
         </div>
 
         {activeProject && (
-          <div className="flex items-center gap-3 border-t md:border-t-0 md:border-l border-slate-200 pt-3 md:pt-0 md:pl-4">
+          <div className="flex items-center gap-3 border-t md:border-t-0 md:border-l border-slate-200/80 pt-2.5 md:pt-0 md:pl-3.5">
             <div>
-              <span className="text-[10px] text-slate-400 font-bold block">Current Stage</span>
-              <span className="inline-flex rounded-md bg-red-50 px-2.5 py-0.5 text-xs font-bold text-[#991B1B]">
+              <span className="text-[9.5px] text-slate-400 font-bold block">Current Stage</span>
+              <span className="inline-flex rounded-md bg-red-50 px-2 py-0.5 text-[11px] font-bold text-[#991B1B]">
                 {activeProject.currentStage}
               </span>
             </div>
             <div>
-              <span className="text-[10px] text-slate-400 font-bold block">Land Acquired</span>
-              <span className="text-xs font-bold text-slate-800">
+              <span className="text-[9.5px] text-slate-400 font-bold block">Land Acquired</span>
+              <span className="text-[11px] font-bold text-slate-800">
                 {activeProject.landAcquiredHa} / {activeProject.landRequiredHa} Ha
               </span>
             </div>
             <button
               type="button"
               onClick={() => onSelectProject(activeProject)}
-              className="rounded-lg bg-slate-900 text-white px-3 py-1.5 text-xs font-bold hover:bg-slate-800 transition-colors"
+              className="rounded-lg bg-slate-900 text-white px-2.5 py-1 text-xs font-bold hover:bg-slate-800 transition-colors cursor-pointer"
             >
               Full Dossier
             </button>
@@ -143,8 +145,8 @@ export default function PiaAcquisitionProgress({
         )}
       </div>
 
-      {/* 6-Stage Visual Interactive Timeline */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {/* 6-Stage Visual Interactive Timeline (Ultra-Compact Modern 6-Column Grid) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-2.5">
         {stagesMetadata.map((stageItem, index) => {
           // Check milestone status on the selected project
           const milestone = activeProject?.statutoryMilestones.find(
@@ -157,91 +159,85 @@ export default function PiaAcquisitionProgress({
           return (
             <div
               key={stageItem.stage}
-              className={`flex flex-col justify-between rounded-xl border p-5 transition-all shadow-2xs ${
+              className={`flex flex-col justify-between rounded-xl border p-2.5 sm:p-3 transition-all duration-150 shadow-2xs hover:shadow-sm ${
                 isCompleted
-                  ? 'border-emerald-200 bg-emerald-50/20'
+                  ? 'border-emerald-200/90 bg-gradient-to-b from-emerald-50/25 to-white'
                   : isCurrent
-                  ? 'border-red-300 bg-red-50/40 ring-1 ring-red-200'
-                  : 'border-slate-200 bg-white opacity-85'
+                  ? 'border-red-300 bg-gradient-to-b from-red-50/40 to-white ring-1 ring-red-200/80 shadow-xs'
+                  : 'border-slate-200/80 bg-white opacity-90'
               }`}
             >
               <div>
                 {/* Stage Header */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
+                <div className="flex items-center justify-between gap-1">
+                  <div className="flex items-center gap-1.5 min-w-0">
                     <span
-                      className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${
+                      className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[9.5px] font-black ${
                         isCompleted
                           ? 'bg-emerald-600 text-white'
                           : isCurrent
-                          ? 'bg-[#991B1B] text-white animate-pulse'
-                          : 'bg-slate-200 text-slate-600'
+                          ? 'bg-[#991B1B] text-white shadow-2xs animate-pulse'
+                          : 'bg-slate-100 text-slate-500 border border-slate-200/60'
                       }`}
                     >
                       {isCompleted ? (
-                        <CheckCircle2 className="h-4 w-4" />
+                        <CheckCircle2 className="h-3 w-3" />
                       ) : (
                         `0${index + 1}`
                       )}
                     </span>
-                    <span className="text-xs font-bold text-slate-900">
+                    <span className="text-[11px] font-bold text-slate-800 truncate">
                       {stageItem.stage}
                     </span>
                   </div>
 
                   {isCompleted && (
-                    <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-800">
-                      Completed
+                    <span className="rounded bg-emerald-50 border border-emerald-200/70 px-1.5 py-0.5 text-[8.5px] font-bold text-emerald-800 shrink-0">
+                      Done
                     </span>
                   )}
                   {isCurrent && (
-                    <span className="rounded-full bg-[#991B1B] px-2 py-0.5 text-[10px] font-bold text-white">
-                      Active Stage
+                    <span className="rounded bg-[#991B1B] px-1.5 py-0.5 text-[8.5px] font-bold text-white shadow-2xs shrink-0">
+                      Active
                     </span>
                   )}
                   {isUpcoming && (
-                    <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-500">
+                    <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[8.5px] font-semibold text-slate-400 shrink-0">
                       Pending
                     </span>
                   )}
                 </div>
 
                 {/* Subtitle & Legal Reference */}
-                <h4 className="mt-3 text-sm font-bold text-slate-900">
+                <h4 className="mt-1.5 text-xs font-bold text-slate-900 leading-snug line-clamp-1" title={stageItem.title}>
                   {stageItem.title}
                 </h4>
-                <span className="text-[11px] font-semibold text-[#991B1B] block mt-0.5">
+                <span className="text-[9.5px] font-semibold text-[#991B1B] block truncate mt-0.5" title={stageItem.legalSection}>
                   {stageItem.legalSection}
                 </span>
 
                 {/* Description */}
-                <p className="mt-2 text-xs text-slate-600 leading-relaxed">
+                <p className="mt-1 text-[10px] text-slate-500 leading-relaxed line-clamp-2">
                   {stageItem.description}
                 </p>
               </div>
 
               {/* Stage Metadata Footer */}
-              <div className="mt-4 pt-3 border-t border-slate-200/60 text-[11px] space-y-1.5 text-slate-500">
-                <div className="flex justify-between">
-                  <span>Standard Statutory SLA:</span>
-                  <span className="font-semibold text-slate-800">{stageItem.standardSla}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Responsible Authority:</span>
-                  <span className="font-semibold text-slate-800 truncate max-w-[170px]">
-                    {stageItem.responsible}
-                  </span>
+              <div className="mt-2 pt-1.5 border-t border-slate-100 text-[9.5px] space-y-0.5 text-slate-500">
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-400">SLA:</span>
+                  <span className="font-semibold text-slate-700">{stageItem.standardSla}</span>
                 </div>
                 {milestone?.completedDate && (
-                  <div className="flex justify-between text-emerald-700 font-semibold pt-1 border-t border-slate-100">
-                    <span>Completed on:</span>
-                    <span>{milestone.completedDate}</span>
+                  <div className="flex justify-between items-center text-emerald-700 font-semibold">
+                    <span>Done:</span>
+                    <span className="truncate">{milestone.completedDate}</span>
                   </div>
                 )}
                 {isCurrent && milestone && (
-                  <div className="flex justify-between text-[#991B1B] font-semibold pt-1 border-t border-slate-100">
-                    <span>SLA Days Elapsed:</span>
-                    <span>{milestone.elapsedDays} / {milestone.slaDays} Days</span>
+                  <div className="flex justify-between items-center text-[#991B1B] font-bold">
+                    <span>Elapsed:</span>
+                    <span>{milestone.elapsedDays}/{milestone.slaDays}d</span>
                   </div>
                 )}
               </div>

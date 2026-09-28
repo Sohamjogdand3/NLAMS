@@ -16,6 +16,7 @@ import StatePerformancePanel from '../components/central/StatePerformancePanel'
 import CriticalProjectsTable from '../components/central/CriticalProjectsTable'
 import SlaAlertsWidget from '../components/central/SlaAlertsWidget'
 import AiRiskWidget from '../components/central/AiRiskWidget'
+import CentralBlockerOverride from '../components/central/CentralBlockerOverride'
 
 import {
   PieChart,
@@ -213,6 +214,7 @@ export default function CentralDashboard() {
           {/* TAB 6: RISK & AI */}
           {activeTab === 'risk' && (
             <div className="space-y-6">
+              <CentralBlockerOverride />
               <AiRiskWidget insights={MOCK_AI_RISK_INSIGHTS} />
             </div>
           )}

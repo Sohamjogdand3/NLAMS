@@ -167,6 +167,12 @@ export default function LoginPage() {
         const lowerEmail = cleanEmail.toLowerCase()
         if (activeType === 'pia' || lowerEmail.includes('nhai') || lowerEmail.includes('mmrda') || lowerEmail.includes('cidco') || lowerEmail.includes('pwd')) {
           navigate('/dashboard/pia')
+        } else if (lowerEmail.includes('state') || lowerEmail.includes('maharashtra') || lowerEmail.includes('nodal')) {
+          navigate('/dashboard/state-nodal')
+        } else if (lowerEmail.includes('rnr') || lowerEmail.includes('rehab')) {
+          navigate('/dashboard/rnr-admin')
+        } else if (lowerEmail.includes('surveyor') || lowerEmail.includes('patwari') || lowerEmail.includes('amin')) {
+          navigate('/surveyor/field-app')
         } else if (
           lowerEmail.includes('collector') ||
           lowerEmail.includes('lao') ||
