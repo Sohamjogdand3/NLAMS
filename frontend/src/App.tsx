@@ -5,6 +5,9 @@ import CitizenDashboard from './pages/CitizenDashboard'
 import CentralDashboard from './pages/CentralDashboard'
 import PiaDashboard from './pages/PiaDashboard'
 import DistrictDashboard from './pages/DistrictDashboard'
+import StateNodalDashboard from './pages/StateNodalDashboard'
+import RnRAdminDashboard from './pages/RnRAdminDashboard'
+import FieldSurveyorApp from './pages/FieldSurveyorApp'
 import { AuthProvider } from './auth/AuthContext'
 import ProtectedRoute from './components/auth/ProtectedRoute'
 
@@ -17,6 +20,13 @@ function App() {
         <Route path="/dashboard/citizen" element={<ProtectedRoute><CitizenDashboard /></ProtectedRoute>} />
         <Route path="/dashboard/central" element={<ProtectedRoute><CentralDashboard /></ProtectedRoute>} />
         <Route path="/dashboard/national" element={<ProtectedRoute><CentralDashboard /></ProtectedRoute>} />
+        <Route path="/dashboard/state-nodal" element={<ProtectedRoute><StateNodalDashboard /></ProtectedRoute>} />
+        <Route path="/dashboard/state" element={<ProtectedRoute><StateNodalDashboard /></ProtectedRoute>} />
+        <Route path="/dashboard/rnr-admin" element={<ProtectedRoute><RnRAdminDashboard /></ProtectedRoute>} />
+        <Route path="/dashboard/rnr" element={<ProtectedRoute><RnRAdminDashboard /></ProtectedRoute>} />
+        <Route path="/surveyor/field-app" element={<ProtectedRoute><FieldSurveyorApp /></ProtectedRoute>} />
+        <Route path="/dashboard/surveyor" element={<ProtectedRoute><FieldSurveyorApp /></ProtectedRoute>} />
+        <Route path="/surveyor" element={<ProtectedRoute><FieldSurveyorApp /></ProtectedRoute>} />
         <Route path="/dashboard/pia" element={<ProtectedRoute><PiaDashboard /></ProtectedRoute>} />
         <Route path="/dashboard/agency" element={<ProtectedRoute><PiaDashboard /></ProtectedRoute>} />
         <Route path="/dashboard/district" element={<ProtectedRoute><DistrictDashboard /></ProtectedRoute>} />

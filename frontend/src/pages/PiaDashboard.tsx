@@ -23,6 +23,8 @@ import PiaAcquisitionProgress from '../components/pia/PiaAcquisitionProgress'
 import PiaDocumentsRepo from '../components/pia/PiaDocumentsRepo'
 import PiaAlertsTasks from '../components/pia/PiaAlertsTasks'
 import PiaGisMap from '../components/pia/PiaGisMap'
+import PiaDprUploader from '../components/pia/PiaDprUploader'
+import PiaEscrowReplenishment from '../components/pia/PiaEscrowReplenishment'
 
 import { CheckCircle2, X } from 'lucide-react'
 
@@ -158,18 +160,24 @@ export default function PiaDashboard() {
             )}
 
             {activeTab === 'progress' && (
-              <PiaAcquisitionProgress
-                projects={searchedProjects}
-                onSelectProject={(p) => setSelectedDossierProject(p)}
-              />
+              <div className="space-y-6">
+                <PiaEscrowReplenishment />
+                <PiaAcquisitionProgress
+                  projects={searchedProjects}
+                  onSelectProject={(p) => setSelectedDossierProject(p)}
+                />
+              </div>
             )}
 
             {activeTab === 'documents' && (
-              <PiaDocumentsRepo
-                documents={documents}
-                projects={projects}
-                onAddDocument={handleAddDocument}
-              />
+              <div className="space-y-6">
+                <PiaDprUploader />
+                <PiaDocumentsRepo
+                  documents={documents}
+                  projects={projects}
+                  onAddDocument={handleAddDocument}
+                />
+              </div>
             )}
 
             {activeTab === 'alerts' && (

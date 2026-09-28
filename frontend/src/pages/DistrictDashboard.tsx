@@ -13,6 +13,9 @@ import DistrictProjectsTable from '../components/district/DistrictProjectsTable'
 import DistrictPipelineTracker from '../components/district/DistrictPipelineTracker'
 import DistrictGisMap from '../components/district/DistrictGisMap'
 import DistrictScrutinyPanel from '../components/district/DistrictScrutinyPanel'
+import DistrictSection11Freeze from '../components/district/DistrictSection11Freeze'
+import DistrictValuationCalculator from '../components/district/DistrictValuationCalculator'
+import DistrictClaimVerification from '../components/district/DistrictClaimVerification'
 import DistrictCompensationRnR from '../components/district/DistrictCompensationRnR'
 import DistrictAlertsAi from '../components/district/DistrictAlertsAi'
 import DistrictReportsAudit from '../components/district/DistrictReportsAudit'
@@ -107,6 +110,12 @@ export default function DistrictDashboard() {
               onUpdateProjectStatus={handleUpdateProjectStage}
             />
           )}
+
+          {activeTab === 'section11' && <DistrictSection11Freeze />}
+
+          {activeTab === 'valuation' && <DistrictValuationCalculator />}
+
+          {activeTab === 'claims' && <DistrictClaimVerification />}
 
           {activeTab === 'compensation' && <DistrictCompensationRnR />}
 

@@ -4,6 +4,9 @@ export type DistrictNavigationTab =
   | 'pipeline'
   | 'gis'
   | 'scrutiny'
+  | 'section11'
+  | 'valuation'
+  | 'claims'
   | 'compensation'
   | 'alerts'
   | 'reports'
@@ -112,4 +115,76 @@ export interface AuditLogEntry {
   action: string
   targetProject: string
   details: string
+}
+
+export interface RfctlarrValuationItem {
+  id: string
+  projectCode: string
+  khasraNo: string
+  village: string
+  ownerName: string
+  landCategory: 'Agricultural' | 'Non-Agricultural' | 'Commercial' | 'Industrial'
+  acquiredAreaSqM: number
+  circleRatePerSqM: number
+  subRegistrarAvgRatePerSqM: number
+  chosenBaselineRatePerSqM: number
+  baselineLandValue: number
+  regionalMultiplier: number // 1.0 to 2.0
+  multipliedLandValue: number
+  solatium100Percent: number
+  additionalInterest12Percent: number // 12% p.a.
+  structuresValuation: number
+  treesValuation: number
+  totalCalculatedAward: number
+  status: 'Draft' | 'Computed' | 'CALA_Approved' | 'Disbursed'
+}
+
+export interface Section11NoticeEntry {
+  id: string
+  projectCode: string
+  projectName: string
+  gazetteNotificationNo: string
+  publicationDate: string
+  expiryDate: string
+  totalDays: number
+  daysRemaining: number
+  stateRegistryLockStatus: 'Active' | 'Pending' | 'Unlocked'
+  affectedKhasrasCount: number
+  totalObjectionsReceived: number
+  objectionsResolved: number
+  hearingSchedule: string
+  objections: {
+    id: string
+    khatedarName: string
+    khasraNo: string
+    objectionType: 'Boundary Mismatch' | 'Title Ownership Dispute' | 'Compensation Rate' | 'Tree/Structure Enumeration'
+    submissionDate: string
+    status: 'Hearing Scheduled' | 'Disposed / Overruled' | 'Remand for Re-survey'
+    hearingDate: string
+    officerRemarks: string
+  }[]
+}
+
+export interface LandownerClaimVerificationItem {
+  id: string
+  claimNumber: string
+  projectCode: string
+  khasraNo: string
+  village: string
+  claimantName: string
+  aadhaarNumberMasked: string
+  aadhaarKycVerified: boolean
+  bankAccountNumberMasked: string
+  bankIfsc: string
+  claimedAreaSqM: number
+  cadastralAreaSqM: number
+  areaDiscrepancySqM: number
+  titleDeedDocUrl: string
+  extract712DocUrl: string
+  bankPassbookDocUrl: string
+  cadastralMapDocUrl: string
+  jmsSurveyReportUrl: string
+  calculatedAwardAmount: number
+  status: 'Pending_Verification' | 'Approved_For_Escrow' | 'Clarification_Required' | 'Disputed'
+  officerRemarks?: string
 }

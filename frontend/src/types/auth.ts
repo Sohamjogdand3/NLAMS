@@ -11,6 +11,7 @@ export type DepartmentRole =
   | 'pia' // Project Implementing Agency
   | 'state_admin' // State Revenue Admin (Maharashtra)
   | 'central_admin' // Central / National Government Authority
+  | 'rnr_admin' // Rehabilitation & Resettlement Administrator
   | 'admin' // System Administrator
 
 export interface UserSession {
@@ -68,6 +69,24 @@ export const MOCK_ACCOUNTS: Record<string, MockAccount> = {
     role: 'lao',
     departmentName: 'Special Land Acquisition Office, Pune',
     description: 'Land Acquisition Officer',
+  },
+  // R&R Administrator (Social Welfare & Rehabilitation)
+  'rnr_officer': {
+    username: 'rnr.officer.pune@nlams.gov.demo',
+    email: 'rnr.officer.pune@nlams.gov.demo',
+    name: 'Dr. Sunita Jagtap (R&R Administrator)',
+    role: 'rnr_admin',
+    departmentName: 'Rehabilitation & Resettlement Authority, Pune',
+    description: 'R&R Administrator & Social Impact Assessor',
+  },
+  // Field Surveyor / Talathi
+  'surveyor_pune': {
+    username: 'surveyor.pune@nlams.gov.demo',
+    email: 'surveyor.pune@nlams.gov.demo',
+    name: 'Ramesh Kadam (Cadastral Surveyor / Talathi)',
+    role: 'surveyor',
+    departmentName: 'District Land Records & Cadastral Survey Division',
+    description: 'Field Surveyor & Cadastral Mapping Officer',
   },
   // Tehsildar (Haveli, Pune)
   'tehsildar_haveli': {
