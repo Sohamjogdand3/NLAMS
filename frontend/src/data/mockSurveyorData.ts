@@ -43,7 +43,7 @@ export const MOCK_SURVEY_TASKS: FieldParcelTask[] = [
     measuredAreaHectares: 1.82,
     variancePercentage: 1.08,
     ownerNameRecord: 'Suresh Babanrao Jagtap',
-    occupantOnSite: 'Suresh Babanrao Jagtap',
+    occupantOnSite: 'Suresh Babanrao Jagtap (Self-Cultivating)',
     occupantType: 'Self-Cultivating Owner',
     aadhaarMasked: 'XXXX-XXXX-4821',
     isDisputedBoundary: false,
@@ -57,7 +57,7 @@ export const MOCK_SURVEY_TASKS: FieldParcelTask[] = [
       {
         id: 'CROP-01',
         cropName: 'Sugarcane (Co 86032)',
-        cultivatedAreaHa: 1.20,
+        cultivatedAreaHa: 1.2,
         season: 'Perennial',
         irrigationType: 'Canal',
       },
@@ -129,6 +129,17 @@ export const MOCK_SURVEY_TASKS: FieldParcelTask[] = [
         operationalStatus: 'Operational',
       },
     ],
+    treesSurveyed: {
+      timberTrees: 8,
+      fruitBearingTrees: 24,
+    },
+    structuresCount: {
+      puccaStructures: 1,
+      borewells: 2,
+      farmPonds: 0,
+      fencingMeters: 180,
+    },
+    photoCount: 6,
     otherAssetsCount: 1,
     photos: MOCK_GEOTAGGED_PHOTOS,
     surveyorRemarks: 'Boundary pillars intact on North and East sides. Farmer requested early joint measurement copy.',
@@ -160,7 +171,7 @@ export const MOCK_SURVEY_TASKS: FieldParcelTask[] = [
       {
         id: 'CROP-03',
         cropName: 'Bajra (Pearl Millet)',
-        cultivatedAreaHa: 1.50,
+        cultivatedAreaHa: 1.5,
         season: 'Kharif',
         irrigationType: 'Rainfed',
       },
@@ -191,6 +202,17 @@ export const MOCK_SURVEY_TASKS: FieldParcelTask[] = [
         operationalStatus: 'Seasonal',
       },
     ],
+    treesSurveyed: {
+      timberTrees: 0,
+      fruitBearingTrees: 0,
+    },
+    structuresCount: {
+      puccaStructures: 0,
+      borewells: 0,
+      farmPonds: 0,
+      fencingMeters: 0,
+    },
+    photoCount: 0,
     otherAssetsCount: 0,
     photos: [],
     offlineCached: false,
@@ -207,7 +229,7 @@ export const MOCK_SURVEY_TASKS: FieldParcelTask[] = [
     measuredAreaHectares: 0.94,
     variancePercentage: 1.05,
     ownerNameRecord: 'Smt. Shantabai Tukaram Gaikwad',
-    occupantOnSite: 'Sunita Tukaram Gaikwad',
+    occupantOnSite: 'Sunita Tukaram Gaikwad (Daughter / Legal Heir)',
     occupantType: 'Legal Heir',
     aadhaarMasked: 'XXXX-XXXX-3312',
     isDisputedBoundary: false,
@@ -229,6 +251,17 @@ export const MOCK_SURVEY_TASKS: FieldParcelTask[] = [
     trees: [],
     structures: [],
     waterAssets: [],
+    treesSurveyed: {
+      timberTrees: 4,
+      fruitBearingTrees: 12,
+    },
+    structuresCount: {
+      puccaStructures: 0,
+      borewells: 1,
+      farmPonds: 1,
+      fencingMeters: 120,
+    },
+    photoCount: 4,
     otherAssetsCount: 0,
     photos: [
       {
@@ -254,7 +287,7 @@ export const MOCK_SURVEY_TASKS: FieldParcelTask[] = [
     district: 'Pune',
     surveyStatus: 'Assigned',
     scheduleDate: 'Tomorrow',
-    prescribedAreaHectares: 1.40,
+    prescribedAreaHectares: 1.4,
     ownerNameRecord: 'Pandurang Ganpat Shinde',
     occupantOnSite: 'Pandurang Ganpat Shinde',
     occupantType: 'Self-Cultivating Owner',
@@ -275,4 +308,3 @@ export const MOCK_SURVEY_TASKS: FieldParcelTask[] = [
     offlineCached: false,
   },
 ]
-
