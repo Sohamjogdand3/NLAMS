@@ -11,6 +11,20 @@ from app.models.otp_session import OTPSession
 from app.models.user_session import UserSession
 from app.models.login_attempt import LoginAttempt
 from app.models.audit_log import AuditLog
+from app.models.project_proposal import ProjectProposal, WorkflowStage
+from app.models.proposal_geography import ProposalGeographyMapping
+from app.models.project_dpr import ProjectDpr
+from app.models.project_gis_corridor import ProjectGisCorridor
+from app.models.land_parcel import LandParcel
+from app.models.cala_appointment import CalaAppointment
+from app.models.expert_committee_appraisal import ExpertCommitteeAppraisal
+from app.models.section15_objection import Section15Objection
+from app.models.citizen_claim import CitizenClaim
+from app.models.statutory_award import StatutoryAward
+from app.models.rnr_census import AffectedFamilyCensus
+from app.models.rnr_entitlement import RnREntitlementPackage
+from app.models.community_asset_loss import CommunityAssetLoss
+from app.models.payment_disbursal import LandCompensationDisbursal, RnRBenefitDisbursal
 
 __all__ = [
     "Base",
@@ -26,4 +40,21 @@ __all__ = [
     "UserSession",
     "LoginAttempt",
     "AuditLog",
+    "ProjectProposal",
+    "WorkflowStage",
+    "ProposalGeographyMapping",
+    "ProjectDpr",
+    "ProjectGisCorridor",
+    "LandParcel",
+    "EscrowAccount",
+    "CalaAppointment",
+    "ExpertCommitteeAppraisal",
+    "Section15Objection",
+    "CitizenClaim",
+    "StatutoryAward",
+    "AffectedFamilyCensus",
+    "RnREntitlementPackage",
+    "CommunityAssetLoss",
+    "LandCompensationDisbursal",
+    "RnRBenefitDisbursal",
 ]
