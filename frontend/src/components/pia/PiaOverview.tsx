@@ -39,10 +39,11 @@ export default function PiaOverview({
       count: kpis.totalProjects,
       subtext: 'Across all sector corridors',
       icon: FolderGit2,
-      color: 'border-slate-300 text-slate-900',
+      color: 'border-slate-200/90 text-slate-900 hover:border-slate-300',
       bg: 'bg-white',
+      iconBg: 'bg-slate-100 text-slate-700',
       badge: 'Portfolio',
-      badgeColor: 'bg-slate-100 text-slate-700',
+      badgeColor: 'bg-slate-100 text-slate-600 border border-slate-200/60',
       filter: 'all',
     },
     {
@@ -51,22 +52,24 @@ export default function PiaOverview({
       count: kpis.draftProposals,
       subtext: 'Pending agency submission',
       icon: FileEdit,
-      color: 'border-slate-300 text-slate-700',
-      bg: 'bg-white',
+      color: 'border-amber-200/80 text-amber-900 hover:border-amber-300',
+      bg: 'bg-gradient-to-b from-amber-50/25 to-white',
+      iconBg: 'bg-amber-100/70 text-amber-700',
       badge: 'Step 1-2 In Prep',
-      badgeColor: 'bg-amber-50 text-amber-700 border border-amber-200',
+      badgeColor: 'bg-amber-50 text-amber-700 border border-amber-200/70',
       filter: 'draft',
     },
     {
       id: 'scrutiny',
       title: 'Under Scrutiny',
       count: kpis.underScrutiny,
-      subtext: 'With CALA / District Collector',
+      subtext: 'With CALA / Collector',
       icon: SearchCheck,
-      color: 'border-blue-200 text-blue-900',
-      bg: 'bg-white',
+      color: 'border-blue-200/80 text-blue-900 hover:border-blue-300',
+      bg: 'bg-gradient-to-b from-blue-50/25 to-white',
+      iconBg: 'bg-blue-100/70 text-blue-700',
       badge: 'Revenue Verification',
-      badgeColor: 'bg-blue-50 text-blue-700 border border-blue-200',
+      badgeColor: 'bg-blue-50 text-blue-700 border border-blue-200/70',
       filter: 'under_scrutiny',
     },
     {
@@ -75,10 +78,11 @@ export default function PiaOverview({
       count: kpis.clarificationRequired,
       subtext: 'Action required within SLA',
       icon: AlertCircle,
-      color: 'border-red-300 text-[#991B1B]',
-      bg: 'bg-red-50/50 ring-1 ring-red-200',
+      color: 'border-red-300/90 text-[#991B1B] hover:border-red-400 ring-1 ring-red-200/60',
+      bg: 'bg-gradient-to-b from-red-50/40 to-white',
+      iconBg: 'bg-red-100 text-[#991B1B]',
       badge: `${openAlerts.length} Critical Queries`,
-      badgeColor: 'bg-[#991B1B] text-white',
+      badgeColor: 'bg-[#991B1B] text-white shadow-2xs',
       filter: 'clarification_required',
     },
     {
@@ -87,10 +91,11 @@ export default function PiaOverview({
       count: kpis.acquisitionInProgress,
       subtext: 'Notification to compensation',
       icon: Clock,
-      color: 'border-purple-200 text-purple-900',
-      bg: 'bg-white',
+      color: 'border-purple-200/80 text-purple-900 hover:border-purple-300',
+      bg: 'bg-gradient-to-b from-purple-50/25 to-white',
+      iconBg: 'bg-purple-100/70 text-purple-700',
       badge: 'Statutory Active',
-      badgeColor: 'bg-purple-50 text-purple-700 border border-purple-200',
+      badgeColor: 'bg-purple-50 text-purple-700 border border-purple-200/70',
       filter: 'in_progress',
     },
     {
@@ -99,35 +104,36 @@ export default function PiaOverview({
       count: kpis.approved,
       subtext: 'Sec 3E possession cleared',
       icon: CheckCircle2,
-      color: 'border-emerald-200 text-emerald-900',
-      bg: 'bg-white',
+      color: 'border-emerald-200/80 text-emerald-900 hover:border-emerald-300',
+      bg: 'bg-gradient-to-b from-emerald-50/25 to-white',
+      iconBg: 'bg-emerald-100/70 text-emerald-700',
       badge: 'Right-of-Way Ready',
-      badgeColor: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
+      badgeColor: 'bg-emerald-50 text-emerald-700 border border-emerald-200/70',
       filter: 'approved',
     },
   ]
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       {/* 1. Urgent Clarification Required Alert Banner */}
       {openAlerts.length > 0 && (
-        <div className="rounded-xl border border-red-200 bg-red-50/90 p-4 shadow-2xs">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div className="flex items-start gap-3">
-              <div className="p-2 rounded-lg bg-[#991B1B] text-white shrink-0">
-                <ShieldAlert className="h-5 w-5" />
+        <div className="rounded-xl border border-red-200 bg-red-50/90 p-3 sm:p-3.5 shadow-2xs">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+            <div className="flex items-center gap-2.5">
+              <div className="p-1.5 rounded-lg bg-[#991B1B] text-white shrink-0">
+                <ShieldAlert className="h-4 w-4" />
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h4 className="text-sm font-bold text-[#991B1B]">
-                    Action Required: {openAlerts.length} Pending Clarification Request{openAlerts.length > 1 ? 's' : ''} from Revenue Authorities
+                  <h4 className="text-xs sm:text-sm font-bold text-[#991B1B]">
+                    Action Required: {openAlerts.length} Pending Query{openAlerts.length > 1 ? 'ies' : ''} from Revenue Authority
                   </h4>
-                  <span className="inline-flex rounded-full bg-red-200 px-2 py-0.5 text-[10px] font-bold text-red-900">
-                    Statutory SLA Risk
+                  <span className="inline-flex rounded-full bg-red-200/80 px-2 py-0.5 text-[9px] font-extrabold text-red-900">
+                    SLA Risk
                   </span>
                 </div>
-                <p className="text-xs text-red-900/80 mt-0.5">
-                  Latest: <span className="font-semibold">{openAlerts[0]?.title}</span> ({openAlerts[0]?.projectCode}) — {openAlerts[0]?.daysLeft} days remaining to respond.
+                <p className="text-[11px] text-red-900/80 mt-0.5">
+                  Latest: <span className="font-semibold">{openAlerts[0]?.title}</span> ({openAlerts[0]?.projectCode}) — {openAlerts[0]?.daysLeft} days left.
                 </p>
               </div>
             </div>
@@ -135,7 +141,7 @@ export default function PiaOverview({
             <button
               type="button"
               onClick={() => onNavigateTab('alerts')}
-              className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#991B1B] hover:bg-[#7F1D1D] text-white px-3.5 py-2 text-xs font-bold transition-colors shrink-0 shadow-xs"
+              className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#991B1B] hover:bg-[#7F1D1D] text-white px-3 py-1.5 text-xs font-bold transition-colors shrink-0 shadow-xs cursor-pointer"
             >
               <span>Resolve Queries</span>
               <ArrowUpRight className="h-3.5 w-3.5" />
@@ -144,8 +150,8 @@ export default function PiaOverview({
         </div>
       )}
 
-      {/* 3. 6 Primary KPI Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      {/* 3. 6 Primary KPI Summary Cards (Ultra-Compact Modern Grid) */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-2.5">
         {kpiCards.map((card) => {
           const Icon = card.icon
           return (
@@ -156,29 +162,22 @@ export default function PiaOverview({
                 onFilterStatus(card.filter)
                 onNavigateTab('projects')
               }}
-              className={`flex flex-col justify-between rounded-xl border p-4 text-left transition-all hover:shadow-md hover:-translate-y-0.5 ${card.bg} ${card.color}`}
+              className={`group flex flex-col justify-between rounded-xl border p-2.5 sm:p-3 text-left transition-all duration-150 hover:shadow-sm hover:-translate-y-0.5 cursor-pointer ${card.bg} ${card.color}`}
             >
-              <div className="flex items-center justify-between">
-                <div className="p-2 rounded-lg bg-slate-100 text-slate-700">
-                  <Icon className="h-5 w-5" />
+              <div className="flex items-center justify-between gap-1.5">
+                <div className={`p-1 rounded-md ${card.iconBg}`}>
+                  <Icon className="h-3.5 w-3.5" />
                 </div>
-                <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold ${card.badgeColor}`}>
-                  {card.badge}
-                </span>
+                <ArrowUpRight className="h-3 w-3 text-slate-400 group-hover:text-[#991B1B] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
               </div>
 
-              <div className="mt-3">
-                <span className="text-xs font-semibold text-slate-600 block">{card.title}</span>
-                <div className="flex items-baseline gap-2 mt-1">
-                  <span className="text-2xl font-bold tracking-tight text-slate-900">{card.count}</span>
-                  <span className="text-xs text-slate-500">projects</span>
+              <div className="mt-1.5">
+                <div className="flex items-baseline gap-1">
+                  <span className="text-lg sm:text-xl font-black tracking-tight text-slate-900 leading-none">{card.count}</span>
+                  <span className="text-[10px] text-slate-400 font-medium">projects</span>
                 </div>
-                <span className="text-[11px] text-slate-500 block mt-1">{card.subtext}</span>
-              </div>
-
-              <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] font-semibold text-[#991B1B]">
-                <span>View projects</span>
-                <ArrowUpRight className="h-3.5 w-3.5" />
+                <span className="text-[11px] font-bold text-slate-700 block leading-tight truncate mt-1">{card.title}</span>
+                <span className="text-[9.5px] text-slate-400 block truncate mt-0.5">{card.subtext}</span>
               </div>
             </button>
           )
