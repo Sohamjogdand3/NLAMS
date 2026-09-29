@@ -30,7 +30,7 @@ export default function CentralSidebar({
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'projects', label: 'Projects', icon: FolderKanban },
     { id: 'states', label: 'States', icon: MapPin },
-    { id: 'gismap', label: 'GIS Map', icon: MapIcon },
+    { id: 'gismap', label: 'Cadastral GIS Map', icon: MapIcon },
     { id: 'workflow', label: 'Workflow', icon: GitMerge },
     { id: 'risk', label: 'Risk & AI', icon: AlertTriangle, badge: 3 },
     { id: 'analytics', label: 'Analytics', icon: BarChart3 },
@@ -76,7 +76,7 @@ export default function CentralSidebar({
             <button
               key={item.id}
               type="button"
-              onClick={() => setActiveTab(item.id)}
+              onClick={() => item.id === 'gismap' ? window.open('/gis-mapping', '_blank') : setActiveTab(item.id)}
               title={isCollapsed ? item.label : undefined}
               className={`group flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-xs font-semibold transition-all cursor-pointer ${
                 isActive

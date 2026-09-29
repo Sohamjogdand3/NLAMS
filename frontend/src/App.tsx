@@ -10,6 +10,8 @@ import RnRAdminDashboard from './pages/RnRAdminDashboard'
 import FieldSurveyorApp from './pages/FieldSurveyorApp'
 import { AuthProvider } from './auth/AuthContext'
 import ProtectedRoute from './components/auth/ProtectedRoute'
+import GisMappingApp from './pages/GisMappingApp'
+
 
 function App() {
   return (
@@ -17,6 +19,7 @@ function App() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
+                <Route path="/gis-mapping" element={<ProtectedRoute><GisMappingApp /></ProtectedRoute>} />
         <Route path="/dashboard/citizen" element={<ProtectedRoute><CitizenDashboard /></ProtectedRoute>} />
         <Route path="/dashboard/central" element={<ProtectedRoute><CentralDashboard /></ProtectedRoute>} />
         <Route path="/dashboard/national" element={<ProtectedRoute><CentralDashboard /></ProtectedRoute>} />

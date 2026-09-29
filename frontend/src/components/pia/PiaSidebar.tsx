@@ -1,4 +1,4 @@
-import {
+import { MapPin,
   LayoutDashboard,
   FolderGit2,
   GitFork,
@@ -35,6 +35,7 @@ export default function PiaSidebar({
       icon: LayoutDashboard,
       badge: null,
     },
+    { id: 'gis' as PiaNavigationTab, label: 'Cadastral GIS Map', icon: MapPin, badge: null },
     {
       id: 'projects' as PiaNavigationTab,
       label: 'My Projects',
@@ -116,7 +117,7 @@ export default function PiaSidebar({
             <button
               key={item.id}
               type="button"
-              onClick={() => setActiveTab(item.id)}
+              onClick={() => item.id === 'gis' ? window.open('/gis-mapping', '_blank') : setActiveTab(item.id)}
               className={`group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all ${
                 isActive
                   ? 'bg-red-50 text-[#991B1B] font-semibold ring-1 ring-red-200'

@@ -12,6 +12,7 @@ from app.api.escrow import router as escrow_router
 from app.api.state_gateway import router as state_gateway_router
 from app.api.adjudication import router as adjudication_router
 from app.api.rnr import router as rnr_router
+from app.api.routes.gis import router as gis_router
 
 from app.db.base import Base
 from app.db.session import engine
