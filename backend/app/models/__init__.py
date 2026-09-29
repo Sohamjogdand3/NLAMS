@@ -25,6 +25,14 @@ from app.models.rnr_census import AffectedFamilyCensus
 from app.models.rnr_entitlement import RnREntitlementPackage
 from app.models.community_asset_loss import CommunityAssetLoss
 from app.models.payment_disbursal import LandCompensationDisbursal, RnRBenefitDisbursal
+from app.models.field_survey import FieldParcelSurvey, GeotaggedAssetEvidence
+from app.models.possession import (
+    DigitalPanchnama,
+    PossessionCertificate,
+    DigitalMutationRecord,
+    PiaHandoverCertificate,
+    ProjectCompletionArchival,
+)
 
 __all__ = [
     "Base",
@@ -57,4 +65,11 @@ __all__ = [
     "CommunityAssetLoss",
     "LandCompensationDisbursal",
     "RnRBenefitDisbursal",
+    "FieldParcelSurvey",
+    "GeotaggedAssetEvidence",
+    "DigitalPanchnama",
+    "PossessionCertificate",
+    "DigitalMutationRecord",
+    "PiaHandoverCertificate",
+    "ProjectCompletionArchival",
 ]
