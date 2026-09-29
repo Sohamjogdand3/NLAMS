@@ -152,7 +152,7 @@ export default function DistrictSidebar({
             <button
               key={item.id}
               type="button"
-              onClick={() => setActiveTab(item.id)}
+              onClick={() => item.id === 'gis' ? window.open('/gis-mapping', '_blank') : setActiveTab(item.id)}
               className={`w-full flex items-center gap-3.5 rounded-xl px-3.5 py-2.5 text-xs font-semibold transition-all group ${
                 isActive
                   ? 'bg-[#042A5E] text-white shadow-sm'

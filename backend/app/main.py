@@ -12,6 +12,7 @@ from app.api.escrow import router as escrow_router
 from app.api.state_gateway import router as state_gateway_router
 from app.api.adjudication import router as adjudication_router
 from app.api.rnr import router as rnr_router
+from app.api.routes.gis import router as gis_router
 from app.api.surveyor import router as surveyor_router
 from app.api.possession import router as possession_router
 
@@ -53,6 +54,7 @@ app.include_router(adjudication_router, prefix=settings.API_V1_STR)
 app.include_router(rnr_router, prefix=settings.API_V1_STR)
 app.include_router(surveyor_router, prefix=settings.API_V1_STR)
 app.include_router(possession_router, prefix=settings.API_V1_STR)
+app.include_router(gis_router, prefix="/api/gis", tags=["GIS Location Intelligence"])
 
 # Direct fallback mounts for legacy compatibility
 app.include_router(auth_router)
@@ -65,6 +67,7 @@ app.include_router(adjudication_router)
 app.include_router(rnr_router)
 app.include_router(surveyor_router)
 app.include_router(possession_router)
+app.include_router(gis_router, prefix="/api/gis", tags=["GIS Location Intelligence"])
 
 
 @app.get("/health", tags=["Health"])
