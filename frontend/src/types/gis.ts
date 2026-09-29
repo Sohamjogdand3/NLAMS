@@ -1,6 +1,7 @@
 export interface CoordinateInput {
   latitude: number;
   longitude: number;
+  radius_m?: number;
 }
 
 export interface ReverseGeocodeResult {

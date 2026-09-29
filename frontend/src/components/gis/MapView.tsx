@@ -1,11 +1,11 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, GeoJSON, useMap, Circle, LayersControl, Tooltip } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
-import { IdentifyLandResponse, ParcelResponse } from '../types';
+import type { IdentifyLandResponse, ParcelResponse } from '../../types/gis';
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -37,7 +37,7 @@ function MapUpdater({ latitude, longitude, data }: MapViewProps) {
     }
 
     if (data?.nearby_parcels) {
-      data.nearby_parcels.forEach(p => {
+      data.nearby_parcels.forEach((p: ParcelResponse) => {
         const layer = L.geoJSON(p.geojson);
         allBounds.extend(layer.getBounds());
         hasBounds = true;
@@ -123,7 +123,7 @@ export function MapView({ latitude, longitude, data, radius, selectedParcels = [
           />
         )}
         
-        {data && data.nearby_parcels && data.nearby_parcels.map((p) => (
+        {data && data.nearby_parcels && data.nearby_parcels.map((p: ParcelResponse) => (
           <GeoJSON 
             key={p.parcel_id} 
             data={p.geojson} 

@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { MapView } from '../components/gis/MapView';
 import { CoordinateInput } from '../components/gis/CoordinateInput';
 import { ParcelInfo } from '../components/gis/ParcelInfo';
 import { LocationIntelligence } from '../components/gis/LocationIntelligence';
 import { AcquisitionDashboard } from '../components/gis/AcquisitionDashboard';
 import { gisService } from '../services/gisApi';
-import { IdentifyLandResponse, ParcelResponse } from '../types/gis';
-import { MapPin, Layers, LayoutDashboard } from 'lucide-react';
+import type { IdentifyLandResponse, ParcelResponse } from '../types/gis';
+import { MapPin } from 'lucide-react';
 
-export default export default function GisMappingApp() {
+export default function GisMappingApp() {
   const [mapCenter, setMapCenter] = useState<{lat: number, lng: number}>({ lat: 19.0328, lng: 72.8964 });
   const [data, setData] = useState<IdentifyLandResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);

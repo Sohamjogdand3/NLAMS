@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { acquisitionService, gisService } from "../services/api";
-import { CompensationResponse, NoticeResponse, ParcelResponse, LocationIntelligenceResponse } from "../types";
+import { useState, useEffect } from "react";
+import { acquisitionService, gisService } from "../../services/gisApi";
+import type { CompensationResponse, NoticeResponse, ParcelResponse, LocationIntelligenceResponse, ParcelCompensation, InfrastructureItem, ProjectItem, NewsItem } from "../../types/gis";
 import { X, Calculator, FileText, Printer, CheckCircle, AlertTriangle, Layers } from "lucide-react";
 
 interface Props {
@@ -165,7 +165,7 @@ export function AcquisitionDashboard({ selectedParcels, district, state, onClose
                           </tr>
                         </thead>
                         <tbody>
-                          {compensation.parcel_breakdown.map((p, i) => (
+                          {compensation.parcel_breakdown.map((p: ParcelCompensation, i: number) => (
                             <tr key={i} className="border-b border-slate-100 hover:bg-slate-50">
                               <td className="px-4 py-3 font-medium">{p.survey_number}</td>
                               <td className="px-4 py-3">{p.area_sqm.toFixed(1)}</td>
@@ -220,14 +220,14 @@ export function AcquisitionDashboard({ selectedParcels, district, state, onClose
                             <div>
                               <h4 className="font-bold text-green-700 mb-2">Strengths</h4>
                               <ul className="list-disc pl-5 text-sm space-y-1">
-                                {intel.ai_analysis.strengths.map((s, i) => <li key={i}>{s}</li>)}
+                                {intel.ai_analysis.strengths.map((s: string, i: number) => <li key={i}>{s}</li>)}
                               </ul>
                             </div>
                             <div>
                               <h4 className="font-bold text-red-700 mb-2">Weaknesses & Risks</h4>
                               <ul className="list-disc pl-5 text-sm space-y-1">
-                                {intel.ai_analysis.weaknesses.map((s, i) => <li key={i}>{s}</li>)}
-                                {intel.ai_analysis.threats.map((s, i) => <li key={i}>{s}</li>)}
+                                {intel.ai_analysis.weaknesses.map((s: string, i: number) => <li key={i}>{s}</li>)}
+                                {intel.ai_analysis.threats.map((s: string, i: number) => <li key={i}>{s}</li>)}
                               </ul>
                             </div>
                           </div>
@@ -240,7 +240,7 @@ export function AcquisitionDashboard({ selectedParcels, district, state, onClose
                             <div>
                               <h3 className="font-bold mb-3 text-slate-600">Nearby Civic Amenities (3km)</h3>
                               <ul className="space-y-3">
-                                {intel.infrastructure.slice(0, 5).map(item => (
+                                {intel.infrastructure.slice(0, 5).map((item: InfrastructureItem) => (
                                   <li key={item.id} className="text-sm flex justify-between border-b border-slate-100 pb-2">
                                     <div>
                                       <span className="font-medium block">{item.name}</span>
@@ -255,7 +255,7 @@ export function AcquisitionDashboard({ selectedParcels, district, state, onClose
                             <div>
                               <h3 className="font-bold mb-3 text-slate-600">Major Ongoing Projects</h3>
                               <ul className="space-y-3">
-                                {intel.projects.slice(0, 5).map(item => (
+                                {intel.projects.slice(0, 5).map((item: ProjectItem) => (
                                   <li key={item.id} className="text-sm flex justify-between border-b border-slate-100 pb-2">
                                     <div>
                                       <span className="font-medium block text-orange-700">{item.name}</span>
@@ -298,7 +298,7 @@ export function AcquisitionDashboard({ selectedParcels, district, state, onClose
                               </tr>
                             </thead>
                             <tbody>
-                              {compensation.parcel_breakdown.map((p, i) => (
+                              {compensation.parcel_breakdown.map((p: ParcelCompensation, i: number) => (
                                 <tr key={i} className="border-b">
                                   <td className="p-2">{p.survey_number}</td>
                                   <td className="p-2">{p.area_sqm.toFixed(1)}</td>
@@ -315,7 +315,7 @@ export function AcquisitionDashboard({ selectedParcels, district, state, onClose
                         <div className="page-break-inside-avoid">
                           <h2 className="text-xl font-bold border-b border-slate-300 pb-2 mb-4 uppercase text-slate-700">4. Regional Public Sentiment & News</h2>
                           <ul className="list-disc pl-5 text-sm space-y-2 text-slate-700">
-                            {intel.news.slice(0, 4).map((n, i) => (
+                            {intel.news.slice(0, 4).map((n: NewsItem, i: number) => (
                               <li key={i}>
                                 <strong>{n.source}</strong>: {n.title} <span className="text-slate-500 text-xs">({n.published_date})</span>
                               </li>

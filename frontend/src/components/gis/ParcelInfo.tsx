@@ -1,5 +1,4 @@
-import React from 'react';
-import { IdentifyLandResponse, ParcelResponse } from '../types';
+import type { IdentifyLandResponse, ParcelResponse } from '../../types/gis';
 import { AlertTriangle } from 'lucide-react';
 
 interface ParcelInfoProps {

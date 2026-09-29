@@ -1,6 +1,13 @@
-import { IdentifyLandResponse, CoordinateInput, LocationIntelligenceResponse, ParcelResponse, ParcelInput, CompensationResponse, NoticeResponse } from "../types";
+import type {
+  IdentifyLandResponse,
+  CoordinateInput,
+  LocationIntelligenceResponse,
+  ParcelInput,
+  CompensationResponse,
+  NoticeResponse,
+} from '../types/gis';
 
-const API_BASE_URL = "http://localhost:8000/api";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
 
 export const gisService = {
   async identifyLand(input: CoordinateInput): Promise<IdentifyLandResponse> {

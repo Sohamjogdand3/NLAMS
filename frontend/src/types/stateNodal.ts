@@ -1,5 +1,6 @@
 export type StateNavigationTab =
   | 'overview'
+  | 'gis'
   | 'proposals'
   | 'cala-appointments'
   | 'multiplier-audit'
