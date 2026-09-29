@@ -19,6 +19,7 @@ import CriticalProjectsTable from '../components/central/CriticalProjectsTable'
 import SlaAlertsWidget from '../components/central/SlaAlertsWidget'
 import AiRiskWidget from '../components/central/AiRiskWidget'
 import CentralBlockerOverride from '../components/central/CentralBlockerOverride'
+import LegalIntelligencePanel from '../components/rag/LegalIntelligencePanel'
 
 import {
   PieChart,
@@ -367,6 +368,13 @@ export default function CentralDashboard() {
                 </div>
               )}
             </>
+          )}
+
+          {/* TAB 10: NATIONAL LEGAL INTELLIGENCE (RAG COPILOT) */}
+          {activeTab === 'legal_ai' && (
+            <div className="h-[calc(100vh-140px)]">
+              <LegalIntelligencePanel />
+            </div>
           )}
         </main>
       </div>

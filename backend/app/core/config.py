@@ -41,6 +41,11 @@ class Settings(BaseSettings):
 
     DATABASE_URL: Optional[str] = None
 
+    # AI & Legal RAG Configuration
+    GEMINI_API_KEY: Optional[str] = None
+    GEMINI_MODEL: str = "gemini-2.5-flash"
+    RAG_EMBEDDING_MODEL: str = "BAAI/bge-small-en-v1.5"
+
     @property
     def sync_database_url(self) -> str:
         if self.DATABASE_URL:

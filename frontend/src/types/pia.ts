@@ -8,6 +8,7 @@ export type PiaNavigationTab =
   | 'reports'
   | 'gis'
   | 'profile'
+  | 'legal_ai'
 
 export type StatutoryStage =
   | 'Proposal'

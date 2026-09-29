@@ -16,6 +16,7 @@ interface CitizenHeaderProps {
 }
 
 export default function CitizenHeader({
+  activeTab = 'home',
   setActiveTab,
   unreadNotificationsCount = 2,
 }: CitizenHeaderProps) {
@@ -168,6 +169,46 @@ export default function CitizenHeader({
               )}
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Subnav Tabs */}
+      <div className="bg-[#031B3D]/80 border-b border-blue-900/40 px-4 sm:px-8">
+        <div className="mx-auto flex max-w-7xl items-center gap-2 overflow-x-auto py-2 text-xs font-semibold">
+          {[
+            { id: 'home', label: 'Overview' },
+            { id: 'case', label: 'Case Progress' },
+            { id: 'land', label: 'Land Records' },
+            { id: 'notices', label: 'Notices' },
+            { id: 'objections', label: 'Objections' },
+            { id: 'compensation', label: 'Compensation' },
+            { id: 'legal_help', label: 'Legal Help', badge: 'Public Assistant' },
+          ].map((tab) => {
+            const isActive = activeTab === tab.id
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setActiveTab?.(tab.id)}
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg whitespace-nowrap transition-colors cursor-pointer ${
+                  isActive
+                    ? 'bg-amber-400 text-[#042A5E] font-bold shadow-xs'
+                    : 'text-slate-300 hover:text-white hover:bg-white/10'
+                }`}
+              >
+                <span>{tab.label}</span>
+                {tab.badge && (
+                  <span
+                    className={`text-[9px] px-1.5 py-0.5 rounded-md font-extrabold ${
+                      isActive ? 'bg-[#042A5E] text-white' : 'bg-amber-500/20 text-amber-300'
+                    }`}
+                  >
+                    {tab.badge}
+                  </span>
+                )}
+              </button>
+            )
+          })}
         </div>
       </div>
     </header>

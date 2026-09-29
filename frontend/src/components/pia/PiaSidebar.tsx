@@ -61,6 +61,13 @@ export default function PiaSidebar({
       badge: openClarificationCount > 0 ? `${openClarificationCount} Action` : null,
       badgeColor: 'bg-red-700 text-white animate-pulse',
     },
+    {
+      id: 'legal_ai' as PiaNavigationTab,
+      label: 'Project Legal Intelligence',
+      icon: Shield,
+      badge: 'RAG Assistant',
+      badgeColor: 'bg-red-800 text-white font-bold',
+    },
   ]
 
   return (

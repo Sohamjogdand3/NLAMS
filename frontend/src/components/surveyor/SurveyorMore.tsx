@@ -16,6 +16,7 @@ interface SurveyorMoreProps {
   onUpdatePreferences: (prefs: Partial<SurveyorPreferences>) => void
   onSyncAll: () => void
   isOnline: boolean
+  onNavigateToLegal?: () => void
 }
 
 export default function SurveyorMore({
@@ -24,6 +25,7 @@ export default function SurveyorMore({
   onUpdatePreferences,
   onSyncAll,
   isOnline,
+  onNavigateToLegal,
 }: SurveyorMoreProps) {
   const [isSyncing, setIsSyncing] = useState(false)
   const [syncToast, setSyncToast] = useState<string | null>(null)
@@ -213,6 +215,31 @@ export default function SurveyorMore({
           <span className="text-slate-400">v2.4 Certified</span>
         </div>
       </div>
+
+      {/* 4. Field Legal Guidance RAG Copilot */}
+      {onNavigateToLegal && (
+        <div className="rounded-2xl border border-indigo-200 bg-indigo-50/50 p-5 shadow-xs space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <FileText className="h-4 w-4 text-indigo-700" />
+              <h3 className="text-sm font-black text-indigo-950">Field Legal Guidance</h3>
+            </div>
+            <span className="text-[10px] font-bold bg-indigo-600 text-white px-2 py-0.5 rounded-full">
+              RAG AI
+            </span>
+          </div>
+          <p className="text-xs text-indigo-900">
+            Query RFCTLARR statutory rules, boundary walk protocols, tree valuation rules, and village revenue norms.
+          </p>
+          <button
+            type="button"
+            onClick={onNavigateToLegal}
+            className="w-full rounded-xl bg-indigo-700 hover:bg-indigo-800 text-white py-2.5 text-xs font-bold transition-colors cursor-pointer shadow-xs"
+          >
+            Launch Field Legal Guidance &rarr;
+          </button>
+        </div>
+      )}
     </div>
   )
 }

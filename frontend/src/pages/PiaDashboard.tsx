@@ -21,6 +21,7 @@ import PiaAlertsTasks from '../components/pia/PiaAlertsTasks'
 import PiaGisMap from '../components/pia/PiaGisMap'
 import PiaDprUploader from '../components/pia/PiaDprUploader'
 import PiaEscrowReplenishment from '../components/pia/PiaEscrowReplenishment'
+import LegalIntelligencePanel from '../components/rag/LegalIntelligencePanel'
 
 import { CheckCircle2, X } from 'lucide-react'
 
@@ -331,6 +332,12 @@ export default function PiaDashboard() {
                 projects={projects}
                 onSelectProject={(p) => setSelectedDossierProject(p)}
               />
+            )}
+
+            {activeTab === 'legal_ai' && (
+              <div className="h-[calc(100vh-140px)]">
+                <LegalIntelligencePanel />
+              </div>
             )}
           </div>
         </main>

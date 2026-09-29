@@ -10,8 +10,10 @@ import {
   ShieldCheck,
   Building,
   AlertTriangle,
+  Sparkles,
 } from 'lucide-react'
 import type { DistrictNavigationTab } from '../../types/district'
+import { useAuth } from '../../auth/AuthContext'
 
 interface DistrictSidebarProps {
   activeTab: DistrictNavigationTab
@@ -28,6 +30,15 @@ export default function DistrictSidebar({
   setIsCollapsed,
   pendingScrutinyCount,
 }: DistrictSidebarProps) {
+  const { user } = useAuth()
+  const roleCode = user?.role?.toLowerCase() || ''
+
+  const legalAiLabel =
+    roleCode === 'dist_collector' || roleCode === 'collector'
+      ? 'District Legal Intelligence'
+      : roleCode === 'talathi' || roleCode === 'tehsildar'
+      ? 'Revenue & Legal Intelligence'
+      : 'Legal Intelligence'
   const menuItems = [
     {
       id: 'dashboard' as DistrictNavigationTab,
@@ -95,6 +106,13 @@ export default function DistrictSidebar({
       label: 'Reports & Audit Log',
       icon: FileCheck2,
       badge: null,
+    },
+    {
+      id: 'legal_ai' as DistrictNavigationTab,
+      label: legalAiLabel,
+      icon: Sparkles,
+      badge: 'RAG AI',
+      badgeColor: 'bg-indigo-600 text-white font-bold',
     },
   ]
 

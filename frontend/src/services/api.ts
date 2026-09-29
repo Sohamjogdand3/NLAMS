@@ -932,3 +932,70 @@ export const analyticsApi = {
       critical_projects: Proposal[];
     }>('/proposals/analytics/national-summary'),
 };
+
+// -----------------------------------------------------------------------------
+// Legal & Statutory RAG Copilot API Client
+// -----------------------------------------------------------------------------
+export interface RagChunkSource {
+  chunk_id: string;
+  text: string;
+  document_id?: string;
+  filename?: string;
+  page?: number;
+  title?: string;
+  type?: string;
+  jurisdiction?: string;
+  state?: string;
+  authority?: string;
+  distance?: number;
+}
+
+export interface RagQueryResponse {
+  query: string;
+  answer: string;
+  sources: RagChunkSource[];
+  total_retrieved: number;
+  authorized_chunks_count: number;
+  access_decision: string;
+  audit_event_id?: string;
+}
+
+export interface RagDocumentInfo {
+  document_id: string;
+  filename: string;
+  title?: string;
+  type?: string;
+  jurisdiction?: string;
+  state?: string;
+  sector?: string;
+  domain?: string;
+  authority?: string;
+  effective_date?: string;
+}
+
+export const ragApi = {
+  query: (query: string, top_k: number = 5, documentId?: string, domain?: string, proposalId?: string) =>
+    apiRequest<RagQueryResponse>('/rag/query', {
+      method: 'POST',
+      body: JSON.stringify({
+        query,
+        top_k,
+        document_id: documentId,
+        domain,
+        proposal_id: proposalId,
+      }),
+    }),
+
+  retrieve: (query: string, top_k: number = 5, documentId?: string) =>
+    apiRequest<RagChunkSource[]>('/rag/retrieve', {
+      method: 'POST',
+      body: JSON.stringify({
+        query,
+        top_k,
+        document_id: documentId,
+      }),
+    }),
+
+  listDocuments: () =>
+    apiRequest<RagDocumentInfo[]>('/rag/documents'),
+};

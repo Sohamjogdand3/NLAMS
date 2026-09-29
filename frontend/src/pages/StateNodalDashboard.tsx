@@ -6,6 +6,7 @@ import StateProposalIntake from '../components/state/StateProposalIntake'
 import StateCalaAssignment from '../components/state/StateCalaAssignment'
 import StateMultiplierAudit from '../components/state/StateMultiplierAudit'
 import StateLandRegistryApi from '../components/state/StateLandRegistryApi'
+import LegalIntelligencePanel from '../components/rag/LegalIntelligencePanel'
 import type { StateNavigationTab, StateProposalItem, MultiplierComplianceRecord, LandRegistryApiGatewayStatus } from '../types/stateNodal'
 import { proposalsApi, stateGatewayApi, type Proposal } from '../services/api'
 import { Loader2, AlertCircle } from 'lucide-react'
@@ -359,6 +360,11 @@ export default function StateNodalDashboard() {
                   </div>
                 )}
               </>
+            )}
+            {activeTab === 'legal_ai' && (
+              <div className="h-[calc(100vh-140px)]">
+                <LegalIntelligencePanel />
+              </div>
             )}
           </div>
         </main>

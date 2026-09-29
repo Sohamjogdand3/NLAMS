@@ -8,6 +8,7 @@ export type NavigationTab =
   | 'analytics'
   | 'reports'
   | 'notifications'
+  | 'legal_ai'
 
 export type ProjectRiskLevel = 'critical' | 'high' | 'moderate' | 'low'
 

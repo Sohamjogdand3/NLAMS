@@ -1,4 +1,4 @@
-export type SurveyorAppSection = 'home' | 'surveys' | 'map' | 'more' | 'active-survey'
+export type SurveyorAppSection = 'home' | 'surveys' | 'map' | 'more' | 'active-survey' | 'legal_guidance'
 
 export type SurveyorTab = 'parcels' | 'gps-walk' | 'asset-audit' | 'verification' | 'sync-queue'
 

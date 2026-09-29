@@ -6,6 +6,7 @@ export type StateNavigationTab =
   | 'multiplier-audit'
   | 'land-registry-api'
   | 'reports'
+  | 'legal_ai'
 
 export interface StateProposalItem {
   id: string

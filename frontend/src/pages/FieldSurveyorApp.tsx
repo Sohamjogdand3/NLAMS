@@ -5,6 +5,7 @@ import SurveyorList from '../components/surveyor/SurveyorList'
 import SurveyorMapView from '../components/surveyor/SurveyorMapView'
 import SurveyorMore from '../components/surveyor/SurveyorMore'
 import SurveyorGuidedFlow from '../components/surveyor/SurveyorGuidedFlow'
+import LegalIntelligencePanel from '../components/rag/LegalIntelligencePanel'
 import type {
   FieldParcelTask,
   SurveyorAppSection,
@@ -185,7 +186,31 @@ export default function FieldSurveyorApp() {
             onUpdatePreferences={handleUpdatePreferences}
             onSyncAll={handleSyncAll}
             isOnline={isOnline}
+            onNavigateToLegal={() => setActiveSection('legal_guidance')}
           />
+        )}
+
+        {activeSection === 'legal_guidance' && (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-lg font-black text-slate-900">Field Legal Guidance</h2>
+                <p className="text-xs text-slate-500">
+                  Assigned jurisdiction statutory rules &amp; field measurement protocols
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setActiveSection('more')}
+                className="text-xs font-bold text-slate-600 hover:text-slate-900 px-3 py-1.5 rounded-lg bg-slate-200"
+              >
+                &larr; Back
+              </button>
+            </div>
+            <div className="h-[550px]">
+              <LegalIntelligencePanel />
+            </div>
+          </div>
         )}
 
         {activeSection === 'active-survey' && activeParcel && (

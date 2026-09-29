@@ -7,6 +7,7 @@ import PaymentStatusCard from '../components/citizen/PaymentStatusCard'
 import NoticeListWidget from '../components/citizen/NoticeListWidget'
 import ObjectionSection from '../components/citizen/ObjectionSection'
 import CitizenProfileSection from '../components/citizen/CitizenProfileSection'
+import LegalIntelligencePanel from '../components/rag/LegalIntelligencePanel'
 
 import {
   MOCK_CITIZEN_LAND_RECORD,
@@ -124,6 +125,13 @@ export default function CitizenDashboard() {
               className="inline-flex items-center gap-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 px-4 py-2.5 text-xs font-bold text-white transition-all cursor-pointer"
             >
               <CreditCard className="h-4 w-4 text-emerald-400" /> View Compensation
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('legal_help')}
+              className="inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 px-4 py-2.5 text-xs font-bold text-white transition-all cursor-pointer shadow-sm"
+            >
+              <span>Legal Help</span>
             </button>
           </div>
         </div>
@@ -262,6 +270,23 @@ export default function CitizenDashboard() {
               landRecord={MOCK_CITIZEN_LAND_RECORD}
               compensation={MOCK_COMPENSATION}
             />
+          </div>
+        )}
+
+        {/* TAB 8: LEGAL HELP (PUBLIC STATUTORY ASSISTANT) */}
+        {activeTab === 'legal_help' && (
+          <div className="space-y-4">
+            <div className="rounded-2xl border border-blue-200 bg-blue-50/50 p-4 text-xs text-blue-900 flex items-center justify-between">
+              <div>
+                <span className="font-bold">Citizen Legal Helpdesk</span> — Ask questions regarding the RFCTLARR Act, your rights as a landowner, statutory notices, and claim procedures.
+              </div>
+              <span className="rounded-full bg-blue-600 text-white px-2.5 py-0.5 text-[10px] font-bold">
+                Public Acts &amp; Rules
+              </span>
+            </div>
+            <div className="h-[600px]">
+              <LegalIntelligencePanel />
+            </div>
           </div>
         )}
       </main>

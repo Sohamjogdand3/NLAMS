@@ -21,6 +21,7 @@ import DistrictClaimVerification from '../components/district/DistrictClaimVerif
 import DistrictCompensationRnR from '../components/district/DistrictCompensationRnR'
 import DistrictAlertsAi from '../components/district/DistrictAlertsAi'
 import DistrictReportsAudit from '../components/district/DistrictReportsAudit'
+import LegalIntelligencePanel from '../components/rag/LegalIntelligencePanel'
 
 import { X, FileText } from 'lucide-react'
 
@@ -248,6 +249,12 @@ export default function DistrictDashboard() {
           {activeTab === 'alerts' && <DistrictAlertsAi />}
 
           {activeTab === 'reports' && <DistrictReportsAudit />}
+
+          {activeTab === 'legal_ai' && (
+            <div className="h-[calc(100vh-140px)]">
+              <LegalIntelligencePanel />
+            </div>
+          )}
         </>
       )}
     </main>

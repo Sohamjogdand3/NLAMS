@@ -15,6 +15,7 @@ from app.api.rnr import router as rnr_router
 from app.api.gis import router as gis_router
 from app.api.surveyor import router as surveyor_router
 from app.api.possession import router as possession_router
+from app.api.rag import router as rag_router
 
 from app.db.base import Base
 from app.db.session import engine
@@ -56,6 +57,7 @@ app.include_router(surveyor_router, prefix=settings.API_V1_STR)
 app.include_router(possession_router, prefix=settings.API_V1_STR)
 app.include_router(gis_router, prefix=settings.API_V1_STR)
 app.include_router(gis_router, prefix="/api", tags=["GIS Location Intelligence"])
+app.include_router(rag_router, prefix=settings.API_V1_STR)
 
 # Direct fallback mounts for legacy compatibility
 app.include_router(auth_router)
@@ -69,6 +71,7 @@ app.include_router(rnr_router)
 app.include_router(surveyor_router)
 app.include_router(possession_router)
 app.include_router(gis_router)
+app.include_router(rag_router)
 
 
 @app.get("/health", tags=["Health"])
