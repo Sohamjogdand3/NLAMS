@@ -9,6 +9,7 @@ import {
   ChevronRight,
   ShieldCheck,
   Building,
+  AlertTriangle,
 } from 'lucide-react'
 import type { DistrictNavigationTab } from '../../types/district'
 
@@ -42,6 +43,13 @@ export default function DistrictSidebar({
       badgeColor: 'bg-blue-100 text-[#042A5E] font-bold',
     },
     {
+      id: 'scrutiny' as DistrictNavigationTab,
+      label: 'Scrutiny & Verification',
+      icon: FileCheck2,
+      badge: pendingScrutinyCount > 0 ? `${pendingScrutinyCount} Review` : null,
+      badgeColor: 'bg-amber-600 text-white font-extrabold',
+    },
+    {
       id: 'section11' as DistrictNavigationTab,
       label: 'Sec 11 Freeze & Objections',
       icon: ShieldCheck,
@@ -63,14 +71,28 @@ export default function DistrictSidebar({
       badgeColor: 'bg-emerald-700 text-white font-bold',
     },
     {
+      id: 'compensation' as DistrictNavigationTab,
+      label: 'Compensation Disbursal',
+      icon: Building,
+      badge: 'PFMS/DBT',
+      badgeColor: 'bg-emerald-100 text-emerald-800 font-bold',
+    },
+    {
       id: 'gis' as DistrictNavigationTab,
       label: 'Cadastral GIS Map',
       icon: MapPin,
       badge: null,
     },
     {
+      id: 'alerts' as DistrictNavigationTab,
+      label: 'Alerts & Bottlenecks',
+      icon: AlertTriangle,
+      badge: '3 Risk',
+      badgeColor: 'bg-red-700 text-white animate-pulse',
+    },
+    {
       id: 'reports' as DistrictNavigationTab,
-      label: 'Reports & Audit Trail',
+      label: 'Reports & Audit Log',
       icon: FileCheck2,
       badge: null,
     },
