@@ -1,4 +1,4 @@
-import {
+import { MapPin,
   LayoutDashboard,
   FileCheck2,
   UserCheck,
@@ -33,6 +33,7 @@ export default function StateSidebar({
       icon: LayoutDashboard,
       badge: null,
     },
+    { id: 'gis' as StateNavigationTab, label: 'Cadastral GIS Map', icon: MapPin, badge: null },
     {
       id: 'proposals' as StateNavigationTab,
       label: 'Proposal Intake & Routing',
@@ -112,7 +113,7 @@ export default function StateSidebar({
             <button
               key={item.id}
               type="button"
-              onClick={() => setActiveTab(item.id)}
+              onClick={() => item.id === 'gis' ? window.open('/gis-mapping', '_blank') : setActiveTab(item.id)}
               className={`group flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-xs font-bold transition-all cursor-pointer ${
                 isActive
                   ? 'bg-[#042A5E] text-white shadow-xs'

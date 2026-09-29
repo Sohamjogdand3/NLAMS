@@ -111,8 +111,8 @@ export default function SurveyorGuidedFlow({
   // Readiness Calculation
   const hasSiteGps = (data.gpsCoordinatesCount || 0) > 0 || (data.measuredAreaHectares || 0) > 0
   const hasPeople = !!data.occupantOnSite
-  const hasAssets = (data.crops.length + data.trees.length + data.structures.length + data.waterAssets.length) > 0
-  const hasPhotos = data.photos.length > 0
+  const hasAssets = ((data.crops || []).length + (data.trees || []).length + (data.structures || []).length + (data.waterAssets || []).length) > 0
+  const hasPhotos = (data.photos || []).length > 0
   const hasSignature = signatureDone
 
   const totalPoints = (hasSiteGps ? 20 : 0) + (hasPeople ? 20 : 0) + (hasAssets ? 20 : 0) + (hasPhotos ? 20 : 0) + (hasSignature ? 20 : 0)
@@ -139,7 +139,7 @@ export default function SurveyorGuidedFlow({
       condition: newTreeCondition,
       isProductive: newTreeProductive,
     }
-    updateData((p) => ({ ...p, trees: [...p.trees, newT] }))
+    updateData((p) => ({ ...p, trees: [...(p.trees || []), newT] }))
     setActiveAssetModal('none')
   }
 
@@ -151,7 +151,7 @@ export default function SurveyorGuidedFlow({
       season: newCropSeason,
       irrigationType: 'Borewell',
     }
-    updateData((p) => ({ ...p, crops: [...p.crops, newC] }))
+    updateData((p) => ({ ...p, crops: [...(p.crops || []), newC] }))
     setActiveAssetModal('none')
   }
 
@@ -164,7 +164,7 @@ export default function SurveyorGuidedFlow({
       floors: 1,
       condition: 'Good',
     }
-    updateData((p) => ({ ...p, structures: [...p.structures, newS] }))
+    updateData((p) => ({ ...p, structures: [...(p.structures || []), newS] }))
     setActiveAssetModal('none')
   }
 
@@ -178,7 +178,7 @@ export default function SurveyorGuidedFlow({
       timestamp: new Date().toISOString().replace('T', ' ').slice(0, 19),
       thumbnailUrl: '/land-acquisition-hero.jpg',
     }
-    updateData((p) => ({ ...p, photos: [newPhoto, ...p.photos] }))
+    updateData((p) => ({ ...p, photos: [newPhoto, ...(p.photos || [])] }))
     setCapturedPhotoPreview(null)
     setActiveAssetModal('none')
   }
@@ -558,7 +558,7 @@ export default function SurveyorGuidedFlow({
               <div className="flex items-center justify-between">
                 <div>
                   <div className="text-xs font-black text-slate-900 uppercase">Crops</div>
-                  <div className="text-xs text-slate-500">{data.crops.length} recorded</div>
+                  <div className="text-xs text-slate-500">{(data.crops || []).length} recorded</div>
                 </div>
                 <button
                   type="button"
@@ -569,7 +569,7 @@ export default function SurveyorGuidedFlow({
                 </button>
               </div>
 
-              {data.crops.map((c) => (
+              {(data.crops || []).map((c) => (
                 <div key={c.id} className="rounded-xl bg-slate-50 p-2.5 flex items-center justify-between text-xs">
                   <div>
                     <span className="font-bold text-slate-900">{c.cropName}</span>
@@ -577,7 +577,7 @@ export default function SurveyorGuidedFlow({
                   </div>
                   <button
                     type="button"
-                    onClick={() => updateData((p) => ({ ...p, crops: p.crops.filter((x) => x.id !== c.id) }))}
+                    onClick={() => updateData((p) => ({ ...p, crops: (p.crops || []).filter((x) => x.id !== c.id) }))}
                     className="text-slate-400 hover:text-red-600 p-1 cursor-pointer"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
@@ -592,7 +592,7 @@ export default function SurveyorGuidedFlow({
                 <div>
                   <div className="text-xs font-black text-slate-900 uppercase">Trees</div>
                   <div className="text-xs text-slate-500">
-                    {data.trees.reduce((acc, t) => acc + t.quantity, 0)} trees recorded
+                    {(data.trees || []).reduce((acc, t) => acc + t.quantity, 0)} trees recorded
                   </div>
                 </div>
                 <button
@@ -604,7 +604,7 @@ export default function SurveyorGuidedFlow({
                 </button>
               </div>
 
-              {data.trees.map((t) => (
+              {(data.trees || []).map((t) => (
                 <div key={t.id} className="rounded-xl bg-slate-50 p-2.5 flex items-center justify-between text-xs">
                   <div>
                     <span className="font-bold text-slate-900">{t.species}</span>
@@ -614,7 +614,7 @@ export default function SurveyorGuidedFlow({
                   </div>
                   <button
                     type="button"
-                    onClick={() => updateData((p) => ({ ...p, trees: p.trees.filter((x) => x.id !== t.id) }))}
+                    onClick={() => updateData((p) => ({ ...p, trees: (p.trees || []).filter((x) => x.id !== t.id) }))}
                     className="text-slate-400 hover:text-red-600 p-1 cursor-pointer"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
@@ -628,7 +628,7 @@ export default function SurveyorGuidedFlow({
               <div className="flex items-center justify-between">
                 <div>
                   <div className="text-xs font-black text-slate-900 uppercase">Structures</div>
-                  <div className="text-xs text-slate-500">{data.structures.length} recorded</div>
+                  <div className="text-xs text-slate-500">{(data.structures || []).length} recorded</div>
                 </div>
                 <button
                   type="button"
@@ -639,7 +639,7 @@ export default function SurveyorGuidedFlow({
                 </button>
               </div>
 
-              {data.structures.map((s) => (
+              {(data.structures || []).map((s) => (
                 <div key={s.id} className="rounded-xl bg-slate-50 p-2.5 flex items-center justify-between text-xs">
                   <div>
                     <span className="font-bold text-slate-900">{s.type}</span>
@@ -649,7 +649,7 @@ export default function SurveyorGuidedFlow({
                   </div>
                   <button
                     type="button"
-                    onClick={() => updateData((p) => ({ ...p, structures: p.structures.filter((x) => x.id !== s.id) }))}
+                    onClick={() => updateData((p) => ({ ...p, structures: (p.structures || []).filter((x) => x.id !== s.id) }))}
                     className="text-slate-400 hover:text-red-600 p-1 cursor-pointer"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
@@ -663,11 +663,11 @@ export default function SurveyorGuidedFlow({
               <div className="flex items-center justify-between">
                 <div>
                   <div className="text-xs font-black text-slate-900 uppercase">Water / Irrigation Assets</div>
-                  <div className="text-xs text-slate-500">{data.waterAssets.length} recorded</div>
+                  <div className="text-xs text-slate-500">{(data.waterAssets || []).length} recorded</div>
                 </div>
               </div>
 
-              {data.waterAssets.map((w) => (
+              {(data.waterAssets || []).map((w) => (
                 <div key={w.id} className="rounded-xl bg-slate-50 p-2.5 flex items-center justify-between text-xs">
                   <div>
                     <span className="font-bold text-slate-900">{w.type}</span>
@@ -696,7 +696,7 @@ export default function SurveyorGuidedFlow({
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-sm font-black text-slate-900">
-                  Geotagged Site Photos ({data.photos.length})
+                  Geotagged Site Photos ({(data.photos || []).length})
                 </h2>
                 <p className="text-xs text-slate-500">
                   Instant camera capture with GPS lat/long stamped on image.
@@ -715,7 +715,7 @@ export default function SurveyorGuidedFlow({
 
             {/* Photos Grid */}
             <div className="grid grid-cols-2 gap-2.5 pt-2">
-              {data.photos.map((ph) => (
+              {(data.photos || []).map((ph) => (
                 <div key={ph.id} className="rounded-xl border border-slate-200 bg-slate-50 p-2 space-y-1">
                   <div className="relative h-24 rounded-lg overflow-hidden bg-slate-200">
                     <img src={ph.thumbnailUrl} alt={ph.caption} className="w-full h-full object-cover" />
@@ -811,7 +811,7 @@ export default function SurveyorGuidedFlow({
                   Geotagged Photos
                 </span>
                 <span className={hasPhotos ? 'font-bold text-emerald-700' : 'font-bold text-amber-600'}>
-                  {data.photos.length} Captured
+                  {(data.photos || []).length} Captured
                 </span>
               </div>
 

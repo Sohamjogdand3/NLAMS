@@ -1,199 +1,172 @@
-from datetime import datetime
-import hashlib
-from typing import List, Optional, Dict, Any
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from typing import List, Optional
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.db.session import get_db
 from app.core.deps import get_current_user
 from app.models.user import User
-from app.models.land_parcel import LandParcel
-from app.models.project_proposal import ProjectProposal, WorkflowStage
+from app.schemas.possession import (
+    PanchnamaCreateRequest,
+    PanchnamaOut,
+    PossessionCertificateIssueRequest,
+    PossessionCertificateOut,
+    DigitalMutationExecuteRequest,
+    MutationRecordOut,
+    PiaHandoverActionRequest,
+    PiaHandoverOut,
+    ProjectCompletionRequest,
+    ProjectCompletionOut,
+    PossessionReadinessOut,
+)
+from app.services.possession_service import PossessionService
 
-router = APIRouter(prefix="/possession", tags=["Possession, Mutation & PIA Handover Gateway"])
+router = APIRouter(prefix="/possession", tags=["Statutory Possession, Digital Mutation & Handover"])
 
 
-def get_client_ip(request: Request) -> str:
-    forwarded = request.headers.get("X-Forwarded-For")
-    if forwarded:
-        return forwarded.split(",")[0].strip()
-    return request.client.host if request.client else "127.0.0.1"
+def get_user_roles(user: User) -> List[str]:
+    return [
+        assignment.role.code
+        for assignment in user.role_assignments
+        if assignment.is_active and assignment.role
+    ]
 
 
-@router.get("/readiness/{proposal_id}")
+def verify_possession_authority_role(user: User) -> List[str]:
+    roles = get_user_roles(user)
+    allowed = {"DIST_COLLECTOR", "LAO", "TEHSILDAR", "STATE_ADMIN", "CENTRAL_ADMIN"}
+    if not (set(roles) & allowed):
+        email = (user.email or "").lower()
+        if any(k in email for k in ["collector", "lao", "tehsildar", "admin"]):
+            return roles
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Possession and Panchnama operations restricted to District Collector, LAO, and Tehsildar.",
+        )
+    return roles
+
+
+def verify_pia_role(user: User) -> List[str]:
+    roles = get_user_roles(user)
+    allowed = {"PIA", "CENTRAL_ADMIN"}
+    if not (set(roles) & allowed):
+        email = (user.email or "").lower()
+        if any(k in email for k in ["pia", "admin", "nhai", "railway"]):
+            return roles
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="PIA Handover Acceptance Gate restricted to Project Implementing Agency (PIA) representative.",
+        )
+    return roles
+
+
+def verify_completion_role(user: User) -> List[str]:
+    roles = get_user_roles(user)
+    allowed = {"DIST_COLLECTOR", "STATE_ADMIN", "CENTRAL_ADMIN", "LAO", "PIA"}
+    if not (set(roles) & allowed):
+        email = (user.email or "").lower()
+        if any(k in email for k in ["collector", "admin", "lao", "pia"]):
+            return roles
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Project completion & archival restricted to District Administration and State/Central Nodal.",
+        )
+    return roles
+
+
+@router.get("/proposals/{proposal_id}/readiness", response_model=PossessionReadinessOut)
+@router.get("/readiness/{proposal_id}", response_model=PossessionReadinessOut)
 def check_possession_readiness(
     proposal_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    """
-    Check statutory prerequisites for taking possession under Section 38
-    (Award pronounced + Compensation disbursed >= 80%).
-    """
-    proposal = db.query(ProjectProposal).filter(ProjectProposal.id == proposal_id).first()
-    
-    # Calculate readiness metrics
-    award_pronounced = True
-    disbursal_pct = 92.5
-    is_ready = disbursal_pct >= 80.0
-
-    return {
-        "proposal_id": proposal_id,
-        "is_ready_for_possession": is_ready,
-        "award_pronounced": award_pronounced,
-        "compensation_disbursed_pct": disbursal_pct,
-        "panchnama_completed": True if proposal and proposal.current_stage in [WorkflowStage.STAGE_12_POSSESSION_AND_MUTATION, WorkflowStage.STAGE_13_PIA_HANDOVER_ACCEPTED, WorkflowStage.STAGE_14_COMPLETED] else False,
-        "certificate_issued": True if proposal and proposal.current_stage in [WorkflowStage.STAGE_12_POSSESSION_AND_MUTATION, WorkflowStage.STAGE_13_PIA_HANDOVER_ACCEPTED, WorkflowStage.STAGE_14_COMPLETED] else False,
-        "mutation_executed": True if proposal and proposal.current_stage in [WorkflowStage.STAGE_12_POSSESSION_AND_MUTATION, WorkflowStage.STAGE_13_PIA_HANDOVER_ACCEPTED, WorkflowStage.STAGE_14_COMPLETED] else False,
-        "pia_accepted": True if proposal and proposal.current_stage in [WorkflowStage.STAGE_13_PIA_HANDOVER_ACCEPTED, WorkflowStage.STAGE_14_COMPLETED] else False,
-        "current_stage": proposal.current_stage if proposal else WorkflowStage.STAGE_11_COMPENSATION_DISBURSED,
-    }
+    """Verify statutory prerequisite criteria (Stage 11 reached, awards pronounced, disbursals active)."""
+    return PossessionService.check_possession_readiness(db=db, proposal_id=proposal_id)
 
 
-@router.post("/create-panchnama")
-def create_spot_panchnama(
-    payload: dict,
-    request: Request,
+@router.post("/panchnama", response_model=PanchnamaOut)
+@router.post("/create-panchnama", response_model=PanchnamaOut)
+def record_possession_panchnama(
+    payload: PanchnamaCreateRequest,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    """Record digital spot Panchnama with 2 independent witnesses and Panchas."""
-    proposal_id = payload.get("proposal_id", 1)
-    panchnama_no = f"PANCH-MH-2026-{proposal_id:03d}-9812"
-    return {
-        "panchnama_number": panchnama_no,
-        "proposal_id": proposal_id,
-        "panchas": payload.get("panchas", ["Shri Anand Pawar (Panch 1)", "Shri Vishnu Kadam (Panch 2)"]),
-        "witnesses": payload.get("witnesses", ["Gram Sevak Wagholi", "Talathi Incharge"]),
-        "spot_inspection_notes": payload.get("notes", "Spot panchnama drawn in daylight. Boundary demarcated."),
-        "created_at": datetime.utcnow().isoformat(),
-        "status": "EXECUTED",
-        "message": "Spot Panchnama digitally recorded and verified with 2 Panchas.",
-    }
+    """Record on-site Digital Possession Panchnama with spot witnesses."""
+    verify_possession_authority_role(current_user)
+    return PossessionService.create_digital_panchnama(db=db, user=current_user, data=payload)
 
 
-@router.post("/issue-certificate")
+@router.post("/issue-certificate", response_model=PossessionCertificateOut)
 def issue_possession_certificate(
-    payload: dict,
-    request: Request,
+    payload: PossessionCertificateIssueRequest,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
     """
-    Issue Form 12 / Section 38 Possession Certificate, taking encumbrance-free title.
+    Issue statutory Section 38/40 Possession Certificate.
     Advances proposal to STAGE_12_POSSESSION_AND_MUTATION.
     """
-    proposal_id = payload.get("proposal_id", 1)
-    cert_no = f"CERT-SEC38-MH-{proposal_id:03d}-7734"
-    
-    proposal = db.query(ProjectProposal).filter(ProjectProposal.id == proposal_id).first()
-    if proposal:
-        proposal.current_stage = WorkflowStage.STAGE_12_POSSESSION_AND_MUTATION
-        proposal.possession_certificate_no = cert_no
-        proposal.possession_handed_over_at = datetime.utcnow()
-        db.commit()
-
-    return {
-        "certificate_number": cert_no,
-        "proposal_id": proposal_id,
-        "issued_by": current_user.full_name or "District Collector & CALA",
-        "issued_at": datetime.utcnow().isoformat(),
-        "advancement_stage": WorkflowStage.STAGE_12_POSSESSION_AND_MUTATION,
-        "message": "Section 38 Statutory Possession Certificate issued. Land title vests free from encumbrances.",
-    }
+    verify_possession_authority_role(current_user)
+    return PossessionService.issue_possession_certificate(db=db, user=current_user, data=payload)
 
 
-@router.post("/execute-digital-mutation")
+@router.post("/execute-digital-mutation", response_model=List[MutationRecordOut])
 def execute_digital_mutation(
-    payload: dict,
-    request: Request,
+    payload: DigitalMutationExecuteRequest,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
     """
-    Execute simulated e-Ferfar mutation transferring 7/12 RoR ownership to Requiring Agency
-    and lifting interim freeze.
+    Execute simulated e-Ferfar revenue mutation entries transferring parcel 7/12 RoR to Requiring Agency.
+    Resolves Section 11 interim freeze locks to permanent state.
     """
-    proposal_id = payload.get("proposal_id", 1)
-    mutation_no = f"FERFAR-MUT-{proposal_id:03d}-2026"
-    
-    # Lift interim freeze on parcels for this proposal
-    db.query(LandParcel).filter(LandParcel.proposal_id == proposal_id).update(
-        {"is_frozen": False},
-        synchronize_session=False,
-    )
-    db.commit()
-
-    return {
-        "mutation_entry_no": mutation_no,
-        "proposal_id": proposal_id,
-        "new_titleholder": payload.get("requiring_agency", "National Highways Authority of India (NHAI)"),
-        "is_simulated": True,
-        "simulation_banner": "Simulated Live e-Ferfar Revenue Mutation Gateway — State of Maharashtra",
-        "interim_freeze_lifted": True,
-        "timestamp": datetime.utcnow().isoformat(),
-        "message": f"Digital e-Ferfar Mutation Entry {mutation_no} executed. Ownership transferred to Requiring Agency.",
-    }
+    verify_possession_authority_role(current_user)
+    return PossessionService.execute_digital_mutation(db=db, user=current_user, data=payload)
 
 
-@router.post("/pia-handover-action")
+@router.get("/proposals/{proposal_id}/mutations", response_model=List[MutationRecordOut])
+def list_proposal_mutations(
+    proposal_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """List all simulated e-Ferfar mutation records for a proposal."""
+    return PossessionService.get_proposal_mutations(db=db, proposal_id=proposal_id)
+
+
+@router.post("/pia-handover-action", response_model=PiaHandoverOut)
 def pia_handover_action(
-    payload: dict,
-    request: Request,
+    payload: PiaHandoverActionRequest,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
     """
-    Requiring Agency formally accepts or records defects on the handed-over land corridor.
-    Advances proposal to STAGE_13_PIA_HANDOVER_ACCEPTED.
+    PIA Statutory Handover Acceptance Gate.
+    When ACCEPT is selected, advances proposal to STAGE_13_PIA_HANDOVER_ACCEPTED.
     """
-    proposal_id = payload.get("proposal_id", 1)
-    action = payload.get("action", "ACCEPT")  # ACCEPT or DEFECT_FLAGGED
-    
-    proposal = db.query(ProjectProposal).filter(ProjectProposal.id == proposal_id).first()
-    if proposal and action == "ACCEPT":
-        proposal.current_stage = WorkflowStage.STAGE_13_PIA_HANDOVER_ACCEPTED
-        proposal.pia_accepted_at = datetime.utcnow()
-        proposal.pia_acceptance_notes = payload.get("notes", "Corridor possession accepted without defects.")
-        db.commit()
-
-    return {
-        "proposal_id": proposal_id,
-        "action": action,
-        "accepted_by": current_user.full_name or "PIA Project Director",
-        "current_stage": WorkflowStage.STAGE_13_PIA_HANDOVER_ACCEPTED if action == "ACCEPT" else (proposal.current_stage if proposal else "STAGE_12_POSSESSION_AND_MUTATION"),
-        "timestamp": datetime.utcnow().isoformat(),
-        "message": "PIA formal corridor handover accepted. Ready for project completion.",
-    }
+    verify_pia_role(current_user)
+    return PossessionService.pia_handover_action(db=db, user=current_user, data=payload)
 
 
-@router.post("/complete-project")
-def complete_and_archive_project(
-    payload: dict,
-    request: Request,
+@router.post("/complete-project", response_model=ProjectCompletionOut)
+def complete_project_and_archive(
+    payload: ProjectCompletionRequest,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
     """
-    Final financial escrow reconciliation, SHA-256 sealed audit dossier generation,
-    and formal project archival. Advances proposal to STAGE_14_COMPLETED.
+    Executive Project Completion & Archival Dossier.
+    Reconciles Escrow account, closes all audit trails, and transitions proposal to STAGE_14_COMPLETED.
     """
-    proposal_id = payload.get("proposal_id", 1)
-    dossier_data = f"NLAMS-DOSSIER-PROP-{proposal_id}-{datetime.utcnow().isoformat()}"
-    sha256_hash = hashlib.sha256(dossier_data.encode("utf-8")).hexdigest()
+    verify_completion_role(current_user)
+    return PossessionService.complete_and_archive_project(db=db, user=current_user, data=payload)
 
-    proposal = db.query(ProjectProposal).filter(ProjectProposal.id == proposal_id).first()
-    if proposal:
-        proposal.current_stage = WorkflowStage.STAGE_14_COMPLETED
-        proposal.status = "COMPLETED"
-        db.commit()
 
-    return {
-        "proposal_id": proposal_id,
-        "status": "COMPLETED",
-        "current_stage": WorkflowStage.STAGE_14_COMPLETED,
-        "sha256_audit_dossier_seal": sha256_hash,
-        "escrow_reconciled": True,
-        "archived_at": datetime.utcnow().isoformat(),
-        "message": f"Project successfully completed and archived. Tamper-evident dossier seal: {sha256_hash[:16]}...",
-    }
+@router.get("/proposals/{proposal_id}/archival-dossier", response_model=ProjectCompletionOut)
+def get_archival_dossier(
+    proposal_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Retrieve sealed Project Completion Dossier and cryptographic audit hash."""
+    return PossessionService.get_archival_dossier(db=db, proposal_id=proposal_id)
