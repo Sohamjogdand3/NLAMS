@@ -12,6 +12,8 @@ from app.api.escrow import router as escrow_router
 from app.api.state_gateway import router as state_gateway_router
 from app.api.adjudication import router as adjudication_router
 from app.api.rnr import router as rnr_router
+from app.api.surveyor import router as surveyor_router
+from app.api.possession import router as possession_router
 
 from app.db.base import Base
 from app.db.session import engine
@@ -20,7 +22,7 @@ from app.db.seed import seed_database
 app = FastAPI(
     title=settings.PROJECT_NAME,
     description="NLAMS - National Land Acquisition & Management System Backend API",
-    version="0.4.0",
+    version="0.5.0",
 )
 
 @app.on_event("startup")
@@ -49,6 +51,8 @@ app.include_router(escrow_router, prefix=settings.API_V1_STR)
 app.include_router(state_gateway_router, prefix=settings.API_V1_STR)
 app.include_router(adjudication_router, prefix=settings.API_V1_STR)
 app.include_router(rnr_router, prefix=settings.API_V1_STR)
+app.include_router(surveyor_router, prefix=settings.API_V1_STR)
+app.include_router(possession_router, prefix=settings.API_V1_STR)
 
 # Direct fallback mounts for legacy compatibility
 app.include_router(auth_router)
@@ -59,6 +63,9 @@ app.include_router(escrow_router)
 app.include_router(state_gateway_router)
 app.include_router(adjudication_router)
 app.include_router(rnr_router)
+app.include_router(surveyor_router)
+app.include_router(possession_router)
+
 
 
 @app.get("/health", tags=["Health"])

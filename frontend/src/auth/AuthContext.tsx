@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react'
-import { MOCK_ACCOUNTS, type UserSession, type UserType, type DepartmentRole } from '../types/auth'
+import { type UserSession, type UserType, type DepartmentRole } from '../types/auth'
 import { authApi } from '../services/api'
 
 interface AuthContextType {
@@ -36,11 +36,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [user])
 
-  // Verify active session on mount
+  // Verify active session on mount with backend /auth/me
   useEffect(() => {
     const checkActiveSession = async () => {
       const token = localStorage.getItem('nlams_access_token')
-      if (token && !user) {
+      if (token) {
         try {
           const meData = await authApi.getMe()
           if (meData?.user) {
@@ -63,6 +63,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           localStorage.removeItem('nlams_access_token')
           localStorage.removeItem('nlams_refresh_token')
           localStorage.removeItem(AUTH_STORAGE_KEY)
+          setUser(null)
         }
       }
     }
@@ -87,19 +88,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (apiRes?.access_token) {
         localStorage.setItem('nlams_access_token', apiRes.access_token)
-        localStorage.setItem('nlams_refresh_token', apiRes.refresh_token)
+        if (apiRes.refresh_token) {
+          localStorage.setItem('nlams_refresh_token', apiRes.refresh_token)
+        }
 
-        const roleCode = (apiRes.role?.code || 'LAO').toLowerCase()
+        const roleCode = (apiRes.role?.code || apiRes.active_role?.code || 'LAO').toLowerCase()
         const isCitizen = roleCode === 'citizen'
         const isPia = roleCode === 'pia' || roleCode === 'agency'
 
         const session: UserSession = {
-          id: String(apiRes.user.id),
-          name: apiRes.user.full_name || emailOrIdentifier,
-          email: apiRes.user.email || emailOrIdentifier,
+          id: String(apiRes.user?.id || 1),
+          name: apiRes.user?.full_name || emailOrIdentifier,
+          email: apiRes.user?.email || emailOrIdentifier,
           userType: isCitizen ? 'citizen' : isPia ? 'pia' : 'department',
           role: roleCode as DepartmentRole,
-          departmentName: apiRes.jurisdiction?.name || apiRes.user.department_name || 'Revenue & Land Reforms Dept',
+          departmentName: apiRes.jurisdiction?.name || apiRes.user?.department_name || 'Revenue & Land Reforms Dept',
           token: apiRes.access_token,
         }
 
@@ -123,71 +126,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       let session: UserSession
 
       if (userType === 'citizen') {
-        try {
-          const apiRes = await authApi.verifyCitizenOTP(username, otp)
-          localStorage.setItem('nlams_access_token', apiRes.access_token)
+        const apiRes = await authApi.verifyCitizenOTP(username, otp)
+        localStorage.setItem('nlams_access_token', apiRes.access_token)
+        if (apiRes.refresh_token) {
           localStorage.setItem('nlams_refresh_token', apiRes.refresh_token)
+        }
 
-          session = {
-            id: String(apiRes.user.id),
-            name: apiRes.user.full_name || `Citizen ${username}`,
-            email: apiRes.user.email || username,
-            userType: 'citizen',
-            role: 'citizen',
-            token: apiRes.access_token,
-          }
-        } catch {
-          const mock = MOCK_ACCOUNTS[username] || {
-            username,
-            name: 'Citizen User',
-            role: 'citizen',
-            description: 'Citizen Portal Access',
-          }
-          session = {
-            id: `usr_${Date.now()}`,
-            name: mock.name,
-            email: mock.email || `${username}@nlams.gov.demo`,
-            userType: 'citizen',
-            role: 'citizen',
-            token: `mock_jwt_token_${Date.now()}`,
-          }
+        session = {
+          id: String(apiRes.user?.id || 1),
+          name: apiRes.user?.full_name || `Citizen ${username}`,
+          email: apiRes.user?.email || username,
+          userType: 'citizen',
+          role: 'citizen',
+          token: apiRes.access_token,
         }
       } else {
-        // Official / Department / PIA Login
-        try {
-          const apiRes = await authApi.loginOfficial(username, password || 'Password@123', otp)
-          localStorage.setItem('nlams_access_token', apiRes.access_token)
+        const apiRes = await authApi.loginOfficial(username, password || 'Password@123', otp)
+        localStorage.setItem('nlams_access_token', apiRes.access_token)
+        if (apiRes.refresh_token) {
           localStorage.setItem('nlams_refresh_token', apiRes.refresh_token)
+        }
 
-          const roleCode = (apiRes.role?.code?.toLowerCase() || 'lao') as DepartmentRole
-          const isPia = userType === 'pia' || roleCode === 'pia' || roleCode === 'agency'
+        const roleCode = (apiRes.role?.code?.toLowerCase() || apiRes.active_role?.code?.toLowerCase() || 'lao') as DepartmentRole
+        const isPia = userType === 'pia' || roleCode === 'pia' || roleCode === 'agency'
 
-          session = {
-            id: String(apiRes.user.id),
-            name: apiRes.user.full_name || `Officer ${username}`,
-            email: apiRes.user.email || username,
-            userType: isPia ? 'pia' : 'department',
-            role: roleCode,
-            departmentName: apiRes.jurisdiction?.name || apiRes.user.department_name || 'Department of Land Resources',
-            token: apiRes.access_token,
-          }
-        } catch {
-          const mock = MOCK_ACCOUNTS[username] || {
-            username,
-            name: 'Department Officer',
-            role: (userType === 'pia' ? 'pia' : 'lao') as DepartmentRole,
-            departmentName: 'Government Administration',
-            description: 'Government Official Access',
-          }
-          session = {
-            id: `usr_${Date.now()}`,
-            name: mock.name,
-            email: mock.email || `${username}@nlams.gov.demo`,
-            userType: userType === 'pia' ? 'pia' : 'department',
-            role: mock.role as DepartmentRole,
-            departmentName: mock.departmentName,
-            token: `mock_jwt_token_${Date.now()}`,
-          }
+        session = {
+          id: String(apiRes.user?.id || 1),
+          name: apiRes.user?.full_name || `Officer ${username}`,
+          email: apiRes.user?.email || username,
+          userType: isPia ? 'pia' : 'department',
+          role: roleCode,
+          departmentName: apiRes.jurisdiction?.name || apiRes.user?.department_name || 'Department of Land Resources',
+          token: apiRes.access_token,
         }
       }
 
@@ -203,6 +173,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       authApi.logout().catch(() => {})
     } finally {
       setUser(null)
+      localStorage.removeItem(AUTH_STORAGE_KEY)
+      localStorage.removeItem('nlams_access_token')
+      localStorage.removeItem('nlams_refresh_token')
     }
   }
 

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import CitizenHeader from '../components/citizen/CitizenHeader'
 import CaseStepperWidget from '../components/citizen/CaseStepperWidget'
@@ -17,6 +17,8 @@ import {
   MOCK_OBJECTIONS,
   MOCK_COMPENSATION,
 } from '../data/mockCitizenData'
+import { citizenApi } from '../services/api'
+import { useAuth } from '../auth/AuthContext'
 
 import {
   PlusCircle,
@@ -29,11 +31,39 @@ import {
 } from 'lucide-react'
 
 export default function CitizenDashboard() {
+  const { user } = useAuth()
   const [searchParams] = useSearchParams()
   const tokenFromUrl = searchParams.get('token') || 'TK-2026-8941'
   const [activeToken, setActiveToken] = useState<string>(tokenFromUrl)
-
   const [activeTab, setActiveTab] = useState<string>('home')
+  const [notices, setNotices] = useState(MOCK_NOTICES)
+
+  const loadCitizenData = useCallback(async () => {
+    try {
+      const data = await citizenApi.fetchMyNotices()
+      if (Array.isArray(data) && data.length > 0) {
+        const mappedNotices = data.map((n: any, idx: number) => ({
+          id: String(n.id || `not-${idx + 1}`),
+          section: (n.section || 'Section 11(1)') as any,
+          title: n.title || 'Preliminary Gazette Notification',
+          publishedDate: n.published_date || '2026-09-12',
+          expiryDate: n.expiry_date || '2026-11-11',
+          daysRemaining: n.days_remaining || 48,
+          status: 'Active',
+          gazetteNo: n.gazette_notification_no || 'MAH/GAZ/2026/PUN-RING/042',
+          pdfUrl: 'Section11_Gazette_Pune_RingRoad_Haveli.pdf',
+          summary: n.description || 'Land acquisition notification under Section 11(1) of RFCTLARR Act 2013.',
+        }))
+        setNotices(mappedNotices as any)
+      }
+    } catch (err) {
+      console.warn('Using cached citizen notices:', err)
+    }
+  }, [])
+
+  useEffect(() => {
+    loadCitizenData()
+  }, [loadCitizenData])
 
   useEffect(() => {
     if (tokenFromUrl) {
@@ -64,7 +94,7 @@ export default function CitizenDashboard() {
             </div>
 
             <h1 className="text-xl sm:text-2xl font-extrabold text-white">
-              Rajesh Kumar S/o Rameshwar Kumar
+              {user?.name || 'Rajesh Kumar S/o Rameshwar Kumar'}
             </h1>
 
             <div className="flex flex-wrap items-center gap-3 text-xs text-slate-300">
@@ -200,14 +230,14 @@ export default function CitizenDashboard() {
               caseId={MOCK_ACQUISITION_CASE.caseId}
               projectName={MOCK_ACQUISITION_CASE.projectName}
             />
-            <NoticeListWidget notices={MOCK_NOTICES} />
+            <NoticeListWidget notices={notices} />
           </div>
         )}
 
         {/* TAB 4: NOTICES */}
         {activeTab === 'notices' && (
           <div className="space-y-6">
-            <NoticeListWidget notices={MOCK_NOTICES} />
+            <NoticeListWidget notices={notices} />
           </div>
         )}
 
