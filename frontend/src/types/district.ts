@@ -10,6 +10,7 @@ export type DistrictNavigationTab =
   | 'compensation'
   | 'alerts'
   | 'reports'
+  | 'legal_ai'
 
 export type AcquisitionStage =
   | 'Proposal'

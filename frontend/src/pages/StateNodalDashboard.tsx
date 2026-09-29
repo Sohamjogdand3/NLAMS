@@ -6,6 +6,7 @@ import StateProposalIntake from '../components/state/StateProposalIntake'
 import StateCalaAssignment from '../components/state/StateCalaAssignment'
 import StateMultiplierAudit from '../components/state/StateMultiplierAudit'
 import StateLandRegistryApi from '../components/state/StateLandRegistryApi'
+import LegalIntelligencePanel from '../components/rag/LegalIntelligencePanel'
 import type { StateNavigationTab, StateProposalItem } from '../types/stateNodal'
 import {
   MOCK_STATE_PROPOSALS,
@@ -140,6 +141,11 @@ export default function StateNodalDashboard() {
                     Export Gazette Ledger (CSV)
                   </button>
                 </div>
+              </div>
+            )}
+            {activeTab === 'legal_ai' && (
+              <div className="h-[calc(100vh-140px)]">
+                <LegalIntelligencePanel />
               </div>
             )}
           </div>

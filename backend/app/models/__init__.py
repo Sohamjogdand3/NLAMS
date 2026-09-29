@@ -16,6 +16,7 @@ from app.models.proposal_geography import ProposalGeographyMapping
 from app.models.project_dpr import ProjectDpr
 from app.models.project_gis_corridor import ProjectGisCorridor
 from app.models.land_parcel import LandParcel
+from app.models.escrow_account import EscrowAccount
 from app.models.cala_appointment import CalaAppointment
 from app.models.expert_committee_appraisal import ExpertCommitteeAppraisal
 from app.models.section15_objection import Section15Objection

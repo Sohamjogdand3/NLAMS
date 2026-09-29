@@ -9,6 +9,7 @@ import {
   ChevronLeft,
   ChevronRight,
   ShieldCheck,
+  Sparkles,
 } from 'lucide-react'
 import type { NavigationTab } from '../../types/central'
 
@@ -34,6 +35,7 @@ export default function CentralSidebar({
     { id: 'workflow', label: 'Workflow', icon: GitMerge },
     { id: 'risk', label: 'Risk & AI', icon: AlertTriangle, badge: 3 },
     { id: 'analytics', label: 'Analytics', icon: BarChart3 },
+    { id: 'legal_ai', label: 'National Legal Intelligence', icon: Sparkles, badge: 1 },
   ]
 
   return (

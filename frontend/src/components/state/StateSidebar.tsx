@@ -67,6 +67,13 @@ export default function StateSidebar({
       icon: FileSpreadsheet,
       badge: null,
     },
+    {
+      id: 'legal_ai' as StateNavigationTab,
+      label: 'State Legal Intelligence',
+      icon: Scale,
+      badge: 'RAG Copilot',
+      badgeColor: 'bg-indigo-600 text-white font-bold',
+    },
   ]
 
   return (

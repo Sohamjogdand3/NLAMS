@@ -8,6 +8,7 @@ import DistrictDashboard from './pages/DistrictDashboard'
 import StateNodalDashboard from './pages/StateNodalDashboard'
 import RnRAdminDashboard from './pages/RnRAdminDashboard'
 import FieldSurveyorApp from './pages/FieldSurveyorApp'
+import LegalIntelligencePage from './pages/LegalIntelligencePage'
 import { AuthProvider } from './auth/AuthContext'
 import ProtectedRoute from './components/auth/ProtectedRoute'
 
@@ -31,6 +32,8 @@ function App() {
         <Route path="/dashboard/agency" element={<ProtectedRoute><PiaDashboard /></ProtectedRoute>} />
         <Route path="/dashboard/district" element={<ProtectedRoute><DistrictDashboard /></ProtectedRoute>} />
         <Route path="/dashboard/lao" element={<ProtectedRoute><DistrictDashboard /></ProtectedRoute>} />
+        <Route path="/dashboard/legal-intelligence" element={<ProtectedRoute><LegalIntelligencePage /></ProtectedRoute>} />
+        <Route path="/legal-intelligence" element={<ProtectedRoute><LegalIntelligencePage /></ProtectedRoute>} />
         <Route path="/dashboard" element={<ProtectedRoute><CentralDashboard /></ProtectedRoute>} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

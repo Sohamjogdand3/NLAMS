@@ -54,3 +54,6 @@ htmlcov/
 .docker/
 
 nlams.db
+
+# External Local Sub-services
+LEGAL_RAG_MCP/
