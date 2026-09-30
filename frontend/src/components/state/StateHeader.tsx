@@ -6,7 +6,6 @@ import {
   LogOut,
   ChevronDown,
   Building,
-  ShieldCheck,
 } from 'lucide-react'
 import { useAuth } from '../../auth/AuthContext'
 import { useNavigate } from 'react-router-dom'
@@ -51,11 +50,6 @@ export default function StateHeader({
 
       {/* Authority Level Badge & Actions */}
       <div className="flex items-center gap-3">
-        <div className="hidden md:flex items-center gap-1.5 rounded-lg bg-blue-50 px-3 py-1.5 text-xs font-bold text-[#042A5E] border border-blue-200">
-          <ShieldCheck className="h-3.5 w-3.5 text-[#042A5E]" />
-          <span>State Revenue Nodal Authority · Maharashtra</span>
-        </div>
-
         {/* Export Action */}
         <button
           type="button"

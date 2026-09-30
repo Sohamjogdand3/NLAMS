@@ -4,7 +4,6 @@ import {
   Bell,
   LogOut,
   ChevronDown,
-  Phone,
   ShieldCheck,
 } from 'lucide-react'
 import { useAuth } from '../../auth/AuthContext'
@@ -34,26 +33,6 @@ export default function DistrictHeader({
 
   return (
     <header className="sticky top-0 z-20 flex flex-col border-b border-slate-200 bg-white/95 backdrop-blur-xs">
-      {/* Top micro-utility bar */}
-      <div className="flex items-center justify-between px-4 sm:px-6 py-1 bg-[#042A5E] text-[11px] text-slate-200 font-medium">
-        <div className="flex items-center gap-4">
-          <span className="flex items-center gap-1.5 text-amber-400 font-bold">
-            <span className="h-2 w-2 rounded-full bg-amber-400 animate-ping inline-block" />
-            GOVERNMENT OF MAHARASHTRA · DISTRICT REVENUE & LAND ACQUISITION AUTHORITY
-          </span>
-          <span className="hidden md:inline text-slate-400">|</span>
-          <span className="hidden md:inline text-slate-200">
-            Pune Collectorate · Haveli / Khed / Maval Sub-Divisions
-          </span>
-        </div>
-        <div className="flex items-center gap-4">
-          <div className="hidden lg:flex items-center gap-1 text-slate-300">
-            <Phone className="h-3 w-3 text-amber-400" />
-            <span>LAO Control Desk: 020-2612-4099</span>
-          </div>
-        </div>
-      </div>
-
       {/* Main Header bar */}
       <div className="flex h-16 items-center justify-between px-4 sm:px-6 gap-4">
         {/* Search Bar */}

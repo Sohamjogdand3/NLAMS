@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import {
   X,
   FileCheck2,
@@ -11,6 +11,9 @@ import {
   FileText,
   FileSpreadsheet,
   Layers,
+  Paperclip,
+  Trash2,
+  FolderOpen,
 } from 'lucide-react'
 import type { PiaProject, InfrastructureSector } from '../../types/pia'
 
@@ -42,13 +45,26 @@ export default function PiaCreateProposalModal({
   const [alignmentFileName, setAlignmentFileName] = useState('')
 
   // Step 2 State
-  const [pfrFileName, setPfrFileName] = useState('')
-  const [villageScheduleFileName, setVillageScheduleFileName] = useState('')
+  const [pfrFile, setPfrFile] = useState<File | null>(null)
+  const [villageScheduleFile, setVillageScheduleFile] = useState<File | null>(null)
+  const [additionalDocs, setAdditionalDocs] = useState<File[]>([])
   const [calaPreference, setCalaPreference] = useState('Sub-Divisional Magistrate (SDM) / CALA')
   const [hasForestNoc, setHasForestNoc] = useState(true)
   const [declarationAgreed, setDeclarationAgreed] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [validationError, setValidationError] = useState<string | null>(null)
+
+  // File input refs
+  const pfrInputRef = useRef<HTMLInputElement>(null)
+  const villageInputRef = useRef<HTMLInputElement>(null)
+  const additionalInputRef = useRef<HTMLInputElement>(null)
+  const alignmentInputRef = useRef<HTMLInputElement>(null)
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes < 1024) return `${bytes} B`
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
+    return `${(bytes / (1024 * 1024)).toFixed(2)} MB`
+  }
 
   if (!isOpen) return null
 
@@ -365,77 +381,231 @@ export default function PiaCreateProposalModal({
                 </div>
               </div>
 
-              {/* GIS Alignment File upload simulation */}
+              {/* GIS Alignment File & Local PDF Upload */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Corridor GIS Alignment File (.KML / .GeoJSON / Shapefile)
+                <label className="block text-xs font-bold text-slate-700 mb-2">
+                  Corridor GIS Alignment / Layout File (.PDF / .KML / .GeoJSON / Shapefile)
                 </label>
-                <div className="flex items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-slate-50/50 p-4 text-center hover:bg-slate-50 transition-colors">
-                  <div className="space-y-1 text-xs text-slate-600">
-                    <UploadCloud className="mx-auto h-6 w-6 text-slate-400" />
-                    <p className="font-semibold text-slate-700">
-                      {alignmentFileName || 'Click to select or drag corridor alignment file'}
-                    </p>
-                    <p className="text-[10px] text-slate-400">
-                      Supports WGS84 coordinates & PM GatiShakti national standard
-                    </p>
+
+                {alignmentFileName ? (
+                  /* File Selected State */
+                  <div className="flex items-center justify-between rounded-xl border border-emerald-300 bg-emerald-50 px-4 py-3 text-xs">
+                    <div className="flex items-center gap-2.5">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-100">
+                        <FileText className="h-4 w-4 text-emerald-700" />
+                      </div>
+                      <div>
+                        <p className="font-bold text-emerald-900 truncate max-w-[220px]">{alignmentFileName}</p>
+                        <p className="text-emerald-600 text-[10px]">GIS Alignment File · Ready to submit</p>
+                      </div>
+                    </div>
                     <button
                       type="button"
-                      onClick={() => setAlignmentFileName('Delhi_Dehradun_Alignment_PK3.geojson')}
-                      className="mt-1 rounded bg-slate-200 px-2.5 py-1 text-[10px] font-bold text-slate-700 hover:bg-slate-300"
+                      onClick={() => setAlignmentFileName('')}
+                      className="text-emerald-600 hover:text-red-600 transition-colors cursor-pointer"
+                      title="Remove file"
                     >
-                      Attach Sample GeoJSON
+                      <Trash2 className="h-4 w-4" />
                     </button>
                   </div>
-                </div>
+                ) : (
+                  /* Upload Drop Zone */
+                  <div
+                    className="relative rounded-xl border-2 border-dashed border-slate-300 bg-slate-50/60 p-5 text-center hover:border-[#991B1B]/60 hover:bg-red-50/20 transition-all cursor-pointer group"
+                    onClick={() => alignmentInputRef.current?.click()}
+                  >
+                    <input
+                      ref={alignmentInputRef}
+                      type="file"
+                      accept=".pdf,.kml,.json,.geojson,.zip,.shp"
+                      onChange={(e) => {
+                        if (e.target.files && e.target.files[0]) {
+                          setAlignmentFileName(e.target.files[0].name)
+                        }
+                      }}
+                      className="hidden"
+                    />
+                    <UploadCloud className="mx-auto h-8 w-8 text-slate-300 group-hover:text-[#991B1B]/60 transition-colors mb-2" />
+                    <p className="font-bold text-slate-700 text-xs">Click to Browse Local File</p>
+                    <p className="text-[10px] text-slate-400 mt-0.5">PDF, KML, GeoJSON, Shapefile (.zip) — WGS84 / PM GatiShakti standard</p>
+                    <div className="mt-3 flex justify-center gap-2">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          alignmentInputRef.current?.click()
+                        }}
+                        className="inline-flex items-center gap-1.5 rounded-lg bg-[#991B1B] hover:bg-[#7F1D1D] px-3 py-1.5 text-[10px] font-bold text-white transition-colors shadow-xs"
+                      >
+                        <FolderOpen className="h-3 w-3" /> Browse Local Storage
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          setAlignmentFileName('Delhi_Dehradun_Alignment_PK3.geojson')
+                        }}
+                        className="rounded-lg bg-slate-200 hover:bg-slate-300 px-3 py-1.5 text-[10px] font-bold text-slate-700"
+                      >
+                        Attach Sample GeoJSON
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           ) : (
             /* STEP 2: Statutory Documentation & Requisition */
             <div className="space-y-4">
-              <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 space-y-3">
+              <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 space-y-4">
                 <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
                   <FileSpreadsheet className="h-4 w-4 text-[#991B1B]" />
-                  Statutory Schedules & Village Details
+                  Statutory Schedules &amp; Village Details
                 </span>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {/* PFR Upload */}
-                  <div className="rounded-lg border border-slate-200 bg-white p-3">
-                    <span className="font-bold text-slate-800 block mb-1">
-                      1. Preliminary Feasibility Report (PFR) *
-                    </span>
-                    <p className="text-[11px] text-slate-500 mb-2">
-                      Technical DPR alignment & ROW width approval
-                    </p>
-                    <button
-                      type="button"
-                      onClick={() => setPfrFileName('PFR_Signed_Feasibility_Report_2026.pdf')}
-                      className="rounded bg-slate-100 hover:bg-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 flex items-center gap-1.5"
-                    >
-                      <FileText className="h-3.5 w-3.5 text-red-700" />
-                      <span>{pfrFileName || 'Upload Signed PFR (.pdf)'}</span>
-                    </button>
+                  <div className="rounded-xl border border-slate-200 bg-white p-3 space-y-2.5">
+                    <div>
+                      <span className="font-bold text-slate-800 block text-xs">
+                        1. Preliminary Feasibility Report (PFR) *
+                      </span>
+                      <p className="text-[11px] text-slate-500 mt-0.5">
+                        Technical DPR alignment &amp; ROW width approval
+                      </p>
+                    </div>
+
+                    {pfrFile ? (
+                      <div className="flex items-center justify-between rounded-lg bg-emerald-50 border border-emerald-200 px-2.5 py-2 text-[11px]">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                          <span className="font-semibold text-emerald-900 truncate">{pfrFile.name}</span>
+                          <span className="text-emerald-500 shrink-0">{formatFileSize(pfrFile.size)}</span>
+                        </div>
+                        <button type="button" onClick={() => setPfrFile(null)} className="text-slate-400 hover:text-red-500 cursor-pointer ml-1 shrink-0">
+                          <X className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => pfrInputRef.current?.click()}
+                        className="w-full flex items-center justify-center gap-2 rounded-lg border border-dashed border-slate-300 bg-slate-50 hover:border-[#991B1B]/60 hover:bg-red-50/30 px-3 py-2.5 text-xs font-semibold text-slate-600 hover:text-[#991B1B] transition-all cursor-pointer"
+                      >
+                        <FolderOpen className="h-4 w-4" />
+                        Browse Local PDF File
+                      </button>
+                    )}
+                    <input
+                      ref={pfrInputRef}
+                      type="file"
+                      accept=".pdf,.doc,.docx"
+                      onChange={(e) => { if (e.target.files?.[0]) setPfrFile(e.target.files[0]) }}
+                      className="hidden"
+                    />
                   </div>
 
                   {/* Village Schedule */}
-                  <div className="rounded-lg border border-slate-200 bg-white p-3">
-                    <span className="font-bold text-slate-800 block mb-1">
-                      2. Gata / Khasra Schedule of Villages *
-                    </span>
-                    <p className="text-[11px] text-slate-500 mb-2">
-                      Village-wise list of affected survey numbers
-                    </p>
-                    <button
-                      type="button"
-                      onClick={() => setVillageScheduleFileName('Village_Gata_List_Gurugram.xlsx')}
-                      className="rounded bg-slate-100 hover:bg-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 flex items-center gap-1.5"
-                    >
-                      <FileSpreadsheet className="h-3.5 w-3.5 text-emerald-700" />
-                      <span>{villageScheduleFileName || 'Upload Schedule (.xlsx)'}</span>
-                    </button>
+                  <div className="rounded-xl border border-slate-200 bg-white p-3 space-y-2.5">
+                    <div>
+                      <span className="font-bold text-slate-800 block text-xs">
+                        2. Gata / Khasra Schedule of Villages *
+                      </span>
+                      <p className="text-[11px] text-slate-500 mt-0.5">
+                        Village-wise list of affected survey numbers
+                      </p>
+                    </div>
+
+                    {villageScheduleFile ? (
+                      <div className="flex items-center justify-between rounded-lg bg-emerald-50 border border-emerald-200 px-2.5 py-2 text-[11px]">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                          <span className="font-semibold text-emerald-900 truncate">{villageScheduleFile.name}</span>
+                          <span className="text-emerald-500 shrink-0">{formatFileSize(villageScheduleFile.size)}</span>
+                        </div>
+                        <button type="button" onClick={() => setVillageScheduleFile(null)} className="text-slate-400 hover:text-red-500 cursor-pointer ml-1 shrink-0">
+                          <X className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => villageInputRef.current?.click()}
+                        className="w-full flex items-center justify-center gap-2 rounded-lg border border-dashed border-slate-300 bg-slate-50 hover:border-emerald-500/60 hover:bg-emerald-50/30 px-3 py-2.5 text-xs font-semibold text-slate-600 hover:text-emerald-700 transition-all cursor-pointer"
+                      >
+                        <FolderOpen className="h-4 w-4" />
+                        Browse Local PDF / Excel
+                      </button>
+                    )}
+                    <input
+                      ref={villageInputRef}
+                      type="file"
+                      accept=".pdf,.xlsx,.csv"
+                      onChange={(e) => { if (e.target.files?.[0]) setVillageScheduleFile(e.target.files[0]) }}
+                      className="hidden"
+                    />
                   </div>
                 </div>
+              </div>
+
+              {/* Additional Supporting Documents Upload */}
+              <div className="rounded-xl border border-slate-200 bg-white p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                    <Paperclip className="h-4 w-4 text-slate-500" />
+                    Additional Supporting Documents
+                    <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-500">Optional</span>
+                  </span>
+                  {additionalDocs.length > 0 && (
+                    <span className="text-[10px] font-bold text-slate-500">{additionalDocs.length} file(s) attached</span>
+                  )}
+                </div>
+
+                {/* File list */}
+                {additionalDocs.length > 0 && (
+                  <div className="space-y-1.5">
+                    {additionalDocs.map((file, idx) => (
+                      <div key={idx} className="flex items-center justify-between rounded-lg bg-slate-50 border border-slate-200 px-3 py-2 text-[11px]">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <FileText className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+                          <span className="font-semibold text-slate-800 truncate">{file.name}</span>
+                          <span className="text-slate-400 shrink-0">{formatFileSize(file.size)}</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setAdditionalDocs(additionalDocs.filter((_, i) => i !== idx))}
+                          className="text-slate-400 hover:text-red-500 cursor-pointer ml-2 shrink-0"
+                        >
+                          <X className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Upload Zone */}
+                <button
+                  type="button"
+                  onClick={() => additionalInputRef.current?.click()}
+                  className="w-full flex items-center justify-center gap-2 rounded-xl border-2 border-dashed border-slate-200 hover:border-blue-400/60 bg-slate-50/50 hover:bg-blue-50/20 px-4 py-3 text-xs font-semibold text-slate-500 hover:text-blue-700 transition-all cursor-pointer"
+                >
+                  <UploadCloud className="h-5 w-5" />
+                  <span>Upload Additional Documents from Local Storage</span>
+                  <span className="text-[10px] font-normal text-slate-400">(NOC, Maps, Approvals, etc. — PDF, JPG, PNG)</span>
+                </button>
+                <input
+                  ref={additionalInputRef}
+                  type="file"
+                  accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xlsx"
+                  multiple
+                  onChange={(e) => {
+                    if (e.target.files) {
+                      const newFiles = Array.from(e.target.files)
+                      setAdditionalDocs(prev => [...prev, ...newFiles])
+                    }
+                  }}
+                  className="hidden"
+                />
               </div>
 
               {/* CALA Authority Preference */}
@@ -540,7 +710,7 @@ export default function PiaCreateProposalModal({
               }`}
             >
               <CheckCircle2 className="h-4 w-4" />
-              <span>{isSubmitting ? 'Submitting to CALA...' : 'Submit Proposal to CALA'}</span>
+              <span>{isSubmitting ? 'Submitting...' : 'Submit'}</span>
             </button>
           )}
         </div>

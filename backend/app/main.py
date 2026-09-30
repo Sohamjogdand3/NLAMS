@@ -23,7 +23,7 @@ from app.db.seed import seed_database
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
-    description="NLAMS - National Land Acquisition & Management System Backend API",
+    description="DHARAA - Digital Land Acquisition & Management System Backend API",
     version="0.5.0",
 )
 

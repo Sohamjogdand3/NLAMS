@@ -28,6 +28,8 @@ export interface ParcelResponse {
   owner_name: string | null;
   land_use: string | null;
   source: string;
+  osm_id?: string | number | null;
+  osm_type?: string | null;
   ulpin: string | null;
   last_updated: string;
   confidence_note: string;

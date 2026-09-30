@@ -39,7 +39,7 @@ export function CoordinateInput({ onIdentify, isLoading }: CoordinateInputProps)
 
   return (
     <div className="bg-white p-4 shadow-md rounded-lg mb-4 border border-slate-200">
-      <h2 className="text-xl font-bold text-slate-800 tracking-tight">NLAMS &mdash; LAND INTELLIGENCE</h2>
+      <h2 className="text-xl font-bold text-slate-800 tracking-tight">DHARAA &mdash; LAND INTELLIGENCE</h2>
       <p className="text-sm text-slate-500 mb-4">GIS / Cadastral Foundation</p>
       
       <div className="mb-5">

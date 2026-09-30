@@ -296,7 +296,7 @@ export default function CitizenDashboard() {
         <div className="mx-auto max-w-7xl px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-            <span className="font-bold text-[#042A5E]">NLAMS Citizen Interface</span>
+            <span className="font-bold text-[#042A5E]">DHARAA Citizen Interface</span>
             <span>•</span>
             <span>Department of Land Resources, Ministry of Rural Development</span>
           </div>

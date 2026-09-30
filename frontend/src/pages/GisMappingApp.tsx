@@ -20,7 +20,6 @@ export default function GisMappingApp() {
   const handleIdentify = async (lat: number, lng: number, radius: number) => {
     setIsLoading(true);
     setError('');
-    setSelectedParcels([]); // Reset selection on new search
     
     try {
       const result = await gisService.identifyLand({
@@ -30,7 +29,13 @@ export default function GisMappingApp() {
       });
       setData(result);
       setMapCenter({ lat, lng });
-      if (result.parcel) setSelectedParcels([result.parcel]);
+      if (result.parcel) {
+        setSelectedParcels([result.parcel]);
+      } else if (result.nearby_parcels && result.nearby_parcels.length > 0) {
+        setSelectedParcels([result.nearby_parcels[0]]);
+      } else {
+        setSelectedParcels([]);
+      }
     } catch (err: any) {
       setError(err.message || 'An error occurred while fetching land data');
     } finally {
@@ -47,6 +52,24 @@ export default function GisMappingApp() {
         return [...prev, parcel];
       }
     });
+  };
+
+  const handleSelectAll = () => {
+    if (!data) return;
+    const all: ParcelResponse[] = [];
+    if (data.parcel) all.push(data.parcel);
+    if (data.nearby_parcels) {
+      data.nearby_parcels.forEach(p => {
+        if (!all.some(existing => existing.parcel_id === p.parcel_id)) {
+          all.push(p);
+        }
+      });
+    }
+    setSelectedParcels(all);
+  };
+
+  const handleDeselectAll = () => {
+    setSelectedParcels([]);
   };
 
   const handleAnalyzeCart = () => {
@@ -83,13 +106,13 @@ export default function GisMappingApp() {
     <div className="flex flex-col h-screen bg-slate-50 font-sans">
       <header className="bg-slate-900 text-white p-3 shadow-md z-20 flex items-center gap-3">
         <MapPin className="text-blue-400" />
-        <h1 className="text-xl font-bold tracking-wide">NLAMS</h1>
+        <h1 className="text-xl font-extrabold tracking-wider text-amber-400">DHARAA</h1>
         <span className="text-slate-400 text-sm border-l border-slate-700 pl-3 ml-1">
           National Land Acquisition & Management System
         </span>
         <div className="ml-auto flex items-center gap-2">
-          <span className="bg-blue-600/20 text-blue-300 text-xs px-2 py-1 rounded border border-blue-500/30">
-            SIH 2024 Prototype
+          <span className="bg-purple-600/20 text-purple-300 text-xs px-2.5 py-1 rounded border border-purple-500/40 font-semibold">
+            {selectedParcels.length} Selected
           </span>
         </div>
       </header>
@@ -104,27 +127,31 @@ export default function GisMappingApp() {
           )}
           <ParcelInfo 
             data={data} 
-            selectedParcels={selectedParcels} 
+            selectedParcels={selectedParcels}
+            onToggleParcel={toggleParcelSelection}
+            onSelectAll={handleSelectAll}
+            onDeselectAll={handleDeselectAll}
             onAnalyze={handleAnalyzeCart}
             onAcquire={handleAcquireCart}
           />
         </aside>
         
-        <section className="flex-1 relative">
+        <section className="flex-1 relative isolate z-0">
           <MapView 
             latitude={mapCenter.lat} 
             longitude={mapCenter.lng} 
             data={data}
             selectedParcels={selectedParcels}
             onToggleParcel={toggleParcelSelection}
+            onMapClick={(lat, lng) => handleIdentify(lat, lng, 150)}
           />
         </section>
       </main>
 
       {showIntelligence && data && selectedParcels.length > 0 && (
         <LocationIntelligence
-          latitude={selectedParcels[0].geojson.coordinates[0][0][1] || mapCenter.lat}
-          longitude={selectedParcels[0].geojson.coordinates[0][0][0] || mapCenter.lng}
+          latitude={selectedParcels[0].geojson?.coordinates?.[0]?.[0]?.[1] || mapCenter.lat}
+          longitude={selectedParcels[0].geojson?.coordinates?.[0]?.[0]?.[0] || mapCenter.lng}
           district={getLocalName()}
           state={data?.reverse_geocode?.state || selectedParcels[0].state || 'India'}
           onClose={() => setShowIntelligence(false)}

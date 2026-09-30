@@ -20,6 +20,7 @@ import SlaAlertsWidget from '../components/central/SlaAlertsWidget'
 import AiRiskWidget from '../components/central/AiRiskWidget'
 import CentralBlockerOverride from '../components/central/CentralBlockerOverride'
 import LegalIntelligencePanel from '../components/rag/LegalIntelligencePanel'
+import WorkflowMatrixAuditComponent from '../components/common/WorkflowMatrixAuditComponent'
 
 import {
   PieChart,
@@ -334,7 +335,7 @@ export default function CentralDashboard() {
                 </div>
               </div>
 
-              {/* Integrated National Reports Generator */}
+              {/* Integrated National Reports Generator & Workflow Matrix */}
               <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-xs space-y-4">
                 <h2 className="text-base font-bold text-slate-900">National MIS Reports Generator</h2>
                 <p className="text-xs text-slate-500">Generate and export automated compliance &amp; acquisition reports for Cabinet Secretariat.</p>
@@ -342,7 +343,7 @@ export default function CentralDashboard() {
                   <button
                     type="button"
                     onClick={() => alert('Generating National Monthly Acquisition Summary PDF...')}
-                    className="rounded-xl bg-navy px-4 py-2 text-xs font-bold text-white hover:bg-slate-800 transition-colors cursor-pointer"
+                    className="rounded-xl bg-[#042A5E] px-4 py-2 text-xs font-bold text-white hover:bg-slate-800 transition-colors cursor-pointer"
                   >
                     Download Cabinet Report (PDF)
                   </button>
@@ -355,6 +356,8 @@ export default function CentralDashboard() {
                   </button>
                 </div>
               </div>
+
+              <WorkflowMatrixAuditComponent />
             </div>
           )}
 

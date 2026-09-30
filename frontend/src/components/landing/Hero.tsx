@@ -3,7 +3,7 @@ export default function Hero() {
     <section className="relative overflow-hidden border-b border-border bg-navy">
       <div className="mx-auto grid max-w-[1700px] w-full items-center gap-10 px-4 sm:px-8 lg:px-12 py-14 lg:grid-cols-[1.1fr_1fr] lg:py-20">
         <div>
-          <p className="text-sm font-medium text-saffron">SIH26016 · National platform prototype</p>
+          <p className="text-sm font-medium text-saffron">DHARAA</p>
           <h1 className="mt-4 max-w-2xl text-3xl font-bold leading-[1.15] text-white sm:text-4xl lg:text-[2.75rem]">
             Land Acquisition Information &amp; Citizen Services
           </h1>
@@ -16,7 +16,7 @@ export default function Hero() {
               href="/login"
               className="rounded-md bg-saffron px-6 py-3 text-sm font-semibold text-navy-dark shadow-sm transition-colors hover:bg-saffron-dark hover:text-white"
             >
-              Sign in to NLAMS
+              Sign in to DHARAA
             </a>
             <a
               href="#info"

@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, GeoJSON, useMap, Circle, LayersControl, Tooltip } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, GeoJSON, useMap, useMapEvents, Circle, LayersControl, Tooltip } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
@@ -21,6 +21,18 @@ interface MapViewProps {
   radius?: number;
   selectedParcels?: ParcelResponse[];
   onToggleParcel?: (p: ParcelResponse) => void;
+  onMapClick?: (lat: number, lng: number) => void;
+}
+
+function MapClickHandler({ onMapClick }: { onMapClick?: (lat: number, lng: number) => void }) {
+  useMapEvents({
+    click(e) {
+      if (onMapClick) {
+        onMapClick(e.latlng.lat, e.latlng.lng);
+      }
+    },
+  });
+  return null;
 }
 
 function MapUpdater({ latitude, longitude, data }: MapViewProps) {
@@ -54,40 +66,70 @@ function MapUpdater({ latitude, longitude, data }: MapViewProps) {
   return null;
 }
 
-const getParcelStyle = (landUse: string | undefined | null, isMain: boolean = false, isSelected: boolean = false) => {
+const getParcelStyle = (_landUse?: string | null, _isMain: boolean = false, isSelected: boolean = false) => {
   if (isSelected) {
-    return { color: '#7c3aed', weight: 4, fillColor: '#8b5cf6', fillOpacity: 0.8, dashArray: '0' }; // Purple for selected
+    return {
+      color: '#5b21b6', // Solid deep purple stroke
+      weight: 3.5,
+      fillColor: '#8b5cf6', // Vibrant bright purple fill matching reference screenshot
+      fillOpacity: 0.75,
+      dashArray: '0',
+    };
   }
 
-  if (landUse === 'Forest') {
-    return isMain 
-      ? { color: '#047857', weight: 4, fillColor: '#10b981', fillOpacity: 0.7, dashArray: '6,6' }
-      : { color: '#059669', weight: 1, fillColor: '#34d399', fillOpacity: 0.2 };
-  }
-  if (landUse === 'Slum') {
-    return isMain 
-      ? { color: '#c2410c', weight: 4, fillColor: '#f97316', fillOpacity: 0.7, dashArray: '6,6' }
-      : { color: '#ea580c', weight: 1, fillColor: '#fb923c', fillOpacity: 0.2 };
-  }
-  
-  // Default (Residential/Commercial)
-  return isMain 
-    ? { color: '#1d4ed8', weight: 4, fillColor: '#3b82f6', fillOpacity: 0.7, dashArray: '6,6' }
-    : { color: '#64748b', weight: 1, fillColor: '#e2e8f0', fillOpacity: 0.2 };
+  // Clean cadastral boundary outline matching reference screenshot
+  return {
+    color: '#475569',
+    weight: 1.5,
+    fillColor: '#94a3b8',
+    fillOpacity: 0.15,
+    dashArray: '0',
+  };
 };
 
-export function MapView({ latitude, longitude, data, radius, selectedParcels = [], onToggleParcel }: MapViewProps) {
+export function MapView({ latitude, longitude, data, radius, selectedParcels = [], onToggleParcel, onMapClick }: MapViewProps) {
   
   const isSelected = (id: string) => selectedParcels.some(p => p.parcel_id === id);
 
+  const handleFeature = (parcel: ParcelResponse) => (_feature: any, layer: L.Layer) => {
+    layer.on({
+      click: (e: L.LeafletMouseEvent) => {
+        if (e.originalEvent) {
+          e.originalEvent.stopPropagation();
+        }
+        L.DomEvent.stopPropagation(e);
+        if (onToggleParcel) {
+          onToggleParcel(parcel);
+        }
+      },
+      mouseover: (e: L.LeafletMouseEvent) => {
+        const target: any = e.target;
+        if (!isSelected(parcel.parcel_id)) {
+          target.setStyle({
+            fillOpacity: 0.35,
+            weight: 2.5,
+            color: '#334155'
+          });
+        }
+      },
+      mouseout: (e: L.LeafletMouseEvent) => {
+        const target: any = e.target;
+        if (!isSelected(parcel.parcel_id)) {
+          target.setStyle(getParcelStyle(parcel.land_use, false, false));
+        }
+      }
+    });
+  };
+
   return (
-    <div className="h-full w-full rounded-lg overflow-hidden shadow-inner border border-slate-300">
+    <div className="h-full w-full rounded-lg overflow-hidden shadow-inner border border-slate-300 blueprint-map relative isolate z-0">
       <MapContainer
         center={[latitude, longitude]}
         zoom={18}
         maxZoom={22}
         style={{ height: '100%', width: '100%' }}
       >
+        <MapClickHandler onMapClick={onMapClick} />
         <LayersControl position="topright">
           <LayersControl.BaseLayer checked name="Cadastral Base Map">
             <TileLayer
@@ -123,31 +165,38 @@ export function MapView({ latitude, longitude, data, radius, selectedParcels = [
           />
         )}
         
-        {data && data.nearby_parcels && data.nearby_parcels.map((p: ParcelResponse) => (
-          <GeoJSON 
-            key={p.parcel_id} 
-            data={p.geojson} 
-            style={getParcelStyle(p.land_use, false, isSelected(p.parcel_id))}
-            eventHandlers={{
-              click: () => onToggleParcel && onToggleParcel(p)
-            }}
-          >
-            <Tooltip direction="center" permanent className="bg-transparent border-0 shadow-none font-bold text-[9px] text-slate-700 opacity-80">
-              {p.survey_number}
-            </Tooltip>
-          </GeoJSON>
-        ))}
+        {data && data.nearby_parcels && data.nearby_parcels.map((p: ParcelResponse) => {
+          const selected = isSelected(p.parcel_id);
+          return (
+            <GeoJSON 
+              key={`nearby-${p.parcel_id}-${selected}`} 
+              data={p.geojson} 
+              style={getParcelStyle(p.land_use, false, selected)}
+              onEachFeature={handleFeature(p)}
+            >
+              <Tooltip 
+                direction="center" 
+                permanent 
+                className={`cadastral-tooltip ${selected ? 'cadastral-tooltip-selected' : ''}`}
+              >
+                {p.survey_number}
+              </Tooltip>
+            </GeoJSON>
+          );
+        })}
 
         {data && data.parcel && (
           <GeoJSON 
-            key={`main-${data.parcel.parcel_id}`} 
+            key={`main-${data.parcel.parcel_id}-${isSelected(data.parcel.parcel_id)}`} 
             data={data.parcel.geojson} 
             style={getParcelStyle(data.parcel.land_use, true, isSelected(data.parcel.parcel_id))}
-            eventHandlers={{
-              click: () => onToggleParcel && onToggleParcel(data.parcel!)
-            }}
+            onEachFeature={handleFeature(data.parcel)}
           >
-            <Tooltip direction="center" permanent className="bg-transparent border-0 shadow-none font-bold text-[10px] text-blue-900">
+            <Tooltip 
+              direction="center" 
+              permanent 
+              className={`cadastral-tooltip font-extrabold ${isSelected(data.parcel.parcel_id) ? 'cadastral-tooltip-selected' : ''}`}
+            >
               {data.parcel.survey_number}
             </Tooltip>
           </GeoJSON>

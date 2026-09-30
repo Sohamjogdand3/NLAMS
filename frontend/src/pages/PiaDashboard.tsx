@@ -8,6 +8,7 @@ import type {
   InfrastructureSector,
 } from '../types/pia'
 import { proposalsApi, type Proposal } from '../services/api'
+import { recordWorkflowStepLog } from '../utils/auditLogger'
 
 import PiaSidebar from '../components/pia/PiaSidebar'
 import PiaHeader from '../components/pia/PiaHeader'
@@ -117,55 +118,70 @@ export default function PiaDashboard() {
     }, 4500)
   }
 
-  // Load proposals from backend API
+  // Load proposals from backend API & shared storage
   const loadProposals = async () => {
     setLoading(true)
     setError(null)
+    let mappedProjects: PiaProject[] = []
     try {
       const liveProposals = await proposalsApi.fetchProposals()
-      const mappedProjects = liveProposals.map(mapProposalToPiaProject)
-      setProjects(mappedProjects)
-
-      // Compute dynamic KPIs
-      const totalProjects = mappedProjects.length
-      const totalLandReq = mappedProjects.reduce((sum, p) => sum + p.landRequiredHa, 0)
-      const totalLandAcq = mappedProjects.reduce((sum, p) => sum + p.landAcquiredHa, 0)
-      const totalBudget = mappedProjects.reduce((sum, p) => sum + p.budgetCr, 0)
-      const totalDisbursed = mappedProjects.reduce((sum, p) => sum + p.disbursedCr, 0)
-
-      setKpis({
-        totalProjects: totalProjects || 6,
-        draftProposals: mappedProjects.filter((p) => p.status === 'draft').length,
-        underScrutiny: mappedProjects.filter((p) => p.status === 'under_scrutiny').length,
-        approved: mappedProjects.filter((p) => p.status === 'approved' || p.status === 'in_progress').length,
-        clarificationRequired: 0,
-        acquisitionInProgress: mappedProjects.filter((p) => p.status === 'in_progress').length,
-        totalLandRequiredHa: Number(totalLandReq.toFixed(1)),
-        totalLandAcquiredHa: Number(totalLandAcq.toFixed(1)),
-        totalBudgetCr: Number(totalBudget.toFixed(1)),
-        totalDisbursedCr: Number(totalDisbursed.toFixed(1)),
-      })
-
-      // Documents
-      const defaultDocs: PiaDocument[] = mappedProjects.map((p, idx) => ({
-        id: `DOC-${idx + 1}`,
-        projectId: p.id,
-        projectCode: p.code,
-        projectName: p.name,
-        title: `Detailed Project Report (DPR) Rev 1.${idx + 1}`,
-        category: 'Gazette Notification',
-        fileType: 'PDF',
-        fileSize: '4.2 MB',
-        uploadDate: p.submissionDate,
-        uploadedBy: 'PIA Executive Engineer',
-        status: 'verified',
-      }))
-      setDocuments(defaultDocs)
+      if (Array.isArray(liveProposals) && liveProposals.length > 0) {
+        mappedProjects = liveProposals.map(mapProposalToPiaProject)
+      }
     } catch (err: any) {
-      setError(err?.message || 'Failed to connect to NLAMS Backend API.')
-    } finally {
-      setLoading(false)
+      console.warn('Backend proposals fetch error, using fallback:', err)
     }
+
+    // Merge with custom proposals from localStorage
+    try {
+      const customStr = localStorage.getItem('dharaa_custom_proposals')
+      if (customStr) {
+        const customProposals: PiaProject[] = JSON.parse(customStr)
+        const customIds = new Set(customProposals.map((cp) => cp.id))
+        mappedProjects = [...customProposals, ...mappedProjects.filter((p) => !customIds.has(p.id))]
+      }
+    } catch (e) {
+      console.warn('Error reading dharaa_custom_proposals:', e)
+    }
+
+    setProjects(mappedProjects)
+
+    // Compute dynamic KPIs
+    const totalProjects = mappedProjects.length
+    const totalLandReq = mappedProjects.reduce((sum, p) => sum + p.landRequiredHa, 0)
+    const totalLandAcq = mappedProjects.reduce((sum, p) => sum + p.landAcquiredHa, 0)
+    const totalBudget = mappedProjects.reduce((sum, p) => sum + p.budgetCr, 0)
+    const totalDisbursed = mappedProjects.reduce((sum, p) => sum + p.disbursedCr, 0)
+
+    setKpis({
+      totalProjects: totalProjects || 6,
+      draftProposals: mappedProjects.filter((p) => p.status === 'draft').length,
+      underScrutiny: mappedProjects.filter((p) => p.status === 'under_scrutiny').length,
+      approved: mappedProjects.filter((p) => p.status === 'approved' || p.status === 'in_progress').length,
+      clarificationRequired: 0,
+      acquisitionInProgress: mappedProjects.filter((p) => p.status === 'in_progress').length,
+      totalLandRequiredHa: Number(totalLandReq.toFixed(1)),
+      totalLandAcquiredHa: Number(totalLandAcq.toFixed(1)),
+      totalBudgetCr: Number(totalBudget.toFixed(1)),
+      totalDisbursedCr: Number(totalDisbursed.toFixed(1)),
+    })
+
+    // Documents
+    const defaultDocs: PiaDocument[] = mappedProjects.map((p, idx) => ({
+      id: `DOC-${idx + 1}`,
+      projectId: p.id,
+      projectCode: p.code,
+      projectName: p.name,
+      title: `Detailed Project Report (DPR) Rev 1.${idx + 1}`,
+      category: 'Gazette Notification',
+      fileType: 'PDF',
+      fileSize: '4.2 MB',
+      uploadDate: p.submissionDate,
+      uploadedBy: 'PIA Executive Engineer',
+      status: 'verified',
+    }))
+    setDocuments(defaultDocs)
+    setLoading(false)
   }
 
   useEffect(() => {
@@ -174,14 +190,45 @@ export default function PiaDashboard() {
 
   // Handle adding new land acquisition proposal
   const handleCreateProject = async (newProject: PiaProject) => {
-    setProjects((prev) => [newProject, ...prev])
-    setKpis((prev) => ({
-      ...prev,
-      totalProjects: prev.totalProjects + 1,
-      underScrutiny: prev.underScrutiny + 1,
-      totalLandRequiredHa: Number((prev.totalLandRequiredHa + newProject.landRequiredHa).toFixed(1)),
-    }))
-    showToast(`Land Acquisition Proposal "${newProject.name}" submitted to CALA successfully!`)
+    // 1. Save to backend if backend API session exists
+    try {
+      await proposalsApi.createProposal({
+        project_title: newProject.name,
+        requiring_agency: newProject.agency || 'NHAI',
+        ministry: 'MoRTH',
+        public_purpose: 'Infrastructure Corridor Land Acquisition',
+        estimated_budget_inr: (newProject.budgetCr || 250) * 10000000,
+        required_area_ha: newProject.landRequiredHa || 100,
+        description: `Submitted by ${newProject.agency} for ${newProject.district}, ${newProject.state}.`,
+      })
+    } catch (apiErr) {
+      console.warn('Backend proposal creation skipped, saving to local shared storage:', apiErr)
+    }
+
+    // 2. Persist to shared localStorage so all role dashboards (State Admin, District Admin) sync instantly
+    try {
+      const existingStr = localStorage.getItem('dharaa_custom_proposals')
+      const existing: PiaProject[] = existingStr ? JSON.parse(existingStr) : []
+      const updated = [newProject, ...existing.filter((p) => p.id !== newProject.id)]
+      localStorage.setItem('dharaa_custom_proposals', JSON.stringify(updated))
+
+      recordWorkflowStepLog({
+        step: 1,
+        workItem: 'Proposal Ingestion',
+        originatingDashboard: 'PIA Agency Desk',
+        receivingDashboard: 'State Revenue Nodal',
+        outputArtifact: 'Requisition File & KML Alignment',
+        targetProject: newProject.code || newProject.id,
+        user: `${newProject.agency || 'NHAI'} Nodal Officer`,
+        role: 'PIA Officer',
+        action: 'Submitted Requisition File & KML Alignment',
+        details: `Land acquisition requisition submitted for ${newProject.name} (${newProject.landRequiredHa || 100} Ha target in ${newProject.district || 'Pune'}).`,
+      })
+    } catch (e) {
+      console.warn('Failed to save to localStorage:', e)
+    }
+
+    showToast(`Land Acquisition Proposal "${newProject.name}" submitted to State Revenue Gateway!`)
     setActiveTab('projects')
     loadProposals()
   }

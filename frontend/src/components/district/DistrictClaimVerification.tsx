@@ -13,6 +13,7 @@ import {
 } from 'lucide-react'
 import { MOCK_CLAIM_VERIFICATIONS } from '../../data/mockDistrictData'
 import type { LandownerClaimVerificationItem } from '../../types/district'
+import { recordWorkflowStepLog } from '../../utils/auditLogger'
 
 export default function DistrictClaimVerification() {
   const [claims, setClaims] = useState<LandownerClaimVerificationItem[]>(MOCK_CLAIM_VERIFICATIONS)
@@ -38,6 +39,21 @@ export default function DistrictClaimVerification() {
           : c
       )
     )
+
+    if (newStatus === 'Approved_For_Escrow') {
+      recordWorkflowStepLog({
+        step: 7,
+        workItem: 'Claim Verification',
+        originatingDashboard: 'Citizen Portal',
+        receivingDashboard: 'District LAO Desk',
+        outputArtifact: 'Title Verification Certificate',
+        targetProject: activeClaim.projectCode,
+        user: activeClaim.claimantName || 'Citizen Landowner',
+        role: 'Landowner / District LAO',
+        action: 'Issued Title Verification Certificate',
+        details: `Verified 7/12 extract & bank details for Khasra ${activeClaim.khasraNo}. Approved for PFMS Escrow Payout of ₹${((activeClaim.calculatedAwardAmount || 4500000) / 100000).toFixed(2)} Lakhs.`,
+      })
+    }
 
     const label =
       newStatus === 'Approved_For_Escrow'

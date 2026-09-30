@@ -15,7 +15,7 @@ export default function PillarsSection() {
         <div className="max-w-2xl">
           <h2 className="text-2xl font-bold text-navy sm:text-3xl">Built for statutory work, not just status pages</h2>
           <p className="mt-3 text-base leading-relaxed text-muted">
-            NLAMS is designed around what makes land acquisition hard: real
+            DHARAA is designed around what makes land acquisition hard: real
             geography, strict sequence, and decisions that carry legal weight.
           </p>
         </div>

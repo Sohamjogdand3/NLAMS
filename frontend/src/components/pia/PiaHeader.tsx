@@ -6,7 +6,6 @@ import {
   LogOut,
   ChevronDown,
   PlusCircle,
-  Phone,
 } from 'lucide-react'
 import { useAuth } from '../../auth/AuthContext'
 import { useNavigate } from 'react-router-dom'
@@ -37,26 +36,6 @@ export default function PiaHeader({
 
   return (
     <header className="sticky top-0 z-20 flex flex-col border-b border-slate-200 bg-white/95 backdrop-blur-xs">
-      {/* Top micro-utility bar */}
-      <div className="flex items-center justify-between px-4 sm:px-6 py-1 bg-slate-900 text-[11px] text-slate-300 font-medium">
-        <div className="flex items-center gap-4">
-          <span className="flex items-center gap-1.5 text-red-400 font-semibold">
-            <span className="h-2 w-2 rounded-full bg-red-500 animate-ping inline-block" />
-            GOVERNMENT OF INDIA · MINISTRY OF RURAL DEVELOPMENT & MoRTH
-          </span>
-          <span className="hidden md:inline text-slate-500">|</span>
-          <span className="hidden md:inline text-slate-300">
-            Project Implementing Agency (PIA) Central Portal
-          </span>
-        </div>
-        <div className="flex items-center gap-4">
-          <div className="hidden lg:flex items-center gap-1 text-slate-300">
-            <Phone className="h-3 w-3 text-red-400" />
-            <span>PIA Helpline: 1800-11-2026</span>
-          </div>
-        </div>
-      </div>
-
       {/* Main Header bar */}
       <div className="flex h-16 items-center justify-between px-4 sm:px-6 gap-4">
         {/* Search Bar */}

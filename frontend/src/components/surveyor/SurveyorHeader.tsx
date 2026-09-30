@@ -38,7 +38,7 @@ export default function SurveyorHeader({
         </div>
         <div className="leading-tight">
           <div className="flex items-center gap-1.5">
-            <span className="text-xs font-black tracking-tight text-white">NLAMS Mobile JMS</span>
+            <span className="text-xs font-black tracking-tight text-white">DHARAA Mobile JMS</span>
             <span className="rounded bg-amber-400/20 px-1 py-0.2 text-[9px] font-bold text-amber-300">
               Field App
             </span>

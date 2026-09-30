@@ -2,7 +2,7 @@ from sqlalchemy import Column, String, Float, DateTime
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
 from geoalchemy2 import Geometry
-from app.database import Base
+from app.db.base import Base
 
 class CadastralParcel(Base):
     __tablename__ = "cadastral_parcels"

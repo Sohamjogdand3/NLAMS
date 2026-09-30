@@ -1,18 +1,16 @@
 import { useState } from 'react'
 import { Menu, X, ChevronDown, Play, Pause, ChevronLeft, ChevronRight, LogIn } from 'lucide-react'
-import EmblemIndia from './EmblemIndia'
-import SwachhBharatLogo from './SwachhBharatLogo'
 
 const navLinks = [
   { href: '/', label: 'Home' },
+  { href: '/dashboard/citizen', label: 'Citizen Portal' },
+  { href: '/gis-mapping', label: 'NAKSHA GIS' },
   { href: '#ministry', label: 'Ministry', hasDropdown: true },
   { href: '#schemes', label: 'Schemes', hasDropdown: true },
   { href: '#acts', label: 'Acts & Policies' },
-  { href: '#naksha', label: 'NAKSHA GIS', hasDropdown: true },
   { href: '#workflow', label: 'How it Works' },
   { href: '#roles', label: 'Role Workspaces' },
-  { href: '#about', label: 'About NLAMS' },
-  { href: '#rti', label: 'RTI' },
+  { href: '#about', label: 'About DHARAA' },
 ]
 
 export default function Header() {
@@ -21,52 +19,20 @@ export default function Header() {
   const [isPaused, setIsPaused] = useState(false)
 
   return (
-    <header className="w-full bg-surface shadow-sm">
-      {/* 1. Official Government Header Branding Banner (As in Reference Image) */}
-      <div className="border-b border-border bg-white py-3">
-        <div className="mx-auto flex max-w-[1700px] w-full items-center justify-between px-4 sm:px-8 lg:px-12">
-          {/* Left Brand: State Emblem of India + Department Details */}
-          <a href="/" className="flex items-center gap-3 sm:gap-4 group">
-            <div className="shrink-0 transition-transform group-hover:scale-105">
-              <EmblemIndia height={68} className="h-14 sm:h-16 w-auto" />
-            </div>
-            <div className="h-12 w-px bg-slate-300 hidden xs:block" />
-            <div className="flex flex-col">
-              {/* Hindi Department Name */}
-              <span className="text-xs sm:text-sm font-bold text-slate-800 tracking-wide font-serif">
-                भूमि संसाधन विभाग
-              </span>
-              {/* English Department Name */}
-              <h1 className="text-base sm:text-xl lg:text-2xl font-extrabold text-slate-900 tracking-tight leading-none uppercase font-sans">
-                DEPARTMENT OF LAND RESOURCES
-              </h1>
-              {/* Ministry Subtitle */}
-              <span className="text-[11px] sm:text-xs font-semibold text-slate-600 tracking-wider uppercase mt-0.5">
-                MINISTRY OF RURAL DEVELOPMENT
-              </span>
-              
-              {/* System Name Badge */}
-              <div className="mt-1 flex items-center gap-1.5">
-                <span className="inline-flex items-center rounded-sm bg-navy px-1.5 py-0.5 text-[10px] font-extrabold uppercase text-white tracking-widest shadow-xs">
-                  NLAMS
-                </span>
-                <span className="text-[11px] font-bold text-navy hidden sm:inline">
-                  National Land Acquisition & Management System
-                </span>
-              </div>
-            </div>
+    <header className="w-full bg-surface shadow-sm sticky top-0 z-40">
+      {/* Main Navigation Bar */}
+      <div className="border-b border-slate-200 bg-surface/98 backdrop-blur shadow-xs">
+        <div className="mx-auto flex max-w-[1700px] w-full items-center justify-between px-4 sm:px-8 lg:px-12 py-2.5">
+          {/* DHARAA Logo & Brand */}
+          <a href="/" className="flex items-center gap-2 mr-6 shrink-0">
+            <span className="inline-flex items-center rounded bg-navy px-2 py-1 text-xs font-black uppercase text-white tracking-widest shadow-xs">
+              DHARAA
+            </span>
+            <span className="text-xs sm:text-sm font-bold text-slate-900 hidden sm:inline tracking-tight">
+              National Land Acquisition & Management System
+            </span>
           </a>
 
-          {/* Right Brand: Swachh Bharat Abhiyan Logo (As in Reference Image) */}
-          <div className="hidden md:flex items-center gap-4">
-            <SwachhBharatLogo height={58} className="h-14 w-auto drop-shadow-xs" />
-          </div>
-        </div>
-      </div>
-
-      {/* 2. Main Navigation Bar (Sticky Bar) */}
-      <div className="sticky top-0 z-40 border-b border-slate-200 bg-surface/98 backdrop-blur shadow-xs">
-        <div className="mx-auto flex max-w-[1700px] w-full items-center justify-between px-4 sm:px-8 lg:px-12 py-2">
           <nav className="hidden items-center gap-1 lg:gap-2 lg:flex">
             {navLinks.map((link) => (
               <a
@@ -130,10 +96,10 @@ export default function Header() {
 
               {/* Citizen Token Quick Action Button */}
               <a
-                href="#citizen-token-tracker"
+                href="/dashboard/citizen"
                 className="inline-flex items-center gap-2 rounded-md bg-[#042A5E] px-4 py-2 text-sm font-bold text-white shadow-xs transition-all hover:bg-[#021838] focus:outline-hidden"
               >
-                <span>Citizen Token Desk</span>
+                <span>Citizen Portal</span>
               </a>
           </div>
 
@@ -171,7 +137,7 @@ export default function Header() {
                 className="mt-3 flex items-center justify-center gap-2 rounded-md bg-navy px-4 py-2.5 text-sm font-bold text-white shadow-xs"
               >
                 <LogIn className="h-4 w-4" />
-                <span>Sign In to NLAMS Portal</span>
+                <span>Sign In to DHARAA Portal</span>
               </a>
             </nav>
           </div>

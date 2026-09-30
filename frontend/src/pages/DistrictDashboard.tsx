@@ -78,6 +78,50 @@ function mapProposalToDistrictProject(p: Proposal): DistrictProject {
   }
 }
 
+function mapCustomProposalToDistrictProject(cp: any): DistrictProject {
+  const stageMap: Record<string, any> = {
+    'Submitted_To_State': 'Scrutiny',
+    'CALA_Appointed': 'Scrutiny',
+    'SIA_In_Progress': 'Notification',
+    'Sec11_Published': 'Notification',
+    'Valuation_Computed': 'Award',
+    'Award_Pronounced': 'Award',
+    'Disbursed': 'Compensation',
+    'Handover_Complete': 'Possession',
+  }
+  const currentStage = stageMap[cp.status] || (cp.currentStage || 'Scrutiny')
+
+  return {
+    id: String(cp.id),
+    code: cp.code || `PROP-${String(cp.id).toUpperCase()}`,
+    name: cp.name || cp.project_title || 'Land Acquisition Project',
+    piaAgency: cp.agency || cp.requiring_agency || 'NHAI',
+    sector: cp.sector || 'Highways & Infrastructure',
+    tehsil: cp.tehsil || 'Haveli & Khed',
+    districtsCovered: `${cp.district || 'Pune'}, ${cp.state || 'Maharashtra'}`,
+    currentStage,
+    status: cp.status === 'CALA_Appointed' ? 'sec_3a_gazette' : (cp.status?.toLowerCase() || 'sec_3a_gazette') as any,
+    totalLandReqHectares: cp.landRequiredHa || cp.total_area_hectares || 120.5,
+    acquiredHectares: cp.status === 'Handover_Complete' ? (cp.landRequiredHa || 120.5) : +((cp.landRequiredHa || 120.5) * 0.3).toFixed(1),
+    totalCompensationCr: cp.budgetCr || cp.estimated_compensation_cr || 350.0,
+    disbursedCompensationCr: cp.disbursedCr || 0,
+    affectedVillagesCount: cp.affectedVillagesCount || 6,
+    affectedParcelsCount: cp.affectedParcelsCount || 98,
+    affectedFamiliesCount: cp.affectedFamiliesCount || 64,
+    submittedDate: cp.submittedDate || new Date().toISOString().split('T')[0],
+    slaDeadline: '2026-12-31',
+    slaDaysRemaining: 60,
+    isDelayed: false,
+    assignedOfficer: cp.appointedCalaOfficer || cp.assignedDistrictCollector || 'Dr. Suhas Diwase (IAS) / LAO Haveli',
+    pendingActionRemark: cp.appointmentOrderNo ? `CALA Appointed via Sec 3(a) Order #${cp.appointmentOrderNo}` : 'Intake verified from State Nodal',
+    documentsSubmitted: [
+      { name: `${cp.code || 'PROP'}_Requisition.pdf`, type: 'DPR', status: 'Verified', date: new Date().toISOString().split('T')[0] },
+      { name: `${cp.code || 'PROP'}_Alignment.kml`, type: 'GIS_KML', status: 'Verified', date: new Date().toISOString().split('T')[0] },
+      { name: `${cp.code || 'PROP'}_Sec3a_Gazette.pdf`, type: 'Gazette', status: 'Verified', date: new Date().toISOString().split('T')[0] },
+    ],
+  }
+}
+
 export default function DistrictDashboard() {
   const [activeTab, setActiveTab] = useState<DistrictNavigationTab>('dashboard')
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false)
@@ -90,53 +134,75 @@ export default function DistrictDashboard() {
   const loadProjects = useCallback(async () => {
     try {
       setLoading(true)
-      const data = await proposalsApi.fetchProposals()
-      if (Array.isArray(data) && data.length > 0) {
-        const mapped = data.map(mapProposalToDistrictProject)
-        setProjects(mapped)
-
-        // Compute live KPIs
-        const totalArea = mapped.reduce((acc, p) => acc + p.totalLandReqHectares, 0)
-        const totalAcquired = mapped.reduce((acc, p) => acc + p.acquiredHectares, 0)
-        const totalCompensation = mapped.reduce((acc, p) => acc + p.totalCompensationCr, 0)
-
-        setKpis([
-          {
-            id: 'kpi-1',
-            title: 'Active District Acquisitions',
-            value: `${mapped.length}`,
-            subtext: `${mapped.filter((p) => p.currentStage === 'Notification').length} in Sec 11/3A Window`,
-            trend: '+2 from last month',
-            badgeColor: 'bg-blue-100 text-[#042A5E]',
-          },
-          {
-            id: 'kpi-2',
-            title: 'Total Land Required',
-            value: `${totalArea.toFixed(1)} Ha`,
-            subtext: `${totalAcquired.toFixed(1)} Ha Acquired (${((totalAcquired / (totalArea || 1)) * 100).toFixed(0)}%)`,
-            trend: '+18.4 Ha this week',
-            badgeColor: 'bg-emerald-100 text-emerald-800',
-          },
-          {
-            id: 'kpi-3',
-            title: 'Sanctioned Compensation',
-            value: `₹${totalCompensation.toFixed(0)} Cr`,
-            subtext: 'PFMS Treasury Locked',
-            trend: '100% Escrow Funded',
-            badgeColor: 'bg-purple-100 text-purple-800',
-          },
-          {
-            id: 'kpi-4',
-            title: 'Section 11 Active Locks',
-            value: `${mapped.reduce((acc, p) => acc + p.affectedParcelsCount, 0)}`,
-            subtext: 'Parcels in Mahabhulekh',
-            trend: '0 Unauthorized Transfers',
-            badgeColor: 'bg-amber-100 text-amber-800',
-          },
-        ])
-      } else {
-        setProjects(MOCK_DISTRICT_PROJECTS)
+      let allMapped: DistrictProject[] = []
+      try {
+        const data = await proposalsApi.fetchProposals()
+        if (Array.isArray(data) && data.length > 0) {
+          allMapped = data.map(mapProposalToDistrictProject)
+        }
+      } catch (err) {
+        console.warn('API fetch skipped in District dashboard:', err)
       }
+
+      // Merge custom proposals appointed by State Nodal
+      try {
+        const customStr = localStorage.getItem('dharaa_custom_proposals')
+        if (customStr) {
+          const customProposals = JSON.parse(customStr)
+          const customMapped = customProposals.map(mapCustomProposalToDistrictProject)
+          const existingIds = new Set(allMapped.map((p) => String(p.id)))
+          const newCustoms = customMapped.filter((p: DistrictProject) => !existingIds.has(String(p.id)))
+          allMapped = [...newCustoms, ...allMapped]
+        }
+      } catch (e) {
+        console.warn('Error reading custom proposals in District dashboard:', e)
+      }
+
+      if (allMapped.length === 0) {
+        allMapped = MOCK_DISTRICT_PROJECTS
+      }
+
+      setProjects(allMapped)
+
+      // Compute live KPIs
+      const totalArea = allMapped.reduce((acc, p) => acc + p.totalLandReqHectares, 0)
+      const totalAcquired = allMapped.reduce((acc, p) => acc + p.acquiredHectares, 0)
+      const totalCompensation = allMapped.reduce((acc, p) => acc + p.totalCompensationCr, 0)
+
+      setKpis([
+        {
+          id: 'kpi-1',
+          title: 'Active District Acquisitions',
+          value: `${allMapped.length}`,
+          subtext: `${allMapped.filter((p) => p.currentStage === 'Notification').length} in Sec 11/3A Window`,
+          trend: '+2 from last month',
+          badgeColor: 'bg-blue-100 text-[#042A5E]',
+        },
+        {
+          id: 'kpi-2',
+          title: 'Total Land Required',
+          value: `${totalArea.toFixed(1)} Ha`,
+          subtext: `${totalAcquired.toFixed(1)} Ha Acquired (${((totalAcquired / (totalArea || 1)) * 100).toFixed(0)}%)`,
+          trend: '+18.4 Ha this week',
+          badgeColor: 'bg-emerald-100 text-emerald-800',
+        },
+        {
+          id: 'kpi-3',
+          title: 'Sanctioned Compensation',
+          value: `₹${totalCompensation.toFixed(0)} Cr`,
+          subtext: 'PFMS Treasury Locked',
+          trend: '100% Escrow Funded',
+          badgeColor: 'bg-purple-100 text-purple-800',
+        },
+        {
+          id: 'kpi-4',
+          title: 'Section 11 Active Locks',
+          value: `${allMapped.reduce((acc, p) => acc + p.affectedParcelsCount, 0)}`,
+          subtext: 'Parcels in Mahabhulekh',
+          trend: '0 Unauthorized Transfers',
+          badgeColor: 'bg-amber-100 text-amber-800',
+        },
+      ])
     } catch (err) {
       console.warn('Using district project cache:', err)
       setProjects(MOCK_DISTRICT_PROJECTS)

@@ -32,6 +32,8 @@ class ParcelResponse(BaseModel):
     owner_name: Optional[str]
     land_use: Optional[str] = None
     source: str = "NLAMS Demo Dataset"
+    osm_id: Optional[str] = None
+    osm_type: Optional[str] = None
     ulpin: Optional[str] = None
     last_updated: Optional[datetime]
     confidence_note: str = "Demo data — not authoritative cadastral record"

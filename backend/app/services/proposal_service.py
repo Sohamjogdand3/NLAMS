@@ -309,6 +309,21 @@ class ProposalService:
             actor_user=user,
             ip_address=ip_address,
         )
+
+        AuditService.log_event(
+            db=db,
+            event_type="PROPOSAL_SUBMITTED_TO_STATE",
+            actor_id=user.id,
+            actor_email=user.email,
+            ip_address=ip_address,
+            entity_name="PROJECT_PROPOSAL",
+            entity_id=str(proposal.id),
+            details={
+                "proposal_code": proposal.proposal_code,
+                "current_stage": proposal.current_stage,
+                "status": proposal.status,
+            },
+        )
         return proposal
 
     @classmethod
@@ -419,6 +434,21 @@ class ProposalService:
             ip_address=ip_address,
         )
 
+        AuditService.log_event(
+            db=db,
+            event_type="CALA_APPOINTED_BY_STATE",
+            actor_id=state_admin_user.id,
+            actor_email=state_admin_user.email,
+            ip_address=ip_address,
+            entity_name="CALA_APPOINTMENT",
+            entity_id=str(appointment.id),
+            details={
+                "proposal_id": proposal_id,
+                "collector_user_id": collector_user_id,
+                "order_no": order_no,
+            },
+        )
+
         return appointment
 
     @classmethod
@@ -482,6 +512,21 @@ class ProposalService:
                 action_metadata={"recommendation_status": recommendation_status},
                 ip_address=ip_address,
             )
+
+        AuditService.log_event(
+            db=db,
+            event_type="EXPERT_COMMITTEE_APPRAISAL_RECORDED",
+            actor_id=committee_user.id,
+            actor_email=committee_user.email,
+            ip_address=ip_address,
+            entity_name="EXPERT_COMMITTEE_APPRAISAL",
+            entity_id=str(appraisal.id),
+            details={
+                "proposal_id": proposal_id,
+                "recommendation_status": recommendation_status,
+                "committee_chairperson": committee_chairperson,
+            },
+        )
 
         return appraisal
 

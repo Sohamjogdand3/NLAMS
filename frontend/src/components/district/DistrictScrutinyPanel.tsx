@@ -7,6 +7,7 @@ import {
 } from 'lucide-react'
 import type { ScrutinyRequisition, DistrictProject } from '../../types/district'
 import { MOCK_SCRUTINY_REQUISITIONS } from '../../data/mockDistrictData'
+import { recordWorkflowStepLog } from '../../utils/auditLogger'
 
 interface DistrictScrutinyPanelProps {
   projects: DistrictProject[]
@@ -43,6 +44,18 @@ export default function DistrictScrutinyPanel({
       if (onUpdateProjectStatus) {
         onUpdateProjectStatus(selectedReq.projectId, 'Notification', remark)
       }
+      recordWorkflowStepLog({
+        step: 3,
+        workItem: 'SIA Study & Expert Gate',
+        originatingDashboard: 'District Collector Desk',
+        receivingDashboard: 'Expert Committee Desk',
+        outputArtifact: 'Social Impact Ledger',
+        targetProject: selectedReq.projectCode,
+        user: 'Dr. Suhas Diwase (IAS)',
+        role: 'District Collector / Expert Committee Chair',
+        action: 'SIA Study Appraised & Social Impact Ledger Approved',
+        details: remark || 'Multi-criteria appraisal passed with public purpose clearance.',
+      })
       setToastMessage(`Requisition ${selectedReq.projectCode} approved and recommended for Section 3A Gazette!`)
     } else if (actionType === 'clarification') {
       setRequisitions((prev) =>

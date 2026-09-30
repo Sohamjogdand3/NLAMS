@@ -20,8 +20,10 @@ function App() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
-                <Route path="/gis-mapping" element={<ProtectedRoute><GisMappingApp /></ProtectedRoute>} />
-        <Route path="/dashboard/citizen" element={<ProtectedRoute><CitizenDashboard /></ProtectedRoute>} />
+        <Route path="/gis" element={<GisMappingApp />} />
+        <Route path="/gis-mapping" element={<GisMappingApp />} />
+        <Route path="/citizen" element={<CitizenDashboard />} />
+        <Route path="/dashboard/citizen" element={<CitizenDashboard />} />
         <Route path="/dashboard/central" element={<ProtectedRoute><CentralDashboard /></ProtectedRoute>} />
         <Route path="/dashboard/national" element={<ProtectedRoute><CentralDashboard /></ProtectedRoute>} />
         <Route path="/dashboard/state-nodal" element={<ProtectedRoute><StateNodalDashboard /></ProtectedRoute>} />

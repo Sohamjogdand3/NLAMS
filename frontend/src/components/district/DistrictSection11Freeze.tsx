@@ -8,6 +8,7 @@ import {
 } from 'lucide-react'
 import { MOCK_SECTION_11_NOTICES } from '../../data/mockDistrictData'
 import type { Section11NoticeEntry } from '../../types/district'
+import { recordWorkflowStepLog } from '../../utils/auditLogger'
 
 export default function DistrictSection11Freeze() {
   const [notices, setNotices] = useState<Section11NoticeEntry[]>(MOCK_SECTION_11_NOTICES)
@@ -43,6 +44,19 @@ export default function DistrictSection11Freeze() {
           : n
       )
     )
+
+    recordWorkflowStepLog({
+      step: 4,
+      workItem: 'Sec 11 Freeze & Objections',
+      originatingDashboard: 'District Collector Desk',
+      receivingDashboard: 'Citizen Portal',
+      outputArtifact: 'Form-II Gazette Notice & API Lock',
+      targetProject: activeNotice.projectCode,
+      user: 'District LAO Haveli',
+      role: 'Land Acquisition Officer',
+      action: `Section 11 Objection Disposed (${outcome})`,
+      details: `Form-II Gazette preliminary notification active. Hearing remark: "${hearingRemark}".`,
+    })
 
     setToastMessage(`Objection ${objId} officially updated as: ${outcome}`)
     setHearingRemark('')

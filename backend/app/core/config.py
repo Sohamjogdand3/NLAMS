@@ -3,7 +3,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    PROJECT_NAME: str = "NLAMS API"
+    PROJECT_NAME: str = "DHARAA API"
     API_V1_STR: str = "/api/v1"
     ENVIRONMENT: str = "development"
 

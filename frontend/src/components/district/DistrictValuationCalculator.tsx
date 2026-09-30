@@ -7,6 +7,7 @@ import {
 } from 'lucide-react'
 import { MOCK_RFCTLARR_VALUATIONS } from '../../data/mockDistrictData'
 import type { RfctlarrValuationItem } from '../../types/district'
+import { recordWorkflowStepLog } from '../../utils/auditLogger'
 
 interface DistrictValuationCalculatorProps {
   onAwardApproved?: (valuationId: string) => void
@@ -56,6 +57,20 @@ export default function DistrictValuationCalculator({
       )
     )
     if (onAwardApproved) onAwardApproved(valId)
+
+    recordWorkflowStepLog({
+      step: 6,
+      workItem: 'Award Valuation',
+      originatingDashboard: 'District LAO Desk',
+      receivingDashboard: 'Citizen & R&R Desks',
+      outputArtifact: 'RFCTLARR Sec 23 Statutory Award',
+      targetProject: activeVal.projectCode,
+      user: 'District LAO Haveli',
+      role: 'Land Acquisition Officer',
+      action: 'Pronounced RFCTLARR Sec 23 Statutory Award',
+      details: `Statutory award of ₹${(totalAwardAmount/100000).toFixed(2)} Lakhs signed for Khasra ${activeVal.khasraNo} (${activeVal.ownerName}).`,
+    })
+
     setToastMessage(`Statutory Award Order signed for Khasra ${activeVal.khasraNo}! Ready for PFMS Escrow payout.`)
   }
 

@@ -60,8 +60,8 @@ export function AcquisitionDashboard({ selectedParcels, district, state, onClose
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-900/60 z-[9999] flex items-center justify-center p-4 backdrop-blur-sm print:static print:inset-auto print:block print:bg-white print:p-0">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden print:block print:w-full print:max-h-none print:shadow-none print:rounded-none">
+    <div className="fixed inset-0 bg-slate-900/60 z-[99999] flex items-center justify-center p-4 backdrop-blur-sm print:static print:inset-auto print:block print:bg-white print:p-0">
+      <div className="relative w-full max-w-5xl max-h-[90vh] flex flex-col bg-white rounded-xl shadow-2xl overflow-hidden print:block print:w-full print:max-h-none print:shadow-none print:rounded-none">
         
         {/* Header - Hidden on Print */}
         <div className="bg-green-800 text-white p-4 flex justify-between items-center print:hidden">

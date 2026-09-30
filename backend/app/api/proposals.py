@@ -12,6 +12,7 @@ from app.schemas.proposal import (
     ProposalCreate,
     ProposalUpdate,
     ProposalOut,
+    ScrutinyRequest,
     ProjectDprOut,
     GisCorridorIngest,
     GisCorridorOut,
@@ -398,4 +399,28 @@ def state_scrutiny_proposal(
         return proposal
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+
+
+@router.post("/{proposal_id}/submit", response_model=ProposalOut)
+def submit_proposal_to_state(
+    proposal_id: int,
+    request: Request,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """
+    Submit proposal to State Gateway -> transitions to STAGE_2_STATE_SCRUTINY.
+    """
+    client_ip = get_client_ip(request)
+    try:
+        proposal = ProposalService.submit_to_state_gateway(
+            db=db,
+            proposal_id=proposal_id,
+            user=current_user,
+            ip_address=client_ip,
+        )
+        return proposal
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+
 

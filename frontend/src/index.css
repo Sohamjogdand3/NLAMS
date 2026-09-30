@@ -46,3 +46,36 @@ body {
   outline: 2px solid var(--color-saffron);
   outline-offset: 2px;
 }
+
+/* Blueprint styling for GIS Cadastral Map */
+.cadastral-map-tiles,
+.blueprint-map .leaflet-tile-pane {
+  filter: grayscale(100%) opacity(80%) contrast(105%);
+}
+
+/* Cadastral Map Tooltips */
+.cadastral-tooltip {
+  background-color: #ffffff !important;
+  border: 1px solid #94a3b8 !important;
+  border-radius: 4px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18) !important;
+  color: #0f172a !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  padding: 1px 4px !important;
+  line-height: 1.2 !important;
+  pointer-events: none !important;
+}
+
+.cadastral-tooltip::before {
+  display: none !important;
+}
+
+.cadastral-tooltip.cadastral-tooltip-selected {
+  background-color: #5b21b6 !important;
+  border: 1.5px solid #4c1d95 !important;
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  box-shadow: 0 2px 6px rgba(91, 33, 182, 0.45) !important;
+}
+

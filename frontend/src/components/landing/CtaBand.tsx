@@ -12,7 +12,7 @@ export default function CtaBand() {
           href="/login"
           className="flex-none rounded-md bg-saffron px-7 py-3 text-sm font-semibold text-navy-dark shadow-sm transition-colors hover:bg-saffron-dark hover:text-white"
         >
-          Sign in to NLAMS
+          Sign in to DHARAA
         </a>
       </div>
     </section>

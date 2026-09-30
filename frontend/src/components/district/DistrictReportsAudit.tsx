@@ -7,6 +7,7 @@ import {
 } from 'lucide-react'
 import type { AuditLogEntry } from '../../types/district'
 import { MOCK_AUDIT_LOGS } from '../../data/mockDistrictData'
+import WorkflowMatrixAuditComponent from '../common/WorkflowMatrixAuditComponent'
 
 export default function DistrictReportsAudit() {
   const [auditLogs] = useState<AuditLogEntry[]>(MOCK_AUDIT_LOGS)
@@ -114,6 +115,9 @@ export default function DistrictReportsAudit() {
           </div>
         </div>
       </div>
+
+      {/* Global 8-Step Statutory Matrix Audit Trail */}
+      <WorkflowMatrixAuditComponent />
     </div>
   )
 }

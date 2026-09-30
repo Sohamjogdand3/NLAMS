@@ -6,7 +6,6 @@ import {
   UserCheck,
   LogOut,
   ChevronDown,
-  Building2,
 } from 'lucide-react'
 import { useAuth } from '../../auth/AuthContext'
 
@@ -44,11 +43,6 @@ export default function CentralHeader({
 
       {/* Right: Actions, Badges & Profile */}
       <div className="flex items-center gap-3">
-        {/* Authority Level Badge */}
-        <div className="hidden md:flex items-center gap-1.5 rounded-lg bg-navy/5 px-3 py-1.5 text-xs font-bold text-navy border border-navy/10">
-          <Building2 className="h-3.5 w-3.5 text-navy" />
-          <span>Central Authority | DoLR &amp; NITI Aayog</span>
-        </div>
 
         {/* MIS Report Export Action */}
         <button

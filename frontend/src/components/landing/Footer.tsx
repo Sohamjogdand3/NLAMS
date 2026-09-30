@@ -19,7 +19,7 @@ export default function Footer() {
       <div className="mx-auto max-w-[1700px] w-full px-4 sm:px-8 lg:px-12 py-14">
         <div className="grid gap-10 lg:grid-cols-[1.3fr_1fr_1fr_1fr]">
           <div>
-            <div className="text-lg font-bold text-white">NLAMS</div>
+            <div className="text-lg font-bold text-white">DHARAA</div>
             <p className="mt-3 max-w-xs text-sm leading-relaxed">
               National Land Acquisition &amp; Management System. A shared,
               GIS-enabled record for every stage of public land acquisition.
@@ -43,7 +43,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-12 flex flex-col gap-4 border-t border-white/10 pt-6 text-xs sm:flex-row sm:items-center sm:justify-between">
-          <p>© 2026 National Land Acquisition &amp; Management System. Prototype build for SIH26016.</p>
+          <p>© 2026 DHARAA — National Land Acquisition &amp; Management System.</p>
           <div className="flex gap-5">
             <a href="#" className="hover:text-white">
               Terms

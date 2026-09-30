@@ -18,6 +18,7 @@ import {
   MOCK_SIA_REVIEWS,
 } from '../data/mockRnrData'
 import { rnrApi, proposalsApi } from '../services/api'
+import WorkflowMatrixAuditComponent from '../components/common/WorkflowMatrixAuditComponent'
 import { Loader2 } from 'lucide-react'
 
 export default function RnRAdminDashboard() {
@@ -278,28 +279,7 @@ export default function RnRAdminDashboard() {
                 )}
 
                 {activeTab === 'disbursals' && (
-                  <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-xs space-y-3">
-                    <h3 className="text-base font-black text-slate-900">
-                      Direct Benefit Transfer (DBT) &amp; Resettlement Disbursals Ledger
-                    </h3>
-                    <p className="text-xs text-slate-500 max-w-xl mx-auto">
-                      PFMS and Aadhaar-enabled payments bridge for monthly subsistence grants (₹3,000/mo), one-time shifting assistance (₹50,000), and cattle shed allowances disbursed directly into verified bank accounts.
-                    </p>
-                    <div className="pt-4 flex justify-center gap-3">
-                      <button
-                        onClick={() => alert('Generating PFMS DBT Disbursal Batch File...')}
-                        className="rounded-xl bg-purple-900 px-4 py-2 text-xs font-bold text-white hover:bg-purple-850 transition-colors cursor-pointer"
-                      >
-                        Generate DBT Batch Export (XML)
-                      </button>
-                      <button
-                        onClick={() => alert('Exporting Social Audit Ledger (CSV)...')}
-                        className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
-                      >
-                        Export Social Ledger (CSV)
-                      </button>
-                    </div>
-                  </div>
+                  <WorkflowMatrixAuditComponent />
                 )}
               </>
             )}

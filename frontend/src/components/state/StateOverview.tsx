@@ -43,37 +43,34 @@ export default function StateOverview({
 
   return (
     <div className="space-y-6">
-      {/* State Authority Badge Banner */}
-      <div className="rounded-2xl border border-slate-200 bg-gradient-to-r from-[#042A5E] via-[#0A3D7E] to-[#042A5E] p-6 text-white shadow-md">
-        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
-          <div className="space-y-1">
+      {/* State Authority Compact Header */}
+      <div className="rounded-2xl border border-slate-200 bg-gradient-to-r from-[#042A5E] via-[#0A3D7E] to-[#042A5E] p-4 text-white shadow-md">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div className="space-y-0.5">
             <div className="flex items-center gap-2">
               <span className="rounded-md bg-amber-400/20 px-2 py-0.5 text-[10px] font-bold tracking-wider text-amber-300 uppercase border border-amber-400/30">
                 State Revenue Nodal Authority
               </span>
-              <span className="text-xs text-slate-300">• State of Maharashtra</span>
+              <span className="text-xs text-slate-300">• Maharashtra</span>
             </div>
-            <h1 className="text-xl font-black tracking-tight text-white sm:text-2xl">
+            <h1 className="text-lg font-extrabold tracking-tight text-white">
               State Land Acquisition Governance Console
             </h1>
-            <p className="text-xs text-slate-200 max-w-2xl">
-              Statutory oversight for PIA proposals under RFCTLARR Act 2013 &amp; NH Act 1956 Section 3(a). Official CALA Collector appointment orders, Cadastral API synchronizations, and regional rural-urban multiplier compliance.
-            </p>
           </div>
 
           <div className="flex flex-wrap gap-2">
             <button
               onClick={() => onSelectTab('proposals')}
-              className="inline-flex items-center gap-2 rounded-xl bg-amber-400 px-4 py-2 text-xs font-bold text-[#042A5E] hover:bg-amber-300 transition-colors shadow-sm cursor-pointer"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-amber-400 px-3.5 py-1.5 text-xs font-bold text-[#042A5E] hover:bg-amber-300 transition-colors shadow-xs cursor-pointer"
             >
-              <FileCheck2 className="h-4 w-4" />
+              <FileCheck2 className="h-3.5 w-3.5" />
               Review Intake ({pendingIntake})
             </button>
             <button
               onClick={() => onSelectTab('cala-appointments')}
-              className="inline-flex items-center gap-2 rounded-xl bg-white/10 px-4 py-2 text-xs font-bold text-white hover:bg-white/20 transition-colors border border-white/20 cursor-pointer"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-white/10 px-3.5 py-1.5 text-xs font-bold text-white hover:bg-white/20 transition-colors border border-white/20 cursor-pointer"
             >
-              <UserCheck className="h-4 w-4" />
+              <UserCheck className="h-3.5 w-3.5" />
               CALA Orders
             </button>
           </div>

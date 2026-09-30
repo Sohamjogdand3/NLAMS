@@ -39,7 +39,7 @@ export default function CitizenHeader({
                   Government of India • DoLR
                 </span>
                 <h1 className="text-sm sm:text-base font-bold text-white tracking-tight leading-tight">
-                  National Land Acquisition & Management System (NLAMS)
+                  Digital Land Acquisition & Management System (DHARAA)
                 </h1>
               </div>
             </a>

@@ -53,7 +53,7 @@ export default function CentralSidebar({
             </div>
             <div className="flex flex-col">
               <span className="text-xs font-black uppercase tracking-wider text-white">
-                NLAMS CENTRAL
+                DHARAA CENTRAL
               </span>
               <span className="text-[10px] font-semibold text-slate-400">
                 National Command Center
@@ -63,7 +63,7 @@ export default function CentralSidebar({
         )}
         {isCollapsed && (
           <div className="mx-auto flex h-8 w-8 items-center justify-center rounded-lg bg-red-700 font-bold text-white text-xs">
-            NL
+            DH
           </div>
         )}
       </div>

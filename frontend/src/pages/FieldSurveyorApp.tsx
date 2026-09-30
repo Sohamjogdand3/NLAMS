@@ -13,6 +13,7 @@ import type {
 } from '../types/surveyor'
 import { MOCK_SURVEY_TASKS } from '../data/mockSurveyorData'
 import { surveyorApi, type SurveyTaskRecord } from '../services/api'
+import { recordWorkflowStepLog } from '../utils/auditLogger'
 import {
   Home,
   FileText,
@@ -110,6 +111,19 @@ export default function FieldSurveyorApp() {
 
   const handleSaveParcelData = async (updatedParcel: FieldParcelTask) => {
     setParcels((prev) => prev.map((p) => (p.id === updatedParcel.id ? updatedParcel : p)))
+
+    recordWorkflowStepLog({
+      step: 5,
+      workItem: 'Field Geotag Audit',
+      originatingDashboard: 'Field Surveyor App',
+      receivingDashboard: 'District LAO Desk',
+      outputArtifact: 'Geotagged Asset Photos & GPS Bounds',
+      targetProject: `Gat ${updatedParcel.khasraGatNumber} (${updatedParcel.village})`,
+      user: (user as any)?.full_name || (user as any)?.username || user?.email || 'Suresh More (Patwari)',
+      role: 'Field Surveyor',
+      action: 'Synced Geotagged Asset Photos & GPS Bounds',
+      details: `Measured area ${updatedParcel.measuredAreaHectares} Ha. GPS coordinates count: ${updatedParcel.gpsCoordinatesCount}. Photos & crop assets logged.`,
+    })
 
     if (isOnline) {
       try {
