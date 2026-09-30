@@ -30,6 +30,10 @@ app = FastAPI(
 @app.on_event("startup")
 def on_startup():
     try:
+        if "postgresql" in settings.sync_database_url:
+            with engine.connect() as conn:
+                conn.execute(text("CREATE EXTENSION IF NOT EXISTS postgis;"))
+                conn.commit()
         Base.metadata.create_all(bind=engine)
         seed_database()
     except Exception as e:
